@@ -10,10 +10,12 @@ import Photos
 class AlbumModel {
     let name:String
     let count:Int
+    let image: UIImage
     let collection:PHAssetCollection
-    init(name:String, count:Int, collection:PHAssetCollection) {
+    init(name:String, count:Int, image:UIImage, collection:PHAssetCollection) {
         self.name = name
         self.count = count
+        self.image = image
         self.collection = collection
     }
 }

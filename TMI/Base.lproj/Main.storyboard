@@ -42,7 +42,7 @@
                                                     </constraints>
                                                 </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="개수" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OJg-vW-44o" userLabel="개수">
-                                                    <rect key="frame" x="0.0" y="199" width="170" height="21"/>
+                                                    <rect key="frame" x="10" y="199" width="160" height="21"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                                     <color key="textColor" red="0.61960784310000006" green="0.61960784310000006" blue="0.61960784310000006" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
@@ -55,20 +55,18 @@
                                                 </label>
                                             </subviews>
                                         </view>
-                                        <color key="backgroundColor" red="0.36078431370000003" green="0.74901960779999999" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="OJg-vW-44o" secondAttribute="trailing" id="9Fm-DG-1wE"/>
-                                            <constraint firstItem="OJg-vW-44o" firstAttribute="width" secondItem="zbV-iO-wmm" secondAttribute="width" id="T3O-Qd-Yd4"/>
                                             <constraint firstItem="med-RU-kL9" firstAttribute="top" secondItem="zbV-iO-wmm" secondAttribute="top" id="Vht-Xd-bjs"/>
                                             <constraint firstAttribute="bottom" secondItem="OJg-vW-44o" secondAttribute="bottom" id="Ws4-7J-sjZ"/>
-                                            <constraint firstItem="OJg-vW-44o" firstAttribute="leading" secondItem="zbV-iO-wmm" secondAttribute="leading" id="byE-kk-HMU"/>
+                                            <constraint firstItem="OJg-vW-44o" firstAttribute="leading" secondItem="zbV-iO-wmm" secondAttribute="leading" constant="10" id="byE-kk-HMU"/>
                                             <constraint firstItem="0d7-Qf-C8T" firstAttribute="top" secondItem="med-RU-kL9" secondAttribute="bottom" constant="3" id="ceO-cp-InD"/>
                                             <constraint firstItem="med-RU-kL9" firstAttribute="leading" secondItem="zbV-iO-wmm" secondAttribute="leading" id="dTd-2O-466"/>
-                                            <constraint firstItem="0d7-Qf-C8T" firstAttribute="leading" secondItem="zbV-iO-wmm" secondAttribute="leading" constant="11" id="fPv-Qh-kJ8"/>
-                                            <constraint firstAttribute="trailing" secondItem="0d7-Qf-C8T" secondAttribute="trailing" constant="-11" id="gWR-Ea-i2S"/>
+                                            <constraint firstItem="0d7-Qf-C8T" firstAttribute="leading" secondItem="zbV-iO-wmm" secondAttribute="leading" constant="10" id="fPv-Qh-kJ8"/>
+                                            <constraint firstAttribute="trailing" secondItem="0d7-Qf-C8T" secondAttribute="trailing" id="gWR-Ea-i2S"/>
                                             <constraint firstAttribute="trailing" secondItem="med-RU-kL9" secondAttribute="trailing" id="u4T-mW-CvU"/>
                                             <constraint firstItem="med-RU-kL9" firstAttribute="width" secondItem="zbV-iO-wmm" secondAttribute="width" id="uRR-v3-oSV"/>
-                                            <constraint firstItem="0d7-Qf-C8T" firstAttribute="width" secondItem="zbV-iO-wmm" secondAttribute="width" id="ukG-ll-kRC"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="imageCountLabel" destination="OJg-vW-44o" id="cvz-in-qfE"/>
