@@ -14,6 +14,10 @@
 		FA329B4921D8C30300C6C485 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA329B4721D8C30300C6C485 /* LaunchScreen.storyboard */; };
 		FA329B5421D8C30300C6C485 /* TMITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B5321D8C30300C6C485 /* TMITests.swift */; };
 		FA329B5F21D8C30300C6C485 /* TMIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B5E21D8C30300C6C485 /* TMIUITests.swift */; };
+		FABA857521DCBC1900E6F7F0 /* Album.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857421DCBC1900E6F7F0 /* Album.swift */; };
+		FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */; };
+		FABA857921DCC5D200E6F7F0 /* SupportingFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857821DCC5D200E6F7F0 /* SupportingFile.swift */; };
+		FABA857D21DD1F2700E6F7F0 /* AlbumModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -47,6 +51,10 @@
 		FA329B5A21D8C30300C6C485 /* TMIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TMIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA329B5E21D8C30300C6C485 /* TMIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMIUITests.swift; sourceTree = "<group>"; };
 		FA329B6021D8C30300C6C485 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FABA857421DCBC1900E6F7F0 /* Album.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Album.swift; sourceTree = "<group>"; };
+		FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCollectionViewCell.swift; sourceTree = "<group>"; };
+		FABA857821DCC5D200E6F7F0 /* SupportingFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportingFile.swift; sourceTree = "<group>"; };
+		FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,7 +107,11 @@
 			children = (
 				FA329B3E21D8C30100C6C485 /* AppDelegate.swift */,
 				FA329B4021D8C30100C6C485 /* ViewController.swift */,
+				FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */,
 				FA329B4221D8C30100C6C485 /* Main.storyboard */,
+				FABA857821DCC5D200E6F7F0 /* SupportingFile.swift */,
+				FABA857421DCBC1900E6F7F0 /* Album.swift */,
+				FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */,
 				FA329B4521D8C30300C6C485 /* Assets.xcassets */,
 				FA329B4721D8C30300C6C485 /* LaunchScreen.storyboard */,
 				FA329B4A21D8C30300C6C485 /* Info.plist */,
@@ -256,8 +268,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */,
+				FABA857D21DD1F2700E6F7F0 /* AlbumModel.swift in Sources */,
+				FABA857921DCC5D200E6F7F0 /* SupportingFile.swift in Sources */,
 				FA329B4121D8C30100C6C485 /* ViewController.swift in Sources */,
 				FA329B3F21D8C30100C6C485 /* AppDelegate.swift in Sources */,
+				FABA857521DCBC1900E6F7F0 /* Album.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -433,8 +449,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 43FKD7C656;
+				DEVELOPMENT_TEAM = P3RSK6JP95;
 				INFOPLIST_FILE = TMI/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -451,8 +468,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 43FKD7C656;
+				DEVELOPMENT_TEAM = P3RSK6JP95;
 				INFOPLIST_FILE = TMI/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
