@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F10214E21F05AB500C1B0CA /* inception_v3_with_class.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F10214C21F05AB500C1B0CA /* inception_v3_with_class.mlmodel */; };
+		2F10214F21F05AB500C1B0CA /* inception_v3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F10214D21F05AB500C1B0CA /* inception_v3.mlmodel */; };
 		2F74CCCD21E4D5E60052055D /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F74CCCC21E4D5E60052055D /* ImageProcessor.swift */; };
-		2F74CCD221E4DD320052055D /* inception_v3_with_class.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F74CCD021E4DD320052055D /* inception_v3_with_class.mlmodel */; };
-		2F74CCD321E4DD320052055D /* inception_v3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F74CCD121E4DD320052055D /* inception_v3.mlmodel */; };
 		FA329B3F21D8C30100C6C485 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B3E21D8C30100C6C485 /* AppDelegate.swift */; };
 		FA329B4121D8C30100C6C485 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B4021D8C30100C6C485 /* ViewController.swift */; };
 		FA329B4421D8C30100C6C485 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA329B4221D8C30100C6C485 /* Main.storyboard */; };
@@ -17,10 +17,12 @@
 		FA329B4921D8C30300C6C485 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA329B4721D8C30300C6C485 /* LaunchScreen.storyboard */; };
 		FA329B5421D8C30300C6C485 /* TMITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B5321D8C30300C6C485 /* TMITests.swift */; };
 		FA329B5F21D8C30300C6C485 /* TMIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B5E21D8C30300C6C485 /* TMIUITests.swift */; };
-		FABA857521DCBC1900E6F7F0 /* Album.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857421DCBC1900E6F7F0 /* Album.swift */; };
 		FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */; };
-		FABA857921DCC5D200E6F7F0 /* SupportingFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857821DCC5D200E6F7F0 /* SupportingFile.swift */; };
 		FABA857D21DD1F2700E6F7F0 /* AlbumModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */; };
+		FAF0DF1A21F1CCBD003F341F /* SelectedAlbumImageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF1921F1CCBD003F341F /* SelectedAlbumImageVC.swift */; };
+		FAF0DF1C21F1D313003F341F /* SelectedAlbumCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF1B21F1D313003F341F /* SelectedAlbumCollectionViewCell.swift */; };
+		FAF0DF1E21F5025F003F341F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF1D21F5025F003F341F /* Extensions.swift */; };
+		FAF0DF2121F5204F003F341F /* SelectedImageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF2021F5204F003F341F /* SelectedImageVC.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,9 +43,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		2F10214C21F05AB500C1B0CA /* inception_v3_with_class.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = inception_v3_with_class.mlmodel; sourceTree = "<group>"; };
+		2F10214D21F05AB500C1B0CA /* inception_v3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = inception_v3.mlmodel; sourceTree = "<group>"; };
 		2F74CCCC21E4D5E60052055D /* ImageProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageProcessor.swift; sourceTree = "<group>"; };
-		2F74CCD021E4DD320052055D /* inception_v3_with_class.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = inception_v3_with_class.mlmodel; path = ../../../inceptionV3/Inceptionv3_retraining/inception_v3_with_class.mlmodel; sourceTree = "<group>"; };
-		2F74CCD121E4DD320052055D /* inception_v3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; name = inception_v3.mlmodel; path = ../../../inceptionV3/Inceptionv3_retraining/inception_v3.mlmodel; sourceTree = "<group>"; };
 		FA329B3B21D8C30000C6C485 /* TMI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TMI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA329B3E21D8C30100C6C485 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA329B4021D8C30100C6C485 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -57,10 +59,12 @@
 		FA329B5A21D8C30300C6C485 /* TMIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TMIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA329B5E21D8C30300C6C485 /* TMIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMIUITests.swift; sourceTree = "<group>"; };
 		FA329B6021D8C30300C6C485 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FABA857421DCBC1900E6F7F0 /* Album.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Album.swift; sourceTree = "<group>"; };
 		FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCollectionViewCell.swift; sourceTree = "<group>"; };
-		FABA857821DCC5D200E6F7F0 /* SupportingFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportingFile.swift; sourceTree = "<group>"; };
 		FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumModel.swift; sourceTree = "<group>"; };
+		FAF0DF1921F1CCBD003F341F /* SelectedAlbumImageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedAlbumImageVC.swift; sourceTree = "<group>"; };
+		FAF0DF1B21F1D313003F341F /* SelectedAlbumCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedAlbumCollectionViewCell.swift; sourceTree = "<group>"; };
+		FAF0DF1D21F5025F003F341F /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		FAF0DF2021F5204F003F341F /* SelectedImageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectedImageVC.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,16 +115,17 @@
 		FA329B3D21D8C30000C6C485 /* TMI */ = {
 			isa = PBXGroup;
 			children = (
-				2F74CCD021E4DD320052055D /* inception_v3_with_class.mlmodel */,
-				2F74CCD121E4DD320052055D /* inception_v3.mlmodel */,
+				FAF0DF1F21F502B9003F341F /* ML */,
 				FA329B3E21D8C30100C6C485 /* AppDelegate.swift */,
+				FA329B4221D8C30100C6C485 /* Main.storyboard */,
 				2F74CCCC21E4D5E60052055D /* ImageProcessor.swift */,
 				FA329B4021D8C30100C6C485 /* ViewController.swift */,
+				FAF0DF1921F1CCBD003F341F /* SelectedAlbumImageVC.swift */,
+				FAF0DF2021F5204F003F341F /* SelectedImageVC.swift */,
 				FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */,
-				FA329B4221D8C30100C6C485 /* Main.storyboard */,
-				FABA857821DCC5D200E6F7F0 /* SupportingFile.swift */,
-				FABA857421DCBC1900E6F7F0 /* Album.swift */,
 				FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */,
+				FAF0DF1B21F1D313003F341F /* SelectedAlbumCollectionViewCell.swift */,
+				FAF0DF1D21F5025F003F341F /* Extensions.swift */,
 				FA329B4521D8C30300C6C485 /* Assets.xcassets */,
 				FA329B4721D8C30300C6C485 /* LaunchScreen.storyboard */,
 				FA329B4A21D8C30300C6C485 /* Info.plist */,
@@ -144,6 +149,15 @@
 				FA329B6021D8C30300C6C485 /* Info.plist */,
 			);
 			path = TMIUITests;
+			sourceTree = "<group>";
+		};
+		FAF0DF1F21F502B9003F341F /* ML */ = {
+			isa = PBXGroup;
+			children = (
+				2F10214C21F05AB500C1B0CA /* inception_v3_with_class.mlmodel */,
+				2F10214D21F05AB500C1B0CA /* inception_v3.mlmodel */,
+			);
+			path = ML;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -277,15 +291,17 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2F74CCD321E4DD320052055D /* inception_v3.mlmodel in Sources */,
-				2F74CCD221E4DD320052055D /* inception_v3_with_class.mlmodel in Sources */,
+				2F10214F21F05AB500C1B0CA /* inception_v3.mlmodel in Sources */,
+				FAF0DF2121F5204F003F341F /* SelectedImageVC.swift in Sources */,
+				2F10214E21F05AB500C1B0CA /* inception_v3_with_class.mlmodel in Sources */,
 				FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */,
 				FABA857D21DD1F2700E6F7F0 /* AlbumModel.swift in Sources */,
 				2F74CCCD21E4D5E60052055D /* ImageProcessor.swift in Sources */,
-				FABA857921DCC5D200E6F7F0 /* SupportingFile.swift in Sources */,
 				FA329B4121D8C30100C6C485 /* ViewController.swift in Sources */,
+				FAF0DF1E21F5025F003F341F /* Extensions.swift in Sources */,
 				FA329B3F21D8C30100C6C485 /* AppDelegate.swift in Sources */,
-				FABA857521DCBC1900E6F7F0 /* Album.swift in Sources */,
+				FAF0DF1A21F1CCBD003F341F /* SelectedAlbumImageVC.swift in Sources */,
+				FAF0DF1C21F1D313003F341F /* SelectedAlbumCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
