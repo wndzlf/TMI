@@ -8,11 +8,12 @@
 import Photos
 
 class AlbumModel {
-    let name:String
-    var count:Int
+    let name: String
+    var count: Int
     var image: UIImage
-    var collection:[PHAsset]
-    init(name:String, count:Int, image:UIImage, collection:[PHAsset]) {
+    var collection: [PHAsset]
+    
+    init(name: String, count: Int, image: UIImage, collection: [PHAsset]) {
         self.name = name
         self.count = count
         self.image = image
