@@ -15,6 +15,7 @@ import Accelerate
 class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, PHPhotoLibraryChangeObserver {
     
     @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     var assetsFetchResult: PHFetchResult<PHAsset>!
     let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
@@ -26,10 +27,16 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     var albumList: [AlbumModel] = []
     var albums: [String:[PHAsset]] = ["kakaoTalk":[], "daumCafe": [], "instagram":[], "others":[]]
     
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         collectionView.delegate = self
         collectionView.dataSource = self
+        
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.startAnimating()
         
         let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
         
@@ -38,8 +45,11 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         case .authorized:
             print("접근 허가됨")
             OperationQueue.main.addOperation {
+                self.activityIndicator.startAnimating()
                 self.GetAlbums()
                 self.collectionView.reloadData()
+                self.activityIndicator.stopAnimating()
+                
             }
         case .denied:
             print("접근 불허됨")
@@ -50,7 +60,9 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 case .authorized:
                     print("사용자가 허용함")
                     //                    self.requestCollection()
+                    self.activityIndicator.startAnimating()
                     self.GetAlbums()
+                    self.activityIndicator.stopAnimating()
                 case .denied:
                     print("사용자가 불허함")
                 default: break
