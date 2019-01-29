@@ -14,6 +14,11 @@ import Accelerate
 
 class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, PHPhotoLibraryChangeObserver {
     
+    func photoLibraryDidChange(_ changeInstance: PHChange) {
+        
+    }
+    
+    
     @IBOutlet weak var collectionView: UICollectionView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
@@ -26,8 +31,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     
     var albumList: [AlbumModel] = []
     var albums: [String:[PHAsset]] = ["kakaoTalk":[], "daumCafe": [], "instagram":[], "others":[]]
-    
-    
     
     
     override func viewDidLoad() {
@@ -59,10 +62,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 switch status {
                 case .authorized:
                     print("사용자가 허용함")
-                    //                    self.requestCollection()
-                    self.activityIndicator.startAnimating()
-                    self.GetAlbums()
-                    self.activityIndicator.stopAnimating()
+                    OperationQueue.main.addOperation {
+                        //                    self.requestCollection()
+                        self.activityIndicator.startAnimating()
+                        self.GetAlbums()
+                        self.collectionView.reloadData()
+                        self.activityIndicator.stopAnimating()
+                    }
                 case .denied:
                     print("사용자가 불허함")
                 default: break
@@ -71,7 +77,13 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         case .restricted:
             print("접근 제한")
         }
-//        PHPhotoLibrary.shared().register(self) //포토 라이브러리가 변화될 때마다 델리게이트가 호출됨
+        
+        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(self.addAlbum))
+        self.navigationItem.rightBarButtonItem = addButton
+        
+        PHPhotoLibrary.shared().register(self) //포토 라이브러리가 변화될 때마다 델리게이트가 호출됨
+        
+      
     }
     
     //MARK: - CollectionView
@@ -122,13 +134,33 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
     
     //MARK:- PhotoLibraryML
-    func photoLibraryDidChange(_ changeInstance: PHChange) {
+ /*   func photoLibraryDidChange(_ changeInstance: PHChange) {
+    
+//        guard let changes = changeInstance.changeDetails(for: assetsFetchResult) else {return}
+//        assetsFetchResult = changes.fetchResultAfterChanges
+//
+//
+//        OperationQueue.main.addOperation {
+//            self.collectionView.reloadData()
+//        }
+        
+        
+//
         let fetchResultChangeDetails = changeInstance.changeDetails(for: assetsFetchResult)
         if(fetchResultChangeDetails != nil){
+            
+            guard (fetchResultChangeDetails) != nil else {
+                print("No Change in fetch Result Change Details")
+                return
+            }
             print("Contains changes")
-            assetsFetchResult = (fetchResultChangeDetails?.fetchResultAfterChanges)
+            
+            assetsFetchResult = (fetchResultChangeDetails?.fetchResultAfterChanges)!
             let insertedObjects = fetchResultChangeDetails?.insertedObjects
+            
             for insertedAsset in insertedObjects!{
+                print("insertedAsset이 있어요오니ㅏ어ㅗ미ㅏ엄나ㅣㅓ아ㅣㅁ넝~~!")
+                
                 manager.requestImage(for: insertedAsset,
                                      targetSize: PHImageManagerMaximumSize,
                                      contentMode: .aspectFill,
@@ -139,7 +171,10 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             }//for문 돌아서 추가된 이미지오브젝트들 각 앨범 딕셔너리에 저장 완료
             //updateAlbumModel 호출 => 추후 콜렉션뷰에서 사진 개수가 0인 앨범모델은 보이지 않게 조정
             let removedObjects = fetchResultChangeDetails?.removedObjects
+            
             for removedAsset in removedObjects!{
+                print("removed asset이 있어용~~~!~!")
+                
                 for var (key, value) in albums {
                     if value.contains(removedAsset){ value.remove(at: value.index(of: removedAsset)!)}
                 }
@@ -149,7 +184,34 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                 albumList.remove(at: i)
             }
         }
+//    }
+ */
+    
+    @objc
+    func addAlbum(_ sender: AnyObject) {
+        let alertController = UIAlertController(title: NSLocalizedString("New Album", comment: ""), message: nil, preferredStyle: .alert)
+        alertController.addTextField { textField in
+            textField.placeholder = NSLocalizedString("Album Name", comment: "")
+        }
+        
+        alertController.addAction(UIAlertAction(title: NSLocalizedString("Create", comment: ""), style: .default) { action in
+            let textField = alertController.textFields!.first!
+            if let title = textField.text, !title.isEmpty {
+                // Create a new album with the entered title.
+                PHPhotoLibrary.shared().performChanges({
+                    PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: title)
+                }, completionHandler: { success, error in
+                    if !success { print("Error creating album: \(String(describing: error)).") }
+                })
+            }
+        })
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        alertController.addAction(cancelAction)
+        self.present(alertController, animated: true, completion: nil)
     }
+}
+
+extension ViewController {
     
     func GetAlbums() {
         let options: PHFetchOptions = PHFetchOptions()
@@ -190,9 +252,6 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         }
     }//GetAlbums 메소드 끝
     
-    func getTex(image: UIImage){
-        
-    }
     func matchPlatform(maxIndex: Int, imageAsset: PHAsset){
         switch maxIndex{
         //결과에 따라 각각의 어레이에 imageAsset자체를 넣는다(UIImage 타입 아님)
@@ -227,9 +286,21 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                                                                   count: albumCount,
                                                                   image: image!,
                                                                   collection: album)
-                                        self.albumList.append(newAlbum)})
+                                        self.albumList.append(newAlbum)
+                })
             }
         }
+        createDefaultAlbum(title: albumTitle)
+    }
+    
+    func createDefaultAlbum(title: String) {
+        print("실행")
+            PHPhotoLibrary.shared().performChanges({
+                PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: title)
+            }, completionHandler: { success, error in
+                if !success { print("Error creating album: \(String(describing: error)).") }
+            })
+        
     }
     //    func updateAlbumModel(albumModel: AlbumModel){
     //       var  albumModel.collection = album[albumModel.name]
@@ -258,7 +329,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     func screenshotPredict(image: UIImage) -> Int{
         let model = inception_v3()
         let newSize = CGSize(width: 149.5, height: 149.5) //size 299..?
-//        let newSize = CGSize(width: availableWidth, height: availableHeight)
+        //        let newSize = CGSize(width: availableWidth, height: availableHeight)
         let image = resize(image: image, newSize: newSize)
         if let pixelBuffer = ImageProcessor.pixelBuffer(forImage: image.cgImage!) {
             //이미지의 사이즈와 타입을 바꾸기위한 전처리과정 후 추론
@@ -274,7 +345,10 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         return -1
         //추론 실패
     }
+    
 }
+
+
 
 //cgImage.size = UIImage.size * UIImage.scale
 extension ViewController: UICollectionViewDelegateFlowLayout {
