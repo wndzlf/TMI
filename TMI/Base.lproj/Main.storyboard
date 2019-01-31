@@ -117,7 +117,7 @@
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
-                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="fbt-iT-NqS" customClass="SelectedAlbumCollectionViewCell" customModule="TMI" customModuleProvider="target">
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="SelectedAlbumCell" id="fbt-iT-NqS" customClass="SelectedAlbumCollectionViewCell" customModule="TMI" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="0.0" width="124" height="118"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
@@ -128,15 +128,21 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="124" height="118"/>
                                                     <color key="backgroundColor" red="0.99607843139999996" green="0.42745098040000001" blue="0.42745098040000001" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                 </imageView>
+                                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="btCheckActive" translatesAutoresizingMaskIntoConstraints="NO" id="CK3-OH-6j2">
+                                                    <rect key="frame" x="104" y="0.0" width="20" height="20"/>
+                                                </imageView>
                                             </subviews>
                                         </view>
                                         <constraints>
                                             <constraint firstAttribute="bottom" secondItem="VJX-Xs-MIB" secondAttribute="bottom" id="CDv-0Y-SJW"/>
                                             <constraint firstItem="VJX-Xs-MIB" firstAttribute="leading" secondItem="fbt-iT-NqS" secondAttribute="leading" id="Q1l-WX-w5k"/>
+                                            <constraint firstItem="CK3-OH-6j2" firstAttribute="trailing" secondItem="VJX-Xs-MIB" secondAttribute="trailing" id="YPI-Jo-55P"/>
                                             <constraint firstAttribute="trailing" secondItem="VJX-Xs-MIB" secondAttribute="trailing" id="aPy-qz-sFm"/>
                                             <constraint firstItem="VJX-Xs-MIB" firstAttribute="top" secondItem="fbt-iT-NqS" secondAttribute="top" id="bBw-s0-NQf"/>
+                                            <constraint firstItem="CK3-OH-6j2" firstAttribute="top" secondItem="VJX-Xs-MIB" secondAttribute="top" id="sKm-oR-lLp"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="checkImageView" destination="CK3-OH-6j2" id="vYz-wZ-j56"/>
                                             <outlet property="detailImageView" destination="VJX-Xs-MIB" id="i9a-Cc-lHt"/>
                                         </connections>
                                     </collectionViewCell>
@@ -154,11 +160,17 @@
                     </view>
                     <connections>
                         <outlet property="detailCollectionView" destination="e1P-Oa-I88" id="88K-bl-oxF"/>
+                        <outlet property="moveButton" destination="1gv-Ed-HKv" id="eP7-T0-4hO"/>
+                        <outlet property="space" destination="P1L-Xz-jgc" id="aD5-ae-vUb"/>
+                        <outlet property="trashButton" destination="xYi-d4-Rum" id="7c1-TM-KqG"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="f76-Rh-HIj" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <barButtonItem style="plain" systemItem="flexibleSpace" id="P1L-Xz-jgc"/>
+                <barButtonItem systemItem="trash" id="xYi-d4-Rum"/>
+                <barButtonItem title="이동" id="1gv-Ed-HKv"/>
             </objects>
-            <point key="canvasLocation" x="1646" y="27"/>
+            <point key="canvasLocation" x="1645.5999999999999" y="26.53673163418291"/>
         </scene>
         <!--Selected ImageVC-->
         <scene sceneID="qYM-ez-B9Y">
@@ -208,4 +220,7 @@
             <point key="canvasLocation" x="157.59999999999999" y="26.53673163418291"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="btCheckActive" width="20" height="20"/>
+    </resources>
 </document>

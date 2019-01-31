@@ -10,4 +10,9 @@ import UIKit
 
 class SelectedAlbumCollectionViewCell: UICollectionViewCell {
     @IBOutlet weak var detailImageView: UIImageView!
+    
+    @IBOutlet weak var checkImageView: UIImageView!
+    
+    var isChecked = false
+    
 }
