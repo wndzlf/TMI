@@ -7,12 +7,18 @@
 //
 
 import UIKit
+import Photos
 
-class AssetVC: UIViewController {
+class AssetVC: UIViewController, UIScrollViewDelegate {
 
     var selectedImage: UIImage!
+    //var selectedAlbums: [PHAsset] = []
     
     @IBOutlet weak var imageView: UIImageView!
+    
+    func viewForZooming(in scrollView: UIScrollView) -> UIView? {
+        return self.imageView
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

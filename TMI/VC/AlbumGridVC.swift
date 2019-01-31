@@ -102,7 +102,27 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
        
         PHPhotoLibrary.shared().register(self) //포토 라이브러리가 변화될 때마다 델리게이트가 호출됨
+        
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(deleteItem(_:)),
+                                               name: NSNotification.Name("deleteAsset"),
+                                               object: nil)
     }
+    
+    
+    @objc func deleteItem(_ notification: Notification) {
+        guard let selectedAlbum: String = notification.userInfo?["selectedAlbum"] as? String else {return}
+        guard let selectedAssetIndex: [Int] = notification.userInfo?["selectedAssetIndex"] as? [Int] else {return}
+        
+        print("1234567890::::::::::::::::::::::::::::::::::")
+        
+        for i in selectedAssetIndex{
+            print("-----",i)
+            //self.albums[selectedAlbum]?.remove(at: i)
+            //AlbumGridVC.albumList[selectedAlbum].collection.remove(at: i)
+        }
+        
+     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -148,6 +168,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 //        }
         PopupAlbumGridVC.currentAlbumIndex = indexPath.item
         selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
+        selectedVC.currentAlbumIndex = indexPath.item
     }
     
     @objc

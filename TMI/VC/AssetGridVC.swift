@@ -19,6 +19,8 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     var selectedAssetIndex: [Int] = []
     var selectedAlbums: [PHAsset] = []
     
+    var currentAlbumIndex: Int = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -65,12 +67,27 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         return cell
     }
     
+    //////////////////////////////////////////////////////
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard detailCollectionView.allowsMultipleSelection else {
             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
             let imageVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as! AssetVC
-            self.navigationController?.pushViewController(imageVC, animated: true)
-            imageVC.selectedImage = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
+            //self.navigationController?.pushViewController(imageVC, animated: true)
+            
+            ////
+            let dashBoard = storyBoard.instantiateViewController(withIdentifier: "DashBoard") as! DashBoard
+            dashBoard.selectedImage = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
+            dashBoard.selectedAlbums = selectedAlbums
+            dashBoard.albumIndex = indexPath
+            dashBoard.selectedIndex = indexPath.row
+            
+            self.navigationController?.pushViewController(dashBoard, animated: true)
+            
+            ////
+            
+            
+            //imageVC.selectedImage = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
+            //imageVC.selectedAlbums = selectedAlbums
             print(convertImageFromAsset(asset: selectedAlbums[indexPath.row]))
             return
         }
@@ -98,10 +115,16 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             //이동버튼 활성화 비활성화
             if selectedAssetIndex.count > 0 {
                 moveButton.isEnabled = true
+                trashButton.isEnabled = true
                 moveButton.target = self
                 moveButton.action = #selector(moveToAlbumGridView(_:))
+                
+                trashButton.target = self
+                trashButton.action = #selector(deleteSelectAlbum(_:))
+                
             } else {
                 moveButton.isEnabled = false
+                trashButton.isEnabled = false
             }
         }
     }
@@ -114,6 +137,40 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         } else {
             sender.title = "선택"
         }
+    }
+    
+    //trashButton
+    @objc func deleteSelectAlbum(_ sender: UIBarButtonItem) {
+        
+        let alert = UIAlertController(title: nil, message: "remove", preferredStyle: .actionSheet)
+        alert.addAction(UIAlertAction(title: "Yes", style: .destructive, handler: { (_) in
+            
+            var count = AlbumGridVC.albumList[self.currentAlbumIndex].count
+            
+            for i in self.selectedAssetIndex {
+                let indexPath = IndexPath(row: i, section: 0)
+                
+                self.selectedAlbums.remove(at: indexPath.item)
+                self.detailCollectionView.deleteItems(at: [indexPath])
+                
+                AlbumGridVC.albumList[self.currentAlbumIndex].collection.remove(at: i)
+                count = count - 1
+            }
+            
+            //AlbumGridVC.albumList[self.currentAlbumIndex].image = convertImageFromAsset(asset: self.selectedAlbums[0])
+            AlbumGridVC.albumList[self.currentAlbumIndex].count = count
+            
+            var userInfo: [String: Any] = [:]
+            userInfo["selectedAlbum"] = "others"
+            userInfo["selectedAssetIndex"] = self.selectedAssetIndex
+            
+             NotificationCenter.default.post(
+                name: NSNotification.Name("deleteAsset"),
+                object: nil, userInfo: userInfo)
+            
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
     }
     
     //moveButton 누르면 동작하는 함수, modal AlbumGridView
