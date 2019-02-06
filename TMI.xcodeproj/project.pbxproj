@@ -23,6 +23,7 @@
 		FA329B5421D8C30300C6C485 /* TMITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B5321D8C30300C6C485 /* TMITests.swift */; };
 		FA329B5F21D8C30300C6C485 /* TMIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B5E21D8C30300C6C485 /* TMIUITests.swift */; };
 		FA806BA02209867700EB38D6 /* PopupAlbumGridVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */; };
+		FAA9C350220AF216003A66A2 /* Photo+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */; };
 		FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */; };
 		FABA857D21DD1F2700E6F7F0 /* AlbumModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */; };
 		FAF0DF1A21F1CCBD003F341F /* AssetGridVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF1921F1CCBD003F341F /* AssetGridVC.swift */; };
@@ -76,6 +77,7 @@
 		FA329B5E21D8C30300C6C485 /* TMIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMIUITests.swift; sourceTree = "<group>"; };
 		FA329B6021D8C30300C6C485 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupAlbumGridVC.swift; sourceTree = "<group>"; };
+		FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Photo+Extensions.swift"; sourceTree = "<group>"; };
 		FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCollectionViewCell.swift; sourceTree = "<group>"; };
 		FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumModel.swift; sourceTree = "<group>"; };
 		FAF0DF1921F1CCBD003F341F /* AssetGridVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetGridVC.swift; sourceTree = "<group>"; };
@@ -211,6 +213,7 @@
 				FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */,
 				FAF0DF1B21F1D313003F341F /* AssetGridViewCell.swift */,
 				FAF0DF1D21F5025F003F341F /* Extensions.swift */,
+				FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */,
 			);
 			path = SupportingFiles;
 			sourceTree = "<group>";
@@ -466,6 +469,7 @@
 			files = (
 				FA806BA02209867700EB38D6 /* PopupAlbumGridVC.swift in Sources */,
 				2F10214F21F05AB500C1B0CA /* inception_v3.mlmodel in Sources */,
+				FAA9C350220AF216003A66A2 /* Photo+Extensions.swift in Sources */,
 				FAF0DF2121F5204F003F341F /* AssetVC.swift in Sources */,
 				2F10214E21F05AB500C1B0CA /* inception_v3_with_class.mlmodel in Sources */,
 				FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */,
