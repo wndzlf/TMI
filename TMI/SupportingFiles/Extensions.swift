@@ -9,6 +9,7 @@
 import Foundation
 import UIKit
 
+
 extension UIViewController {
     class func displaySpinner(onView : UIView) -> UIView {
         let spinnerView = UIView.init(frame: onView.bounds)
@@ -197,6 +198,21 @@ extension CALayer {
         border.backgroundColor = color.cgColor;
         
         self.addSublayer(border)
+    }
+}
+
+
+//배열 중복 제거
+extension Array where Element: Equatable {
+    func removeDuplicates() -> [Element] {
+        var result = [Element]()
+        
+        for value in self {
+            if result.contains(value) == false {
+                result.append(value)
+            }
+        }
+        return result
     }
 }
 
