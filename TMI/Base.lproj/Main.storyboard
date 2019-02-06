@@ -181,7 +181,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dbn-Lx-chP" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="924" y="755.17241379310349"/>
+            <point key="canvasLocation" x="924" y="701"/>
         </scene>
         <!--Asset GridVC-->
         <scene sceneID="GeB-co-ewn">

@@ -21,9 +21,6 @@ class PopupAlbumGridVC: UIViewController {
 
         albumCollectionView.delegate = self
         albumCollectionView.dataSource = self
-        print(" ALbumlist: \(AlbumGridVC.albumList.count)")
-        
-        print("movingAsset: \(movingAssets)")
     }
     
 }
@@ -39,25 +36,20 @@ extension PopupAlbumGridVC: UICollectionViewDelegate, UICollectionViewDataSource
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! AlbumCollectionViewCell
-        
-        //        cell.titleLabel.text = Data[indexPath.row]["titleLabel"]
         let album: AlbumModel = AlbumGridVC.albumList[indexPath.item]
         cell.titleImageView.image = album.image
         cell.titleLabel.text = album.name
         cell.imageCountLabel.text = String(album.count)
         
-        print("currentAlbumIndex: \(PopupAlbumGridVC.currentAlbumIndex)")
+        //현재 앨범이면 선택 못하도록
         if (indexPath.item == PopupAlbumGridVC.currentAlbumIndex) {
             cell.alpha = 0.3
             cell.isUserInteractionEnabled = false
         }
-        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-        
         //albumList에 선택한 에셋을 이동시킴(첫 화면에서도 연동 가능하도록)
         var countToUp = AlbumGridVC.albumList[indexPath.item].count
         var countToDown = AlbumGridVC.albumList[PopupAlbumGridVC.currentAlbumIndex].count
@@ -65,11 +57,7 @@ extension PopupAlbumGridVC: UICollectionViewDelegate, UICollectionViewDataSource
         for asset in movingAssets {
             AlbumGridVC.albumList[indexPath.item].collection.append(asset)
             countToUp = countToUp + 1
-//            let itemToRemove = AlbumGridVC.albumList[PopupAlbumGridVC.currentAlbumIndex].collection.filter { (photo) -> Bool in
-//                return photo == asset
-//            }
-//            print("itemToRemove:\(itemToRemove)")
-            
+          
             //현재 선택한 앨범에서 이동한 asset 삭제
             AlbumGridVC.albumList[PopupAlbumGridVC.currentAlbumIndex].collection.removeAll { (movingPhoto) -> Bool in
                 return movingPhoto == asset
@@ -78,7 +66,6 @@ extension PopupAlbumGridVC: UICollectionViewDelegate, UICollectionViewDataSource
         }
         AlbumGridVC.albumList[indexPath.item].count = countToUp
         AlbumGridVC.albumList[PopupAlbumGridVC.currentAlbumIndex].count = countToDown
-//        pop()
         self.navigationController?.popToRootViewController(animated: true)
         
     }

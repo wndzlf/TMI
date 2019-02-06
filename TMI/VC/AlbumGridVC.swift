@@ -116,9 +116,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     //MARK: - CollectionView
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        //        return self.albums.count
-        //        return 5
-        //       return self.fetchResult?.count ?? 0
         return AlbumGridVC.albumList.count
     }
     
@@ -129,22 +126,17 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         cell.titleImageView.image = album.image
         cell.titleLabel.text = album.name
         cell.imageCountLabel.text = String(album.count)
-        print("jhgjhgjgj")
-        print("titleCountLabel: \(String(album.count))")
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         print("cell")
-        
         //goto SelectedAlbumImageVC
         //self.performSegue(withIdentifier: "ToDetailAlbum", sender: self)
         
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as! AssetGridVC
-        //        self.present(selectedVC, animated: true, completion: nil)
         self.navigationController?.pushViewController(selectedVC, animated: true)
-        
 //        if self.albumList[indexPath.item].name == "daumCafe" {
 //            print("goto DaumCafe")
 //        } else if self.albumList[indexPath.item].name == "kakaoTalk" {
@@ -154,12 +146,9 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 //        } else if self.albumList[indexPath.item].name == "others" {
 //            print("goto others")
 //        }
-        
         PopupAlbumGridVC.currentAlbumIndex = indexPath.item
         selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
     }
-    
-   
     
     @objc
     func addAlbum(_ sender: AnyObject) {
@@ -184,6 +173,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         self.present(alertController, animated: true, completion: nil)
     }
 }
+
 
 extension AlbumGridVC {
     
@@ -344,26 +334,6 @@ extension AlbumGridVC {
         }
     }
 
-
-//MARK:- CollectionViewFlowLayout
-//cgImage.size = UIImage.size * UIImage.scale
-extension AlbumGridVC: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = (view.frame.width) / 2 - 20
-        let height: CGFloat = (view.frame.width) / 2 + 28
-        return CGSize(width: width, height: height)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
-    }
-}
-
-
 //MARK:- OCR
 extension AlbumGridVC {
     //ocr로 텍스트 추출하고 디비에 localIdentifier와 함께 저장하는 메소드
@@ -442,6 +412,24 @@ extension AlbumGridVC {
     //        saveText()
     //    }
     
+}
+
+//MARK:- CollectionViewFlowLayout
+//cgImage.size = UIImage.size * UIImage.scale
+extension AlbumGridVC: UICollectionViewDelegateFlowLayout {
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width: CGFloat = (view.frame.width) / 2 - 20
+        let height: CGFloat = (view.frame.width) / 2 + 28
+        return CGSize(width: width, height: height)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 10
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+    }
 }
 
 

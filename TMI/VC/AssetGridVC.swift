@@ -11,15 +11,9 @@ import Photos
 
 class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
-//    var asset: PHAsset!
-//    var assetCollecton: PHAssetCollection!
-   
     @IBOutlet weak var detailCollectionView: UICollectionView!
-    
     @IBOutlet var moveButton: UIBarButtonItem!
-    
     @IBOutlet var trashButton: UIBarButtonItem!
-    
     @IBOutlet var space: UIBarButtonItem!
     
     var selectedAssetIndex: [Int] = []
@@ -27,16 +21,13 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         detailCollectionView.delegate = self
         detailCollectionView.dataSource = self
         
         setNavigationBar()
         setBackBtn(color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1))
         
-        print("받을때 \(selectedAlbums.count)")
-        
-//        let selectButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(self.selectAlbum))
         let selectButton = UIBarButtonItem(title: "선택", style: .plain, target: self, action: #selector(self.selectAlbum))
         self.navigationItem.rightBarButtonItem = selectButton
         moveButton.isEnabled = false
@@ -56,42 +47,35 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         toolbarItems = [trashButton, space, moveButton]
         
-//        if assetCollection != nil {
-//            trashButton.isEnabled = assetCollection.canPerform(.removeContent)
-//        } else {
-//            trashButton.isEnabled = asset.canPerform(.delete)
-//        }
+        //        if assetCollection != nil {
+        //            trashButton.isEnabled = assetCollection.canPerform(.removeContent)
+        //        } else {
+        //            trashButton.isEnabled = asset.canPerform(.delete)
+        //        }
         
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         return selectedAlbums.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as! AssetGridViewCell
-        
-        //cell.detailImageView.image = selectedAlbums?[indexPath.item]
-        
-        
         cell.detailImageView.image = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard detailCollectionView.allowsMultipleSelection else {
-            print("detailxxxx: \(detailCollectionView.allowsMultipleSelection)")
             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
             let imageVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as! AssetVC
             self.navigationController?.pushViewController(imageVC, animated: true)
             imageVC.selectedImage = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
-            print("image")
             print(convertImageFromAsset(asset: selectedAlbums[indexPath.row]))
             return
         }
         
-        //선택시
+        //선택버튼 눌러서 이미지 선택 시
         if let currentCell = collectionView.cellForItem(at: indexPath) as? AssetGridViewCell {
             if currentCell.isChecked == true {
                 print("해제할것")
@@ -120,7 +104,6 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 moveButton.isEnabled = false
             }
         }
-        
     }
     
     @objc
@@ -150,37 +133,10 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         }
         popVC.movingAssetIndexs = selectedAssetIndex
     }
-    
-    
-    func getUIImage(asset: PHAsset) -> UIImage? {
-        
-        var img: UIImage?
-        let manager = PHImageManager.default()
-        let options = PHImageRequestOptions()
-        options.version = .original
-        options.isSynchronous = true
-        manager.requestImageData(for: asset, options: options) { data, _, _, _ in
-            
-            if let data = data {
-                img = UIImage(data: data)
-            }
-        }
-        return img
-    }
-    
-    func convertImageFromAsset(asset: PHAsset) -> UIImage {
-        let manager = PHImageManager.default()
-        let option = PHImageRequestOptions()
-        var image = UIImage()
-        option.isSynchronous = true
-        manager.requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFill, options: option, resultHandler: {(result, info) -> Void in
-            image = result!
-        })
-        return image
-    }
-
 }
 
+
+//MARK:- CollectionViewFlowLayout
 extension AssetGridVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width: CGFloat = (view.frame.width) / 4 - 8
@@ -197,17 +153,3 @@ extension AssetGridVC: UICollectionViewDelegateFlowLayout {
     }
 }
 
-
-extension Array where Element: Equatable {
-    func removeDuplicates() -> [Element] {
-        var result = [Element]()
-        
-        for value in self {
-            if result.contains(value) == false {
-                result.append(value)
-            }
-        }
-        
-        return result
-    }
-}
