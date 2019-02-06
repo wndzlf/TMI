@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SelectedAlbumCollectionViewCell: UICollectionViewCell {
+class AssetGridViewCell: UICollectionViewCell {
     @IBOutlet weak var detailImageView: UIImageView!
     
     @IBOutlet weak var checkImageView: UIImageView!

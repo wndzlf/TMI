@@ -16,43 +16,44 @@ import FirebaseMLVision
 //import FirebaseDatabase
 
 
-class ViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
-    @IBOutlet weak var collectionView: UICollectionView!
+    @IBOutlet weak var albumGridCollectionView: UICollectionView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    var assetsFetchResult: PHFetchResult<PHAsset>!
-    let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
-    let manager = PHImageManager.default()
-    let requestOptions = PHImageRequestOptions()
-    let availableWidth = UIScreen.main.bounds.size.width
-    let availableHeight = UIScreen.main.bounds.size.height
+    private var assetsFetchResult: PHFetchResult<PHAsset>!
+    private let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
+    private let manager = PHImageManager.default()
+    private let requestOptions = PHImageRequestOptions()
+    private let availableWidth = UIScreen.main.bounds.size.width
+    private let availableHeight = UIScreen.main.bounds.size.height
     
-    var albumList: [AlbumModel] = []
-    var albums: [String:[PHAsset]] = ["kakaoTalk":[], "daumCafe": [], "instagram":[], "others":[]]
+    static var albumList: [AlbumModel] = []
+    private var albums: [String:[PHAsset]] = ["kakaoTalk":[], "daumCafe": [], "instagram":[], "others":[]]
     
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    var textArray = [Text]()
-    var fetchedTextArray = [Text]()
-    var searchedLocalIdentifier: [String] = []
+    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    private var textArray = [Text]()
+    private var fetchedTextArray = [Text]()
+    private var searchedLocalIdentifier: [String] = []
     
-    var smartAlbums: PHFetchResult<PHAssetCollection>!
-    var userCollections: PHFetchResult<PHCollection>!
+    private var smartAlbums: PHFetchResult<PHAssetCollection>!
+    private var userCollections: PHFetchResult<PHCollection>!
     
     
-    var image: UIImage!
-    var assetCollection: PHAssetCollection!
-    var albumFound : Bool = false
-    var photosAsset: PHFetchResult<PHAsset>!
-    var assetThumbnailSize: CGSize!
-    var collection: PHAssetCollection!
-    var assetCollectionPlaceholder: PHObjectPlaceholder!
+    private var image: UIImage!
+    private var assetCollection: PHAssetCollection!
+    private var albumFound : Bool = false
+    private var photosAsset: PHFetchResult<PHAsset>!
+    private var assetThumbnailSize: CGSize!
+    private var collection: PHAssetCollection!
+    private var assetCollectionPlaceholder: PHObjectPlaceholder!
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView.delegate = self
-        collectionView.dataSource = self
+        albumGridCollectionView.delegate = self
+        albumGridCollectionView.dataSource = self
         
         activityIndicator.hidesWhenStopped = true
         activityIndicator.startAnimating()
@@ -66,7 +67,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
             OperationQueue.main.addOperation {
                 self.activityIndicator.startAnimating()
                 self.GetAlbums()
-                self.collectionView.reloadData()
+                self.albumGridCollectionView.reloadData()
                 self.activityIndicator.stopAnimating()
                 
             }
@@ -82,7 +83,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
                         //                    self.requestCollection()
                         self.activityIndicator.startAnimating()
                         self.GetAlbums()
-                        self.collectionView.reloadData()
+                        self.albumGridCollectionView.reloadData()
                         self.activityIndicator.stopAnimating()
                     }
                 case .denied:
@@ -101,28 +102,35 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
        
         PHPhotoLibrary.shared().register(self) //포토 라이브러리가 변화될 때마다 델리게이트가 호출됨
-        
-        
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(true)
+        albumGridCollectionView.reloadData()
+        
+        navigationController?.isToolbarHidden = false
+        navigationController?.hidesBarsOnTap = false
+    }
+    
+    
     
     //MARK: - CollectionView
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         //        return self.albums.count
         //        return 5
         //       return self.fetchResult?.count ?? 0
-        return albumList.count
+        return AlbumGridVC.albumList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! AlbumCollectionViewCell
-        
-        //        cell.titleLabel.text = Data[indexPath.row]["titleLabel"]
-        let album: AlbumModel = self.albumList[indexPath.item]
+        let album: AlbumModel = AlbumGridVC.albumList[indexPath.item]
         cell.titleImageView.image = album.image
         cell.titleLabel.text = album.name
         cell.imageCountLabel.text = String(album.count)
-        
+        print("jhgjhgjgj")
+        print("titleCountLabel: \(String(album.count))")
         return cell
     }
     
@@ -131,24 +139,24 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
         
         //goto SelectedAlbumImageVC
         //self.performSegue(withIdentifier: "ToDetailAlbum", sender: self)
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! AlbumCollectionViewCell
         
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-        let selectedVC = storyBoard.instantiateViewController(withIdentifier: "SelectedAlbumImageVC") as! SelectedAlbumImageVC
+        let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as! AssetGridVC
         //        self.present(selectedVC, animated: true, completion: nil)
         self.navigationController?.pushViewController(selectedVC, animated: true)
         
-        if self.albumList[indexPath.item].name == "daumCafe" {
-            print("goto DaumCafe")
-        }else if self.albumList[indexPath.item].name == "kakaoTalk" {
-            print("goto kakaoTalk")
-        }else if self.albumList[indexPath.item].name == "instagram" {
-            print("goto instagram")
-        }else if self.albumList[indexPath.item].name == "others" {
-            print("goto others")
-        }
+//        if self.albumList[indexPath.item].name == "daumCafe" {
+//            print("goto DaumCafe")
+//        } else if self.albumList[indexPath.item].name == "kakaoTalk" {
+//            print("goto kakaoTalk")
+//        } else if self.albumList[indexPath.item].name == "instagram" {
+//            print("goto instagram")
+//        } else if self.albumList[indexPath.item].name == "others" {
+//            print("goto others")
+//        }
         
-        selectedVC.selectedAlbums = self.albumList[indexPath.item].collection
+        PopupAlbumGridVC.currentAlbumIndex = indexPath.item
+        selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
     }
     
    
@@ -177,7 +185,7 @@ class ViewController: UIViewController, UICollectionViewDelegate, UICollectionVi
     }
 }
 
-extension ViewController {
+extension AlbumGridVC {
     
     func GetAlbums() {
         let options: PHFetchOptions = PHFetchOptions()
@@ -190,7 +198,7 @@ extension ViewController {
             options.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
             fetchOptions.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
             assetsFetchResult = PHAsset.fetchAssets(in: assetCollection, options: fetchOptions)
-            if assetsFetchResult.count > 0{
+            if assetsFetchResult.count > 0 {
                 requestOptions.isSynchronous = true
                 //순차적으로 진행되게 하기위해 true!
                 requestOptions.deliveryMode = .highQualityFormat
@@ -239,11 +247,11 @@ extension ViewController {
                                                                   count: albumCount,
                                                                   image: image!,
                                                                   collection: album)
-                                        self.albumList.append(newAlbum)
+                                        AlbumGridVC.albumList.append(newAlbum)
                 })
             }
         }
-        createAlbum(albumTitle: albumTitle)
+//        createAlbum(albumTitle: albumTitle) //앨범 추가(shared)
     }
     
     
@@ -339,7 +347,7 @@ extension ViewController {
 
 //MARK:- CollectionViewFlowLayout
 //cgImage.size = UIImage.size * UIImage.scale
-extension ViewController: UICollectionViewDelegateFlowLayout {
+extension AlbumGridVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width: CGFloat = (view.frame.width) / 2 - 20
         let height: CGFloat = (view.frame.width) / 2 + 28
@@ -357,7 +365,7 @@ extension ViewController: UICollectionViewDelegateFlowLayout {
 
 
 //MARK:- OCR
-extension ViewController {
+extension AlbumGridVC {
     //ocr로 텍스트 추출하고 디비에 localIdentifier와 함께 저장하는 메소드
     func getText(screenshot: UIImage, localIdentifier: String){
         //MLvision instance 생성
@@ -439,7 +447,7 @@ extension ViewController {
 
 
 
-extension ViewController: PHPhotoLibraryChangeObserver {
+extension AlbumGridVC: PHPhotoLibraryChangeObserver {
     /// - Tag: RespondToChanges
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         

@@ -9,11 +9,11 @@
 import UIKit
 import Photos
 
-class SelectedAlbumImageVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     
-    var asset: PHAsset!
-    var assetCollecton: PHAssetCollection!
-    
+//    var asset: PHAsset!
+//    var assetCollecton: PHAssetCollection!
+   
     @IBOutlet weak var detailCollectionView: UICollectionView!
     
     @IBOutlet var moveButton: UIBarButtonItem!
@@ -22,8 +22,8 @@ class SelectedAlbumImageVC: UIViewController, UICollectionViewDelegate, UICollec
     
     @IBOutlet var space: UIBarButtonItem!
     
-    var selectedPhoto: [Int] = []
-    var selectedAlbums:[PHAsset]?
+    var selectedAssetIndex: [Int] = []
+    var selectedAlbums: [PHAsset] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,15 +31,16 @@ class SelectedAlbumImageVC: UIViewController, UICollectionViewDelegate, UICollec
         detailCollectionView.delegate = self
         detailCollectionView.dataSource = self
         
-        
         setNavigationBar()
         setBackBtn(color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1))
         
-        print("받을때 \(selectedAlbums?.count)")
+        print("받을때 \(selectedAlbums.count)")
         
-        let selectButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(self.selectAlbum))
+//        let selectButton = UIBarButtonItem(barButtonSystemItem: .edit, target: self, action: #selector(self.selectAlbum))
+        let selectButton = UIBarButtonItem(title: "선택", style: .plain, target: self, action: #selector(self.selectAlbum))
         self.navigationItem.rightBarButtonItem = selectButton
-        
+        moveButton.isEnabled = false
+        trashButton.isEnabled = false
     }
     
     override func viewWillLayoutSubviews() {
@@ -51,7 +52,7 @@ class SelectedAlbumImageVC: UIViewController, UICollectionViewDelegate, UICollec
         super.viewWillAppear(animated)
         
         navigationController?.isToolbarHidden = false
-//        navigationController?.hidesBarsOnTap = true //탭하면 사라짐
+        navigationController?.hidesBarsOnTap = false
         
         toolbarItems = [trashButton, space, moveButton]
         
@@ -65,78 +66,91 @@ class SelectedAlbumImageVC: UIViewController, UICollectionViewDelegate, UICollec
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
-        return selectedAlbums?.count ?? 0
+        return selectedAlbums.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as! SelectedAlbumCollectionViewCell
+        let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as! AssetGridViewCell
         
         //cell.detailImageView.image = selectedAlbums?[indexPath.item]
         
-        if let albums = selectedAlbums {
-//            cell.detailImageView.image = getUIImage(asset: albums[indexPath.row])
-            cell.detailImageView.image = convertImageFromAsset(asset: albums[indexPath.row])
-        }
-//        var image: PHAsset
-//
-//        for i in selectedAlbums! {
-//            image = i
-////            cell.detailImageView.image = image
-//        }
-//        let image: PHAsset = self.selectedAlbums[indexPath.item]
+        
+        cell.detailImageView.image = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as! SelectedAlbumCollectionViewCell
-        
         guard detailCollectionView.allowsMultipleSelection else {
             print("detailxxxx: \(detailCollectionView.allowsMultipleSelection)")
             let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-            let imageVC = storyBoard.instantiateViewController(withIdentifier: "SelectedImageVC") as! SelectedImageVC
+            let imageVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as! AssetVC
             self.navigationController?.pushViewController(imageVC, animated: true)
-            if let albums = selectedAlbums {
-                imageVC.selectedImage = convertImageFromAsset(asset: albums[indexPath.row])
-                print("image")
-                print(convertImageFromAsset(asset: albums[indexPath.row]))
-            }
+            imageVC.selectedImage = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
+            print("image")
+            print(convertImageFromAsset(asset: selectedAlbums[indexPath.row]))
             return
         }
         
-       
-        
-        if let currentCell = collectionView.cellForItem(at: indexPath) as? SelectedAlbumCollectionViewCell {
-            
+        //선택시
+        if let currentCell = collectionView.cellForItem(at: indexPath) as? AssetGridViewCell {
             if currentCell.isChecked == true {
                 print("해제할것")
-//                currentCell.detailImageView.isHighlighted = false
                 currentCell.isChecked = false
                 currentCell.layer.borderWidth = 0
                 currentCell.checkImageView.isHidden = true
                 
-                let index: Int? = selectedPhoto.firstIndex(of: indexPath.row)
-                selectedPhoto.remove(at: index!)
+                let index: Int? = selectedAssetIndex.firstIndex(of: indexPath.row)
+                selectedAssetIndex.remove(at: index!)
             } else {
                 currentCell.isChecked = true
                 print("선택됨")
                 currentCell.layer.borderWidth = 2
                 currentCell.layer.borderColor = UIColor.init(red: 201/255, green: 201/255, blue: 201/255, alpha: 0.5).cgColor
                 currentCell.checkImageView.isHidden = false
-                selectedPhoto.append(indexPath.row)
-                
+                selectedAssetIndex.append(indexPath.row)
             }
+            print("selectedAsset: \(selectedAssetIndex)")
             
-            print(selectedPhoto)
+            //이동버튼 활성화 비활성화
+            if selectedAssetIndex.count > 0 {
+                moveButton.isEnabled = true
+                moveButton.target = self
+                moveButton.action = #selector(moveToAlbumGridView(_:))
+            } else {
+                moveButton.isEnabled = false
+            }
         }
         
     }
     
     @objc
-    func selectAlbum(_ sender: AnyObject) {
+    func selectAlbum(_ sender: UIBarButtonItem) {
         detailCollectionView.allowsMultipleSelection = true
-        
-        print("detail: \(detailCollectionView.allowsMultipleSelection)")
+        if sender.title == "선택" {
+            sender.title = "취소"
+        } else {
+            sender.title = "선택"
+        }
     }
+    
+    //moveButton 누르면 동작하는 함수, modal AlbumGridView
+    @objc
+    func moveToAlbumGridView(_ sender: UIBarButtonItem) {
+        let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+        let popVC = storyBoard.instantiateViewController(withIdentifier: "PopupAlbumGridVC") as! PopupAlbumGridVC
+        self.addChild(popVC)
+        popVC.view.frame = self.view.frame
+        self.view.addSubview(popVC.view)
+        
+        popVC.didMove(toParent: self)
+        
+        for i in selectedAssetIndex {
+            print("selectedImage: \(selectedAlbums[i])")
+            popVC.movingAssets.append(selectedAlbums[i])
+        }
+        popVC.movingAssetIndexs = selectedAssetIndex
+    }
+    
     
     func getUIImage(asset: PHAsset) -> UIImage? {
         
@@ -167,7 +181,7 @@ class SelectedAlbumImageVC: UIViewController, UICollectionViewDelegate, UICollec
 
 }
 
-extension SelectedAlbumImageVC: UICollectionViewDelegateFlowLayout {
+extension AssetGridVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         let width: CGFloat = (view.frame.width) / 4 - 8
         let height: CGFloat = (view.frame.width) / 4
