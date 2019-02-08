@@ -163,15 +163,15 @@
 		FA329B3D21D8C30000C6C485 /* TMI */ = {
 			isa = PBXGroup;
 			children = (
-				FA329B3E21D8C30100C6C485 /* AppDelegate.swift */,
-				FA329B4221D8C30100C6C485 /* Main.storyboard */,
 				FAA9C34B220AE50F003A66A2 /* VC */,
 				FAA9C34C220AE549003A66A2 /* SupportingFiles */,
+				FAF0DF1F21F502B9003F341F /* ML */,
 				FA329B4521D8C30300C6C485 /* Assets.xcassets */,
+				FA329B4221D8C30100C6C485 /* Main.storyboard */,
 				FA329B4721D8C30300C6C485 /* LaunchScreen.storyboard */,
+				FA329B3E21D8C30100C6C485 /* AppDelegate.swift */,
 				FA329B4A21D8C30300C6C485 /* Info.plist */,
 				2F56E1AC21FB1E3E00CD75A4 /* GoogleService-Info.plist */,
-				FAF0DF1F21F502B9003F341F /* ML */,
 				2F3DB68F21FC4B6500DEE0C7 /* TMImodel.xcdatamodeld */,
 			);
 			path = TMI;
