@@ -32,8 +32,8 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     private var albums: [String:[PHAsset]] = ["kakaoTalk":[], "daumCafe": [], "instagram":[], "others":[]]
     
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    private var textArray = [Screenshot]()
-    private var fetchedTextArray = [Screenshot]()
+    private var recordArray = [Screenshot]()
+    private var fetchedRecordArray = [Screenshot]()
     private var searchedLocalIdentifier: [String] = []
     
     private var smartAlbums: PHFetchResult<PHAssetCollection>!
@@ -68,6 +68,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 OperationQueue.main.addOperation {
                     self.activityIndicator.startAnimating()
                     if defaults.object(forKey: "theFirstRun") != nil{
+                        self.GetAlbums()
                     }else{
                         defaults.set(true, forKey: "theFirstRun")
                         //인트로 부르기
@@ -215,7 +216,7 @@ extension AlbumGridVC {
                         resultHandler: { image, _ in
                             let maxIndex = self.screenshotPredict(image: image!)
                             self.matchPlatform(maxIndex: maxIndex, imageAsset: imageAsset)
-                            self.getText(screenshot: image!,localIdentifier: imageAsset.localIdentifier,maxIndex: maxIndex)
+                            self.getText(screenshot: image!,localIdentifier: imageAsset.localIdentifier, maxIndex: maxIndex)
                     })//리퀘스트 완료
                 }//for문 끝
                 makeAlbumModel(albumTitle: "kakaoTalk")
@@ -370,9 +371,9 @@ extension AlbumGridVC {
                     print("앨범이름 디비 저장 에러 발생")
             }
             //textArray에 레코드들 추가하기
-            self.textArray.append(newRecord)
-            self.saveText()
-            self.textArray.removeAll()
+            self.recordArray.append(newRecord)
+            self.saveRecord()
+            self.recordArray.removeAll()
         }
     }
     //검색하는 뷰에서 호출하는 메소드
@@ -381,12 +382,12 @@ extension AlbumGridVC {
         //SQL query로는 (select * from Text where content LIKE '%keyword%')와 같은 작업
         request.predicate = NSPredicate(format: "content CONTAINS[cd] %@", keyword)
         do{
-            fetchedTextArray = try context.fetch(request) //조건에 맞는 레코드들 저장
+            fetchedRecordArray = try context.fetch(request) //조건에 맞는 레코드들 저장
         }catch{
             print("coredata fetch error")
         }
-        if(fetchedTextArray.count > 0){
-            for textRecord in fetchedTextArray{
+        if(fetchedRecordArray.count > 0){
+            for textRecord in fetchedRecordArray{
                 //각 레코드들의 localIdentifier만 따로 배열에 저장 후 이를 이용해 뷰에 사진 보여주기
                 let aTextRecord:Screenshot = textRecord
                 searchedLocalIdentifier.append(aTextRecord.localIdentifier!)
@@ -397,7 +398,7 @@ extension AlbumGridVC {
         searchedLocalIdentifier.removeAll()
     }
     
-    func saveText(){
+    func saveRecord(){
         do{ //디비에 변화 저장하는 메소드
             try context.save()
         }catch{
