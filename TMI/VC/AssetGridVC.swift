@@ -113,6 +113,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             sender.title = "취소"
         } else {
             sender.title = "선택"
+            detailCollectionView.allowsMultipleSelection = false
         }
     }
     
