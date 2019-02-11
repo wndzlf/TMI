@@ -32,8 +32,8 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     private var albums: [String:[PHAsset]] = ["kakaoTalk":[], "daumCafe": [], "instagram":[], "others":[]]
     
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    private var textArray = [Text]()
-    private var fetchedTextArray = [Text]()
+    private var recordArray = [Screenshot]()
+    private var fetchedRecordArray = [Screenshot]()
     private var searchedLocalIdentifier: [String] = []
     
     private var smartAlbums: PHFetchResult<PHAssetCollection>!
@@ -59,40 +59,52 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         activityIndicator.startAnimating()
         
         let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
-        
+        let defaults = UserDefaults.standard
+
         //사용자가 사진첩에 접근을 허가했는지
         switch photoAuthorizationStatus {
-        case .authorized:
-            print("접근 허가됨")
-            OperationQueue.main.addOperation {
-                self.activityIndicator.startAnimating()
-                self.GetAlbums()
-                self.albumGridCollectionView.reloadData()
-                self.activityIndicator.stopAnimating()
-                
-            }
-        case .denied:
-            print("접근 불허됨")
-        case .notDetermined: //허가하는지 안하는지 선택하지 않으면
-            print("아직 응답하지 않음")
-            PHPhotoLibrary.requestAuthorization({ (status) in //다시 허가 요청
-                switch status {
-                case .authorized:
-                    print("사용자가 허용함")
-                    OperationQueue.main.addOperation {
-                        //                    self.requestCollection()
-                        self.activityIndicator.startAnimating()
+            case .authorized:
+                print("접근 허가됨")
+                OperationQueue.main.addOperation {
+                    self.activityIndicator.startAnimating()
+                    if defaults.object(forKey: "theFirstRun") != nil{
                         self.GetAlbums()
-                        self.albumGridCollectionView.reloadData()
-                        self.activityIndicator.stopAnimating()
+                    }else{
+                        defaults.set(true, forKey: "theFirstRun")
+                        //인트로 부르기
+                        self.GetAlbums()
                     }
-                case .denied:
-                    print("사용자가 불허함")
-                default: break
+                    self.albumGridCollectionView.reloadData()
+                    self.activityIndicator.stopAnimating()
+                    
                 }
-            })
-        case .restricted:
-            print("접근 제한")
+            case .denied:
+                print("접근 불허됨")
+            case .notDetermined: //허가하는지 안하는지 선택하지 않으면
+                print("아직 응답하지 않음")
+                PHPhotoLibrary.requestAuthorization({ (status) in //다시 허가 요청
+                    switch status {
+                    case .authorized:
+                        print("사용자가 허용함")
+                        OperationQueue.main.addOperation {
+                            //                    self.requestCollection()
+                            self.activityIndicator.startAnimating()
+                            if defaults.object(forKey: "theFirstRun") != nil{
+                            }else{
+                                defaults.set(true, forKey: "theFirstRun")
+                                //인트로 부르기
+                                self.GetAlbums()
+                            }
+                            self.albumGridCollectionView.reloadData()
+                            self.activityIndicator.stopAnimating()
+                        }
+                    case .denied:
+                        print("사용자가 불허함")
+                    default: break
+                    }
+                })
+            case .restricted:
+                print("접근 제한")
         }
         
        /* //커스텀 앨범 추가
@@ -202,11 +214,9 @@ extension AlbumGridVC {
                         contentMode: .aspectFill,
                         options: requestOptions,
                         resultHandler: { image, _ in
-                            self.getText(screenshot: image!,localIdentifier: imageAsset.localIdentifier )
                             let maxIndex = self.screenshotPredict(image: image!)
-                            //테스트
                             self.matchPlatform(maxIndex: maxIndex, imageAsset: imageAsset)
-                            //inceptionV3 모델에 가져온 이미지를 넣고 결과를 maxIndex에 저장한다.
+                            self.getText(screenshot: image!,localIdentifier: imageAsset.localIdentifier, maxIndex: maxIndex)
                     })//리퀘스트 완료
                 }//for문 끝
                 makeAlbumModel(albumTitle: "kakaoTalk")
@@ -244,7 +254,6 @@ extension AlbumGridVC {
 //        createAlbum(albumTitle: albumTitle) //앨범 추가(shared)
     }
     
-    
     func matchPlatform(maxIndex: Int, imageAsset: PHAsset){
         switch maxIndex{
         //결과에 따라 각각의 어레이에 imageAsset자체를 넣는다(UIImage 타입 아님)
@@ -258,7 +267,6 @@ extension AlbumGridVC {
             albums["others"]?.append(imageAsset)
         default:
             print("추론 에러 발생")
-            
         }
     }
     
@@ -287,58 +295,49 @@ extension AlbumGridVC {
             })
         }
     }
-    
-  
-        //    func updateAlbumModel(albumModel: AlbumModel){
-        //       var  albumModel.collection = album[albumModel.name]
-        //    }
+    func argmax(_ array: UnsafePointer<Double>, count: Int) -> (Int, Double) {
+        //tensorflow의 argmax구현
+        var maxValue: Double = 0
+        var maxIndex: vDSP_Length = 0
+        vDSP_maxviD(array, 1, &maxValue, &maxIndex, vDSP_Length(count))
+        if(maxValue > 0.6){ return (Int(maxIndex), maxValue)}
+        else{ return (3, maxValue)}
         
-        // insert 경우 이미지 리퀘스트=> 프레딕트 => album[""]에 추가 => 앨범모델 업데이트(다시 어펜드): 이 떄 해당 앨범모델이 이미 생성되어 있다면 updateAlbum , 아니라면 makeAlbum메소드 부르기
-        // remove의 경우 => 해당 album['']에서 제거하고 updateAlbju
-        func argmax(_ array: UnsafePointer<Double>, count: Int) -> (Int, Double) {
-            //tensorflow의 argmax구현
-            var maxValue: Double = 0
-            var maxIndex: vDSP_Length = 0
-            vDSP_maxviD(array, 1, &maxValue, &maxIndex, vDSP_Length(count))
-            if(maxValue > 0.6){ return (Int(maxIndex), maxValue)}
-            else{ return (3, maxValue)}
-            
-        }
-        
-        func resize(image: UIImage, newSize: CGSize) -> UIImage {
-            UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
-            image.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
-            let newImage = UIGraphicsGetImageFromCurrentImageContext()
-            UIGraphicsEndImageContext()
-            return newImage!
-        }
-        
-        func screenshotPredict(image: UIImage) -> Int {
-            let model = inception_v3()
-            let newSize = CGSize(width: 149.5, height: 149.5) //size 299..?
-            //        let newSize = CGSize(width: availableWidth, height: availableHeight)
-            let image = resize(image: image, newSize: newSize)
-            if let pixelBuffer = ImageProcessor.pixelBuffer(forImage: image.cgImage!) {
-                //이미지의 사이즈와 타입을 바꾸기위한 전처리과정 후 추론
-                guard let inception_v3Output = try? model.prediction(Mul__0: pixelBuffer) else {
-                    fatalError("Unexpected runtime error.")}
-                let featurePointer = UnsafePointer<Double>(OpaquePointer(inception_v3Output.final_result__0.dataPointer))
-                print(inception_v3Output.final_result__0)
-                let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
-                print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
-                return maxIndex
-                //추론 성공
-            }
-            return -1
-            //추론 실패
-        }
     }
+
+    func resize(image: UIImage, newSize: CGSize) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(newSize, false, 0.0)
+        image.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.height))
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return newImage!
+    }
+    
+    func screenshotPredict(image: UIImage) -> Int {
+        let model = inception_v3()
+        let newSize = CGSize(width: 149.5, height: 149.5) //size 299..?
+        //        let newSize = CGSize(width: availableWidth, height: availableHeight)
+        let image = resize(image: image, newSize: newSize)
+        if let pixelBuffer = ImageProcessor.pixelBuffer(forImage: image.cgImage!) {
+            //이미지의 사이즈와 타입을 바꾸기위한 전처리과정 후 추론
+            guard let inception_v3Output = try? model.prediction(Mul__0: pixelBuffer) else {
+                fatalError("Unexpected runtime error.")}
+            let featurePointer = UnsafePointer<Double>(OpaquePointer(inception_v3Output.final_result__0.dataPointer))
+            print(inception_v3Output.final_result__0)
+            let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
+            print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
+            return maxIndex
+            //추론 성공
+        }
+        return -1
+        //추론 실패
+    }
+}
 
 //MARK:- OCR
 extension AlbumGridVC {
-    //ocr로 텍스트 추출하고 디비에 localIdentifier와 함께 저장하는 메소드
-    func getText(screenshot: UIImage, localIdentifier: String){
-        //MLvision instance 생성
+    //ocr로 텍스트 추출하고 디비에 localIdentifier&text&albumName을 함께 저장하는 메소드
+    func getText(screenshot: UIImage, localIdentifier: String, maxIndex: Int){
         let vision = Vision.vision()
         // https://cloud.google.com/vision/docs/languages => 언어 약자 확인하는 사이트
         let options = VisionCloudTextRecognizerOptions()
@@ -355,30 +354,42 @@ extension AlbumGridVC {
             //result가 nil일때 어떻게 할 지 고민해보기
             let resultText = result.text
             print(resultText)
-            let newText = Text(context: self.context) //텍스트모델의 레코드가 될 변수 생성
+            let newRecord = Screenshot(context: self.context) //텍스트모델의 레코드가 될 변수 생성
             //텍스트 모델의 attribute 저장
-            newText.localIdentifier = localIdentifier
-            newText.content = resultText
+            newRecord.localIdentifier = localIdentifier
+            newRecord.text = resultText
+            switch maxIndex{
+                case 0:
+                    newRecord.albumName = "kakaoTalk"
+                case 1:
+                    newRecord.albumName = "daumCafe"
+                case 2:
+                    newRecord.albumName = "instagram"
+                case 3:
+                    newRecord.albumName = "others"
+                default:
+                    print("앨범이름 디비 저장 에러 발생")
+            }
             //textArray에 레코드들 추가하기
-            self.textArray.append(newText)
-            self.saveText()
-            self.textArray.removeAll()
+            self.recordArray.append(newRecord)
+            self.saveRecord()
+            self.recordArray.removeAll()
         }
     }
     //검색하는 뷰에서 호출하는 메소드
     func screenshotSearch(keyword: String){
-        let request: NSFetchRequest<Text> = Text.fetchRequest()
+        let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
         //SQL query로는 (select * from Text where content LIKE '%keyword%')와 같은 작업
         request.predicate = NSPredicate(format: "content CONTAINS[cd] %@", keyword)
         do{
-            fetchedTextArray = try context.fetch(request) //조건에 맞는 레코드들 저장
+            fetchedRecordArray = try context.fetch(request) //조건에 맞는 레코드들 저장
         }catch{
             print("coredata fetch error")
         }
-        if(fetchedTextArray.count > 0){
-            for textRecord in fetchedTextArray{
+        if(fetchedRecordArray.count > 0){
+            for textRecord in fetchedRecordArray{
                 //각 레코드들의 localIdentifier만 따로 배열에 저장 후 이를 이용해 뷰에 사진 보여주기
-                let aTextRecord:Text = textRecord
+                let aTextRecord:Screenshot = textRecord
                 searchedLocalIdentifier.append(aTextRecord.localIdentifier!)
             }
         }
@@ -387,7 +398,7 @@ extension AlbumGridVC {
         searchedLocalIdentifier.removeAll()
     }
     
-    func saveText(){
+    func saveRecord(){
         do{ //디비에 변화 저장하는 메소드
             try context.save()
         }catch{
