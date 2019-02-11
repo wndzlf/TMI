@@ -176,7 +176,8 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 
 
 extension AlbumGridVC {
-    
+    func retrieveAssets() {
+    }
     func GetAlbums() {
         let options: PHFetchOptions = PHFetchOptions()
         // 스크린샷 앨범만 가져온다.
