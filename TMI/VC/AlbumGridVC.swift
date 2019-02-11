@@ -35,6 +35,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     private var recordArray = [Screenshot]()
     private var fetchedRecordArray = [Screenshot]()
     private var searchedLocalIdentifier: [String] = []
+//    private var assetLocalIdentifier: [String] = []
     
     private var smartAlbums: PHFetchResult<PHAssetCollection>!
     private var userCollections: PHFetchResult<PHCollection>!
@@ -67,11 +68,17 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 print("접근 허가됨")
                 OperationQueue.main.addOperation {
                     self.activityIndicator.startAnimating()
+                    
                     if defaults.object(forKey: "theFirstRun") != nil{
-                        self.GetAlbums()
+                        //TODO: - 뿌리기
+//                        self.GetAlbums()
+                        print("theFirstRUN 존재함돠")
+                        print("recordArray: \(self.recordArray)")
+                        self.retrieveAssets()
                     }else{
                         defaults.set(true, forKey: "theFirstRun")
                         //인트로 부르기
+                        print("theFirstRUN 존재안혀")
                         self.GetAlbums()
                     }
                     self.albumGridCollectionView.reloadData()
@@ -90,7 +97,8 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                             //                    self.requestCollection()
                             self.activityIndicator.startAnimating()
                             if defaults.object(forKey: "theFirstRun") != nil{
-                            }else{
+                                
+                            } else {
                                 defaults.set(true, forKey: "theFirstRun")
                                 //인트로 부르기
                                 self.GetAlbums()
@@ -118,6 +126,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        
         albumGridCollectionView.reloadData()
         
         navigationController?.isToolbarHidden = false
@@ -149,15 +158,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as! AssetGridVC
         self.navigationController?.pushViewController(selectedVC, animated: true)
-//        if self.albumList[indexPath.item].name == "daumCafe" {
-//            print("goto DaumCafe")
-//        } else if self.albumList[indexPath.item].name == "kakaoTalk" {
-//            print("goto kakaoTalk")
-//        } else if self.albumList[indexPath.item].name == "instagram" {
-//            print("goto instagram")
-//        } else if self.albumList[indexPath.item].name == "others" {
-//            print("goto others")
-//        }
         PopupAlbumGridVC.currentAlbumIndex = indexPath.item
         selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
     }
@@ -189,7 +189,57 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 
 extension AlbumGridVC {
     func retrieveAssets() {
+        
+        DispatchQueue.main.async {
+            self.fetchCoreData(albumName: "kakaoTalk")
+            self.fetchCoreData(albumName: "daumCafe")
+            self.fetchCoreData(albumName: "instagram")
+            self.fetchCoreData(albumName: "others")
+            
+        }
     }
+    
+    func fetchCoreData(albumName: String) {
+        let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
+        request.predicate = NSPredicate(format: "albumName = %@", albumName)
+        var assetLocalIdentifiers: [String] = []
+        
+        do {
+            recordArray = try context.fetch(request)
+            print("albumName: \(albumName)")
+            print("count: \(recordArray.count)")
+        } catch {
+            print("coredata fetch error")
+        }
+        
+        if(recordArray.count > 0) {
+            for assetRecord in recordArray {
+                let albumRecord: Screenshot = assetRecord
+                assetLocalIdentifiers.append(albumRecord.localIdentifier!)
+                print(albumRecord.localIdentifier)
+                print(albumRecord.albumName)
+                
+            }
+            
+            let fetchOptions = PHFetchOptions()
+            fetchOptions.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
+            let assetsFetchResult = PHAsset.fetchAssets(withLocalIdentifiers: assetLocalIdentifiers, options: fetchOptions)
+            
+            for i in 0..<assetsFetchResult.count {
+                let imageAsset = assetsFetchResult.object(at: i)
+                manager.requestImage(for: imageAsset,
+                                     targetSize: PHImageManagerMaximumSize,
+                                     contentMode: .aspectFill,
+                                     options: requestOptions,
+                                     resultHandler: { image, _ in
+                })
+                 self.albums[albumName]?.append(imageAsset)
+            }
+        }
+         self.makeAlbumModel(albumTitle: albumName)
+    }
+    
+    
     func GetAlbums() {
         let options: PHFetchOptions = PHFetchOptions()
         // 스크린샷 앨범만 가져온다.
@@ -296,6 +346,7 @@ extension AlbumGridVC {
             })
         }
     }
+    
     func argmax(_ array: UnsafePointer<Double>, count: Int) -> (Int, Double) {
         //tensorflow의 argmax구현
         var maxValue: Double = 0

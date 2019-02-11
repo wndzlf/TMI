@@ -16,10 +16,11 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
 //    var candies = [Candy]()
 //    var filteredCandies = [Candy]()
-
-     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    private var fetchedTextArray = [Text]()
+    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    private var recordArray = [Screenshot]()
+    private var fetchedRecordArray = [Screenshot]()
     private var searchedLocalIdentifier: [String] = []
+    
 
 
     override func viewDidLoad() {
@@ -48,7 +49,7 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         }
 
 //        searchFooter.setNotFiltering()
-        return fetchedTextArray.count
+        return fetchedRecordArray.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -59,10 +60,10 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 //        } else {
 //            candy = candies[indexPath.row]
 //        }
-        let fetchText: Text
+        let fetchText: Screenshot
         
-        fetchText = fetchedTextArray[indexPath.row]
-        cell.textLabel!.text = fetchText.content
+        fetchText = fetchedRecordArray[indexPath.row]
+        cell.textLabel!.text = fetchText.text
         cell.detailTextLabel!.text = fetchText.localIdentifier
         return cell
     }
@@ -92,30 +93,50 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
 
     func screenshotSearch(keyword: String){
-        if searchedLocalIdentifier.count > 0 {
-            searchedLocalIdentifier.removeAll()
-        }
-        let request: NSFetchRequest<Text> = Text.fetchRequest()
+        let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
         //SQL query로는 (select * from Text where content LIKE '%keyword%')와 같은 작업
-        request.predicate = NSPredicate(format: "content CONTAINS[cd] %@", keyword)
-        do {
-            fetchedTextArray = try context.fetch(request) //조건에 맞는 레코드들 저장
-        } catch {
+        request.predicate = NSPredicate(format: "text CONTAINS[cd] %@", keyword)
+        do{
+            fetchedRecordArray = try context.fetch(request) //조건에 맞는 레코드들 저장
+        }catch{
             print("coredata fetch error")
         }
-
-        if(fetchedTextArray.count > 0){
-            for textRecord in fetchedTextArray {
+        if(fetchedRecordArray.count > 0){
+            for textRecord in fetchedRecordArray{
                 //각 레코드들의 localIdentifier만 따로 배열에 저장 후 이를 이용해 뷰에 사진 보여주기
-                let aTextRecord: Text = textRecord
+                let aTextRecord:Screenshot = textRecord
                 searchedLocalIdentifier.append(aTextRecord.localIdentifier!)
             }
         }
-
         print("***********검색된 사진의 localIdentifier =")
         print(searchedLocalIdentifier)
-//        searchedLocalIdentifier.removeAll()
+        searchedLocalIdentifier.removeAll()
     }
+    
+    func saveRecord(){
+        do{ //디비에 변화 저장하는 메소드
+            try context.save()
+        }catch{
+            print("coredata save error")
+        }
+    }
+    
+    private func deleteAllCDRecords() { //디비의 모든 레코드를 삭제하는 메소드
+        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Text")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
+        do {
+            try context.execute(deleteRequest)
+        } catch let error as NSError {
+            print("deleteAllCDRecords error")
+        }
+    }
+    
+    // 디비에서 데이터 삭제할 때 구현
+    //    func destroyText(){
+    //        context.delete(textArray)
+    //        textArray.remove(at: indexPath.row)
+    //        saveText()
+    //    }
 
 }
 
