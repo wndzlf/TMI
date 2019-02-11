@@ -188,7 +188,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 
 
 extension AlbumGridVC {
-    
     func GetAlbums() {
         let options: PHFetchOptions = PHFetchOptions()
         // 스크린샷 앨범만 가져온다.
@@ -393,8 +392,7 @@ extension AlbumGridVC {
                 searchedLocalIdentifier.append(aTextRecord.localIdentifier!)
             }
         }
-        print("***********검색된 사진의 localIdentifier =")
-        print(searchedLocalIdentifier)
+        fetchedRecordArray.removeAll()
         searchedLocalIdentifier.removeAll()
     }
     
@@ -405,24 +403,6 @@ extension AlbumGridVC {
             print("coredata save error")
         }
     }
-    
-    private func deleteAllCDRecords() { //디비의 모든 레코드를 삭제하는 메소드
-        let deleteFetch = NSFetchRequest<NSFetchRequestResult>(entityName: "Text")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
-        do {
-            try context.execute(deleteRequest)
-        } catch let error as NSError {
-            print("deleteAllCDRecords error")
-        }
-    }
-    
-    // 디비에서 데이터 삭제할 때 구현
-    //    func destroyText(){
-    //        context.delete(textArray)
-    //        textArray.remove(at: indexPath.row)
-    //        saveText()
-    //    }
-    
 }
 
 //MARK:- CollectionViewFlowLayout
@@ -449,33 +429,30 @@ extension AlbumGridVC: UICollectionViewDelegateFlowLayout {
 extension AlbumGridVC: PHPhotoLibraryChangeObserver {
     /// - Tag: RespondToChanges
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        
         // Change notifications may originate from a background queue.
         // Re-dispatch to the main queue before acting on the change,
         // so you can update the UI.
-        DispatchQueue.main.sync {
-            //            // Check each of the three top-level fetches for changes.
-            //            if let changeDetails = changeInstance.changeDetails(for: allPhotos) {
-            //                // Update the cached fetch result.
-            //                allPhotos = changeDetails.fetchResultAfterChanges
-            //                // Don't update the table row that always reads "All Photos."
-            //            }
-            
-            // Update the cached fetch results, and reload the table sections to match.
-            //            if let changeDetails = changeInstance.changeDetails(for: smartAlbums) {
-            //                smartAlbums = changeDetails.fetchResultAfterChanges
-            //                tableView.reloadSections(IndexSet(integer: Section.smartAlbums.rawValue), with: .automatic)
-            //            }
-            //
-            //            if let changeDetails = changeInstance.changeDetails(for: userCollections) {
-            //                userCollections = changeDetails.fetchResultAfterChanges
-            //                collectionView.reloadData()
-            //                tableView.reloadSections(IndexSet(integer: Section.userCollections.rawValue), with: .automatic)
-            //            }
-        }
+        //DispatchQueue.main.sync {
+        //            // Check each of the three top-level fetches for changes.
+        //            if let changeDetails = changeInstance.changeDetails(for: allPhotos) {
+        //                // Update the cached fetch result.
+        //                allPhotos = changeDetails.fetchResultAfterChanges
+        //                // Don't update the table row that always reads "All Photos."
+        //            }
+        
+        // Update the cached fetch results, and reload the table sections to match.
+        //            if let changeDetails = changeInstance.changeDetails(for: smartAlbums) {
+        //                smartAlbums = changeDetails.fetchResultAfterChanges
+        //                tableView.reloadSections(IndexSet(integer: Section.smartAlbums.rawValue), with: .automatic)
+        //            }
+        //
+        //            if let changeDetails = changeInstance.changeDetails(for: userCollections) {
+        //                userCollections = changeDetails.fetchResultAfterChanges
+        //                collectionView.reloadData()
+        //                tableView.reloadSections(IndexSet(integer: Section.userCollections.rawValue), with: .automatic)
+        //            }
     }
 }
-
 
 //MARK:- PhotoLibraryML
 /*   func photoLibraryDidChange(_ changeInstance: PHChange) {
