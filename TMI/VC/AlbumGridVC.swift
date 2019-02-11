@@ -35,6 +35,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     private var recordArray = [Screenshot]()
     private var fetchedRecordArray = [Screenshot]()
     private var searchedLocalIdentifier: [String] = []
+//    private var assetLocalIdentifier: [String] = []
     
     private var smartAlbums: PHFetchResult<PHAssetCollection>!
     private var userCollections: PHFetchResult<PHCollection>!
@@ -68,10 +69,15 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 OperationQueue.main.addOperation {
                     self.activityIndicator.startAnimating()
                     if defaults.object(forKey: "theFirstRun") != nil{
-                        self.GetAlbums()
+                        //TODO: - 뿌리기
+                        print("theFirstRUN 존재함돠")
+                        print("recordArray: \(self.recordArray)")
+//                        self.DetectChanges()
+                        self.retrieveAssets()
                     }else{
                         defaults.set(true, forKey: "theFirstRun")
                         //인트로 부르기
+                        print("theFirstRUN 존재안혀")
                         self.GetAlbums()
                     }
                     self.albumGridCollectionView.reloadData()
@@ -90,7 +96,9 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                             //                    self.requestCollection()
                             self.activityIndicator.startAnimating()
                             if defaults.object(forKey: "theFirstRun") != nil{
-                            }else{
+//                                self.DetectChanges()
+                                self.retrieveAssets()
+                            } else {
                                 defaults.set(true, forKey: "theFirstRun")
                                 //인트로 부르기
                                 self.GetAlbums()
@@ -118,6 +126,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
+        
         albumGridCollectionView.reloadData()
         
         navigationController?.isToolbarHidden = false
@@ -149,15 +158,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as! AssetGridVC
         self.navigationController?.pushViewController(selectedVC, animated: true)
-//        if self.albumList[indexPath.item].name == "daumCafe" {
-//            print("goto DaumCafe")
-//        } else if self.albumList[indexPath.item].name == "kakaoTalk" {
-//            print("goto kakaoTalk")
-//        } else if self.albumList[indexPath.item].name == "instagram" {
-//            print("goto instagram")
-//        } else if self.albumList[indexPath.item].name == "others" {
-//            print("goto others")
-//        }
         PopupAlbumGridVC.currentAlbumIndex = indexPath.item
         selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
     }
@@ -188,6 +188,115 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 
 
 extension AlbumGridVC {
+    //재실행시 변화 탐지
+    func DetectChanges(){
+        var photoLibraryArray:[String] = []
+        var dbArray: [String] = []
+        //포토라이브러리에서 패치
+        let getAlbums : PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumScreenshots, options: PHFetchOptions())
+        guard let assetCollection: PHAssetCollection = getAlbums.firstObject else {return}
+        let fetchOptions = PHFetchOptions()
+        fetchOptions.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
+        assetsFetchResult = PHAsset.fetchAssets(in: assetCollection, options: fetchOptions)
+        if assetsFetchResult.count > 0 {
+            for i in 0..<assetsFetchResult.count {
+                let imageAsset = assetsFetchResult.object(at: i)
+                photoLibraryArray.append(imageAsset.localIdentifier)
+            }
+        }
+        //디비에서 패치
+        let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
+        do{
+            fetchedRecordArray = try context.fetch(request)
+        }catch{
+            print("coredata fetch error when detectin changes from PhotoLibrary")
+        }
+        if(fetchedRecordArray.count > 0){
+            for record in fetchedRecordArray{
+                dbArray.append(record.localIdentifier!)
+            }
+        }
+        //삭제된 사진 디비에서 삭제
+        let removedAssetArray = dbArray.filter({!(photoLibraryArray.contains($0))})
+        print("두 배열의 디비기준 차집합\(removedAssetArray)")
+        for removedAsset in removedAssetArray{
+            for record in fetchedRecordArray{
+                if(removedAsset == record.localIdentifier){
+                    context.delete(record)
+                    do{try context.save()} catch {print("삭제된 사진 디비에서 삭제할 때 에러발생 in DetectChanges\(error)")}
+                }
+            }
+        }
+        //새로 삽입된 사진 디비에 추가
+        let insertedAssetArray  = photoLibraryArray.filter({!(dbArray.contains($0))})
+        print("두 배열의 포토라이브러리 기준 차집합\(insertedAssetArray)")
+        for insertedAsset in insertedAssetArray{
+            for i in 0..<self.assetsFetchResult.count {
+                if(insertedAsset == self.assetsFetchResult.object(at: i).localIdentifier){
+                    self.manager.requestImage(for: self.assetsFetchResult.object(at: i),
+                                             targetSize: PHImageManagerMaximumSize,
+                                             contentMode: .aspectFill,
+                                             options: self.requestOptions,
+                                             resultHandler: { image, _ in
+                                                if let image = image {
+                                                    let maxIndex = self.screenshotPredict(image: image)
+                                                    self.matchPlatform(maxIndex: maxIndex, imageAsset: self.assetsFetchResult.object(at: i))
+                                                    DispatchQueue(label: "flow").sync {
+                                                        self.getText(screenshot: image, localIdentifier: self.assetsFetchResult.object(at: i).localIdentifier, maxIndex: maxIndex)}}})
+                }
+            }
+        }
+    }
+    func retrieveAssets() {
+        DispatchQueue(label: "flow").sync {
+            self.DetectChanges()
+            DispatchQueue(label: "flow").sync {
+                self.fetchCoreData(albumName: "kakaoTalk")
+                self.fetchCoreData(albumName: "daumCafe")
+                self.fetchCoreData(albumName: "instagram")
+                self.fetchCoreData(albumName: "others")
+            }
+        }
+    }
+    func fetchCoreData(albumName: String) {
+        let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
+        request.predicate = NSPredicate(format: "albumName = %@", albumName)
+        var assetLocalIdentifiers: [String] = []
+        
+        do {
+            recordArray = try context.fetch(request)
+            print("albumName: \(albumName)")
+            print("count: \(recordArray.count)")
+        } catch {
+            print("coredata fetch error")
+        }
+        
+        if(recordArray.count > 0) {
+            for assetRecord in recordArray {
+                let albumRecord: Screenshot = assetRecord
+                assetLocalIdentifiers.append(albumRecord.localIdentifier!)
+                print(albumRecord.localIdentifier)
+                print(albumRecord.albumName)
+                
+            }
+            
+            let fetchOptions = PHFetchOptions()
+            fetchOptions.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
+            let assetsFetchResult = PHAsset.fetchAssets(withLocalIdentifiers: assetLocalIdentifiers, options: fetchOptions)
+            
+            for i in 0..<assetsFetchResult.count {
+                let imageAsset = assetsFetchResult.object(at: i)
+                manager.requestImage(for: imageAsset,
+                                     targetSize: PHImageManagerMaximumSize,
+                                     contentMode: .aspectFill,
+                                     options: requestOptions,
+                                     resultHandler: { image, _ in
+                })
+                self.albums[albumName]?.append(imageAsset)
+            }
+        }
+        self.makeAlbumModel(albumTitle: albumName)
+    }
     func GetAlbums() {
         let options: PHFetchOptions = PHFetchOptions()
         // 스크린샷 앨범만 가져온다.
@@ -223,8 +332,6 @@ extension AlbumGridVC {
                 makeAlbumModel(albumTitle: "instagram")
                 makeAlbumModel(albumTitle: "others")
                 //각각 어레이를 collection으로 해서 앨범모델을 만들고 albumList에 추가한다.
-                //                screenshotSearch(keyword: "둘러보기")
-                //                deleteAllCDRecords() //디비 비우는 메소드
             }//if문 끝
         }
     }//GetAlbums 메소드 끝
@@ -294,6 +401,7 @@ extension AlbumGridVC {
             })
         }
     }
+    
     func argmax(_ array: UnsafePointer<Double>, count: Int) -> (Int, Double) {
         //tensorflow의 argmax구현
         var maxValue: Double = 0
@@ -429,82 +537,49 @@ extension AlbumGridVC: UICollectionViewDelegateFlowLayout {
 extension AlbumGridVC: PHPhotoLibraryChangeObserver {
     /// - Tag: RespondToChanges
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        // Change notifications may originate from a background queue.
-        // Re-dispatch to the main queue before acting on the change,
-        // so you can update the UI.
-        //DispatchQueue.main.sync {
-        //            // Check each of the three top-level fetches for changes.
-        //            if let changeDetails = changeInstance.changeDetails(for: allPhotos) {
-        //                // Update the cached fetch result.
-        //                allPhotos = changeDetails.fetchResultAfterChanges
-        //                // Don't update the table row that always reads "All Photos."
-        //            }
-        
-        // Update the cached fetch results, and reload the table sections to match.
-        //            if let changeDetails = changeInstance.changeDetails(for: smartAlbums) {
-        //                smartAlbums = changeDetails.fetchResultAfterChanges
-        //                tableView.reloadSections(IndexSet(integer: Section.smartAlbums.rawValue), with: .automatic)
-        //            }
-        //
-        //            if let changeDetails = changeInstance.changeDetails(for: userCollections) {
-        //                userCollections = changeDetails.fetchResultAfterChanges
-        //                collectionView.reloadData()
-        //                tableView.reloadSections(IndexSet(integer: Section.userCollections.rawValue), with: .automatic)
-        //            }
+        let fetchResultChangeDetails = changeInstance.changeDetails(for: assetsFetchResult)
+        print("에셋패치리저트 디드체인지에서 : \(assetsFetchResult)")
+        guard (fetchResultChangeDetails) != nil else {
+            print("No change in fetchResultChangeDetails")
+            return;
+        }
+        print("Contains changes")
+        assetsFetchResult = (fetchResultChangeDetails?.fetchResultAfterChanges)!
+        if let insertedObjects = fetchResultChangeDetails?.insertedObjects{
+            for insertedAsset in insertedObjects{
+                print("insertedAsset")
+                manager.requestImage(for: insertedAsset,
+                                     targetSize: PHImageManagerMaximumSize,
+                                     contentMode: .aspectFill,
+                                     options: requestOptions,
+                                     resultHandler: { image, _ in
+                                        let maxIndex = self.screenshotPredict(image: image!)
+                                        self.matchPlatform(maxIndex: maxIndex, imageAsset: insertedAsset)
+                                        self.getText(screenshot: image!, localIdentifier: insertedAsset.localIdentifier, maxIndex: maxIndex)
+                })
+            }//포토라이브러리에서 삽입된 이미지들 디비 저장 및 각 albums 배열에 저장완료
+        }
+        //삭제된 이미지 처리
+        if let removedObjects = fetchResultChangeDetails?.removedObjects{
+            let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
+            for removedAsset in removedObjects{
+                request.predicate = NSPredicate(format: "localIdentifier = %@", removedAsset.localIdentifier )
+                do{
+                    if let removedRecord:Screenshot = try context.fetch(request).last{
+                        context.delete(removedRecord)
+                        do{try context.save()}catch{print(error)}
+                    }
+                }catch{ print("coredata fetch error when screenshot is deleted")}
+            }
+            for (key, value) in albums {
+                albums[key] = value.filter({!(removedObjects.contains($0))})
+            }
+            for album in AlbumGridVC.albumList{
+                album.collection = albums[album.name]!
+                album.count = albums[album.name]!.count
+            }
+        }
+        OperationQueue.main.addOperation {self.albumGridCollectionView.reloadData()}
     }
 }
-
-//MARK:- PhotoLibraryML
-/*   func photoLibraryDidChange(_ changeInstance: PHChange) {
- 
- //        guard let changes = changeInstance.changeDetails(for: assetsFetchResult) else {return}
- //        assetsFetchResult = changes.fetchResultAfterChanges
- //
- //
- //        OperationQueue.main.addOperation {
- //            self.collectionView.reloadData()
- //        }
- 
- 
- //
- let fetchResultChangeDetails = changeInstance.changeDetails(for: assetsFetchResult)
- if(fetchResultChangeDetails != nil){
- 
- guard (fetchResultChangeDetails) != nil else {
- print("No Change in fetch Result Change Details")
- return
- }
- print("Contains changes")
- 
- assetsFetchResult = (fetchResultChangeDetails?.fetchResultAfterChanges)!
- let insertedObjects = fetchResultChangeDetails?.insertedObjects
- 
- for insertedAsset in insertedObjects!{
- print("insertedAsset이 있어요오니ㅏ어ㅗ미ㅏ엄나ㅣㅓ아ㅣㅁ넝~~!")
- 
- manager.requestImage(for: insertedAsset,
- targetSize: PHImageManagerMaximumSize,
- contentMode: .aspectFill,
- options: requestOptions,
- resultHandler: { image, _ in
- self.getText(screenshot: image!, localIdentifier: insertedAsset.localIdentifier)
- let maxIndex = self.screenshotPredict(image: image!)
- self.matchPlatform(maxIndex: maxIndex, imageAsset: insertedAsset)})
- }//for문 돌아서 추가된 이미지오브젝트들 각 앨범 딕셔너리에 저장 완료
- let removedObjects = fetchResultChangeDetails?.removedObjects
- 
- for removedAsset in removedObjects!{
- print("removed asset이 있어용~~~!~!")
- 
- for var (key, value) in albums {
- if value.contains(removedAsset){ value.remove(at: value.index(of: removedAsset)!)}
- }
- }
- for i in 0..<albumList.count{
- makeAlbumModel(albumTitle: albumList[i].name)
- albumList.remove(at: i)
- }
- }
- //    }
- */
 
