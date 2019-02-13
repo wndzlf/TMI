@@ -186,7 +186,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 
 
 extension AlbumGridVC {
-    //재실행시 변화 탐지
+    //앱 재실행시 포토라이브러리의 변화 탐지
     func DetectChanges(){
 
         var photoLibraryArray:[String] = []
@@ -230,6 +230,7 @@ extension AlbumGridVC {
                 if(removedAsset == record.localIdentifier){
                     context.delete(record)
                     do{try context.save()} catch {print("error occurs when record try to be destroyed from db in DetectChanges method : \(error)")}
+                    break
                 }
             }
         }
@@ -247,15 +248,15 @@ extension AlbumGridVC {
                             let maxIndex = self.screenshotPredict(image: image)
                             self.matchPlatform(maxIndex: maxIndex, imageAsset:self.assetsFetchResult.object(at: i))
                             self.getText(screenshot: image, localIdentifier: self.assetsFetchResult.object(at: i).localIdentifier, maxIndex: maxIndex)}})
+                    break;
                 }
             }
         }
         for album in AlbumGridVC.albumList{
             album.collection = albums[album.name]!
             album.count = albums[album.name]!.count
-            print("앨범이름 : \(album.name)")
-            print("앨범사진개수 : \(album.count)")
-            print("앨범리스트개수 : \(AlbumGridVC.albumList.count)")
+            print("\(album.name)")
+            print("count : \(album.count)")
         }
         OperationQueue.main.addOperation {self.albumGridCollectionView.reloadData()}
     }
@@ -355,10 +356,10 @@ extension AlbumGridVC {
         requestOptions.isSynchronous = true
         //순차적으로 진행되게하기위해 true로 설정
         requestOptions.deliveryMode = .highQualityFormat
-        if var album = albums[albumTitle]{
+        if let album = albums[albumTitle]{
+            let albumCount = album.count
             if let titleImage = album.last{
                 //타이틀이미지를 따로 저장하기위해 한 번 더 리퀘스트한다.
-                let albumCount = album.count
                 manager.requestImage(for: titleImage,
                                      targetSize: PHImageManagerMaximumSize,
                                      contentMode: .aspectFill,
@@ -368,8 +369,13 @@ extension AlbumGridVC {
                                                                   count: albumCount,
                                                                   image: image!,
                                                                   collection: album)
-                                        AlbumGridVC.albumList.append(newAlbum)
-                })
+                                        AlbumGridVC.albumList.append(newAlbum)})
+            }else{
+                let newAlbum = AlbumModel(name: albumTitle ,
+                                          count: albumCount,
+                                          image: UIImage(named: "LaunchScreen")!,
+                                          collection: album)
+                AlbumGridVC.albumList.append(newAlbum)
             }
         }
 //        createAlbum(albumTitle: albumTitle) //앨범 추가(shared)
@@ -498,10 +504,10 @@ extension AlbumGridVC {
             self.recordArray.removeAll()
         }
     }
-    //검색하는 뷰에서 호출하는 메소드
+    
+    //키워드로 스크린샷 서치
     func screenshotSearch(keyword: String){
         let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
-        //SQL query로는 (select * from Text where content LIKE '%keyword%')와 같은 작업
         request.predicate = NSPredicate(format: "content CONTAINS[cd] %@", keyword)
         do{
             fetchedRecordArray = try context.fetch(request) //조건에 맞는 레코드들 저장
@@ -553,7 +559,6 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
     /// - Tag: RespondToChanges
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         let fetchResultChangeDetails = changeInstance.changeDetails(for: assetsFetchResult)
-        print("에셋패치리저트 디드체인지에서 : \(assetsFetchResult)")
         guard (fetchResultChangeDetails) != nil else {
             print("No change in fetchResultChangeDetails")
             return;
@@ -561,8 +566,8 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
         print("Contains changes")
         assetsFetchResult = (fetchResultChangeDetails?.fetchResultAfterChanges)!
         if let insertedObjects = fetchResultChangeDetails?.insertedObjects{
+            print("Assets have been Inserted while TMI's running")
             for insertedAsset in insertedObjects{
-                print("insertedAsset")
                 manager.requestImage(for: insertedAsset,
                                      targetSize: PHImageManagerMaximumSize,
                                      contentMode: .aspectFill,
@@ -576,6 +581,7 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
         }
         //삭제된 이미지 처리
         if let removedObjects = fetchResultChangeDetails?.removedObjects{
+            print("Assets have been Removed while TMI's running")
             let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
             for removedAsset in removedObjects{
                 request.predicate = NSPredicate(format: "localIdentifier = %@", removedAsset.localIdentifier )
@@ -584,7 +590,7 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
                         context.delete(removedRecord)
                         do{try context.save()}catch{print(error)}
                     }
-                }catch{ print("coredata fetch error when screenshot is deleted")}
+                }catch{ print("coredata fetch error when screenshot is deleted in photoLibraryDidChange")}
             }
             for (key, value) in albums {
                 albums[key] = value.filter({!(removedObjects.contains($0))})
