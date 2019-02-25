@@ -15,4 +15,23 @@ class AssetGridViewCell: UICollectionViewCell {
     
     var isChecked = false
     
+    var thumbnailImage: UIImage! {
+        didSet {
+            detailImageView.image = thumbnailImage
+        }
+    }
+    
+    var checkImage: UIImage! {
+        didSet {
+            checkImageView.image =  checkImage
+        }
+    }
+    
+    
+    override func prepareForReuse() {
+        
+        super.prepareForReuse()
+//        detailImageView.image = nil
+        checkImageView.image = nil
+    }
 }

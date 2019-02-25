@@ -10,7 +10,7 @@ import UIKit
 
 class AssetVC: UIViewController {
 
-    var selectedImage: UIImage!
+    var selectedImage: UIImage?
     
     @IBOutlet weak var imageView: UIImageView!
     
@@ -21,6 +21,11 @@ class AssetVC: UIViewController {
         setBackBtn(color: .black)
         
         imageView.image = selectedImage
+        
+        if let image = selectedImage {
+            print("받을때 : \(image.description)")
+        }
+
     }
     
     override func viewWillLayoutSubviews() {
@@ -35,4 +40,12 @@ class AssetVC: UIViewController {
         
         navigationController?.hidesBarsOnTap = true //탭하면 사라짐
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        navigationController?.hidesBarsOnTap = false
+    }
+    
+  
 }

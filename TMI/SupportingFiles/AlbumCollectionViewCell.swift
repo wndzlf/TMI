@@ -13,6 +13,8 @@ class AlbumCollectionViewCell: UICollectionViewCell {
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var imageCountLabel: UILabel!
     
+    var representedAssetIdentifier: String!
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         self.titleImageView.applyImageRadius(radius: 10)
