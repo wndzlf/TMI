@@ -17,7 +17,12 @@ class AssetVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setNavigationBar()
+//        let bar: UINavigationBar! = self.navigationController?.navigationBar
+//
+//        bar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+//        bar.shadowImage = UIImage()
+//        bar.backgroundColor = navigationController?.toolbar.barTintColor
+//
         setBackBtn(color: .black)
         
         imageView.image = selectedImage

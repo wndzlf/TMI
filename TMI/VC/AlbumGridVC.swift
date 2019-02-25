@@ -50,6 +50,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     var searchController: UISearchController!
     var searchAssets: [PHAsset] = []
+    var searchImages: [UIImage] = []
     
     
     
@@ -132,9 +133,9 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         super.viewWillAppear(true)
         
         albumGridCollectionView.reloadData()
-        
-        navigationController?.isToolbarHidden = false
-        navigationController?.hidesBarsOnTap = false
+
+        //메인화면 하단툴바 안보이도록 설정
+        navigationController?.setToolbarHidden(true, animated: false)
     }
     
     
@@ -155,7 +156,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         if isSearch() {
             let fetchText: Screenshot
-            var searchImages: [UIImage] = []
+            
             fetchText = fetchedRecordArray[indexPath.item]
             
             for searchAsset in searchAssets {
@@ -179,15 +180,22 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("cell")
         //goto SelectedAlbumImageVC
         //self.performSegue(withIdentifier: "ToDetailAlbum", sender: self)
         
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-        let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as! AssetGridVC
-        self.navigationController?.pushViewController(selectedVC, animated: true)
-        PopupAlbumGridVC.currentAlbumIndex = indexPath.item
-        selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
+        if isSearch() {
+            guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else { fatalError("Unexpected ViewController") }
+            self.navigationController?.pushViewController(assetVC, animated: true)
+            assetVC.selectedImage = searchImages[indexPath.item]
+            
+        } else {
+            guard let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as? AssetGridVC else { fatalError("Unexpected ViewController") }
+            
+            self.navigationController?.pushViewController(selectedVC, animated: true)
+            PopupAlbumGridVC.currentAlbumIndex = indexPath.item
+            selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
+        }
     }
     
     @objc
