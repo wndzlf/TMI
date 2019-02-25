@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreData
+import Photos
 
 class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
@@ -20,7 +21,8 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     private var recordArray = [Screenshot]()
     private var fetchedRecordArray = [Screenshot]()
     private var searchedLocalIdentifier: [String] = []
-    
+    fileprivate let imageManager = PHCachingImageManager()
+    fileprivate var thumbnailSize: CGSize!
 
 
     override func viewDidLoad() {
@@ -28,11 +30,11 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.placeholder = "Search Candies"
+        searchController.searchBar.placeholder = "키워드 입력"
         navigationItem.searchController = searchController
         definesPresentationContext = true
-        screenshotSearch(keyword: "Instagram")
-        searchController.searchBar.scopeButtonTitles = ["All", "Chocolate", "Hard", "Other"]
+//        screenshotSearch(keyword: "Instagram")
+//        searchController.searchBar.scopeButtonTitles = ["All", "다음카페", "에브리타임", "Other"]
         searchController.searchBar.delegate = self
     }
 
@@ -43,10 +45,10 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if isFiltering() {
+//        if isFiltering() {
 //            searchFooter.setIsFilteringToShow(filteredItemCount: filteredCandies.count, of: candies.count)
-            return searchedLocalIdentifier.count
-        }
+//            return searchedLocalIdentifier.count
+//        }
 
 //        searchFooter.setNotFiltering()
         return fetchedRecordArray.count
@@ -67,6 +69,58 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         cell.detailTextLabel!.text = fetchText.localIdentifier
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let currentCell = tableView.cellForRow(at: indexPath) else {
+            return
+        }
+        let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+       guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else { fatalError("Unexpected view controller") }
+        
+        guard let mainNav = storyBoard.instantiateViewController(withIdentifier: "MainNavigation") as? UINavigationController else { fatalError("Unexpected navi view controller") }
+        
+        let selectedLocalIdentifier = currentCell.detailTextLabel?.text
+        
+        let requestOptions = PHImageRequestOptions()
+        requestOptions.isSynchronous = false
+        let asset = PHAsset.fetchAssets(withLocalIdentifiers: [selectedLocalIdentifier!], options: .none).firstObject
+        imageManager.requestImage(for: asset!, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit, options: requestOptions, resultHandler: { result, info in
+//            if cell.representedAssetIdentifier =="someuri" {
+            
+            assetVC.selectedImage = result
+            print("보낼때 이미지: \(assetVC.selectedImage)")
+//                cell.imageview.image = result
+            
+//            }
+        })
+        
+        navigationController?.pushViewController(assetVC, animated: false)
+//        mainNav.pushViewController(assetVC, animated: true)
+        
+        
+    }
+    
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        if segue.identifier == "SearchImage" {
+//            let viewController: SearchImageVC = (segue.destination as? SearchImageVC)!
+////            viewController.profileImageUrlString = sender as? String
+//
+//
+//            let asset = PHAsset.fetchAssets(withLocalIdentifiers: [selectedLocalIdentifier!], options: .none).firstObject
+//
+//            imageManager.requestImage(for: asset!, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit, options: requestOptions, resultHandler: { result, info in
+//                //            if cell.representedAssetIdentifier =="someuri" {
+//
+////                assetVC.selectedImage = result
+//
+//                 viewController.searchImage = result
+//
+//                //            }
+//            })
+//
+//
+//        }
+//    }
 
     // MARK: - Private instance methods
 
@@ -111,6 +165,7 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         print("***********검색된 사진의 localIdentifier =")
         print(searchedLocalIdentifier)
         searchedLocalIdentifier.removeAll()
+        tableView.reloadData()
     }
     
     func saveRecord(){
@@ -143,7 +198,8 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 extension SearchVC: UISearchBarDelegate {
     // MARK: - UISearchBar Delegate
     func searchBar(_ searchBar: UISearchBar, selectedScopeButtonIndexDidChange selectedScope: Int) {
-        filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
+        screenshotSearch(keyword: searchBar.text!)
+//        filterContentForSearchText(searchBar.text!, scope: searchBar.scopeButtonTitles![selectedScope])
     }
 }
 
@@ -151,7 +207,8 @@ extension SearchVC: UISearchResultsUpdating {
     // MARK: - UISearchResultsUpdating Delegate
     func updateSearchResults(for searchController: UISearchController) {
         let searchBar = searchController.searchBar
-        let scope = searchBar.scopeButtonTitles![searchBar.selectedScopeButtonIndex]
-        filterContentForSearchText(searchController.searchBar.text!, scope: scope)
+//        let scope = searchBar.scopeButtonTitles![searchBar.selectedScopeButtonIndex]
+        screenshotSearch(keyword: searchBar.text!)
+//        filterContentForSearchText(searchController.searchBar.text!, scope: scope)
     }
 }
