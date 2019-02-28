@@ -22,7 +22,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     private var assetsFetchResult: PHFetchResult<PHAsset>!
-    private let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
+    let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
     private let manager = PHImageManager.default()
     private let requestOptions = PHImageRequestOptions()
     private let availableWidth = UIScreen.main.bounds.size.width
@@ -31,10 +31,10 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     static var albumList: [AlbumModel] = []
     private var albums: [String:[PHAsset]] = ["kakaoTalk":[], "daumCafe": [], "instagram":[], "others":[]]
     
-    private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
-    private var recordArray = [Screenshot]()
-    private var fetchedRecordArray = [Screenshot]()
-    private var searchedLocalIdentifier: [String] = []
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    var recordArray = [Screenshot]()
+    var fetchedRecordArray = [Screenshot]()
+    var searchedLocalIdentifiers: [String] = []
 //    private var assetLocalIdentifier: [String] = []
     
     private var smartAlbums: PHFetchResult<PHAssetCollection>!
@@ -48,6 +48,11 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     private var assetCollectionPlaceholder: PHObjectPlaceholder!
     
     
+    var searchController: UISearchController!
+    var searchAssets: [PHAsset] = []
+    var searchImages: [UIImage] = []
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -56,6 +61,8 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         activityIndicator.hidesWhenStopped = true
         activityIndicator.startAnimating()
+        
+        setUpSearchController()
         
         let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
         let defaults = UserDefaults.standard
@@ -126,38 +133,69 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         super.viewWillAppear(true)
         
         albumGridCollectionView.reloadData()
-        
-        navigationController?.isToolbarHidden = false
-        navigationController?.hidesBarsOnTap = false
+
+        //메인화면 하단툴바 안보이도록 설정
+        navigationController?.setToolbarHidden(true, animated: false)
     }
     
     
     
     //MARK: - CollectionView
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        
+        if isSearch() {
+            return fetchedRecordArray.count
+        }
         return AlbumGridVC.albumList.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! AlbumCollectionViewCell
-        let album: AlbumModel = AlbumGridVC.albumList[indexPath.item]
-        cell.titleImageView.image = album.image
-        cell.titleLabel.text = album.name
-        cell.imageCountLabel.text = String(album.count)
+        
+        
+        if isSearch() {
+            let fetchText: Screenshot
+            
+            fetchText = fetchedRecordArray[indexPath.item]
+            
+            for searchAsset in searchAssets {
+                searchImages.append(convertImageFromAsset(asset: searchAsset))
+            }
+            
+            cell.titleImageView.image = searchImages[indexPath.item]
+            cell.titleLabel.text = fetchText.text
+            cell.imageCountLabel.text = fetchText.localIdentifier
+//            cell.textLabel!.text = fetchText.text
+//            cell.detailTextLabel!.text = fetchText.localIdentifier
+            
+        } else {
+            let album: AlbumModel = AlbumGridVC.albumList[indexPath.item]
+            cell.titleImageView.image = album.image
+            cell.titleLabel.text = album.name
+            cell.imageCountLabel.text = String(album.count)
+        }
+        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("cell")
         //goto SelectedAlbumImageVC
         //self.performSegue(withIdentifier: "ToDetailAlbum", sender: self)
         
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-        let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as! AssetGridVC
-        self.navigationController?.pushViewController(selectedVC, animated: true)
-        PopupAlbumGridVC.currentAlbumIndex = indexPath.item
-        selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
+        if isSearch() {
+            guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else { fatalError("Unexpected ViewController") }
+            self.navigationController?.pushViewController(assetVC, animated: true)
+            assetVC.selectedImage = searchImages[indexPath.item]
+            
+        } else {
+            guard let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as? AssetGridVC else { fatalError("Unexpected ViewController") }
+            
+            self.navigationController?.pushViewController(selectedVC, animated: true)
+            PopupAlbumGridVC.currentAlbumIndex = indexPath.item
+            selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
+        }
     }
     
     @objc
@@ -506,7 +544,7 @@ extension AlbumGridVC {
     }
     
     //키워드로 스크린샷 서치
-    func screenshotSearch(keyword: String){
+/*   func screenshotSearch(keyword: String){
         let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
         request.predicate = NSPredicate(format: "content CONTAINS[cd] %@", keyword)
         do{
@@ -524,6 +562,7 @@ extension AlbumGridVC {
         fetchedRecordArray.removeAll()
         searchedLocalIdentifier.removeAll()
     }
+ */
     
     func saveRecord(){
         do{ //디비에 변화 저장하는 메소드
