@@ -192,7 +192,7 @@ extension AlbumGridVC {
         var photoLibraryArray:[String] = []
         var dbArray: [String] = []
         
-        //포토라이브러리에서 스크린샷 패치
+        //포토라이브러리에서 스크린샷 패치 => 앱 실행시 한 번만 할 수 있도록 추후에 조정
         let getAlbums : PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumScreenshots, options: PHFetchOptions())
         guard let assetCollection: PHAssetCollection = getAlbums.firstObject else {return}
         
