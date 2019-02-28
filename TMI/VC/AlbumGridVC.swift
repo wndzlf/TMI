@@ -226,7 +226,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 extension AlbumGridVC {
     //앱 재실행시 포토라이브러리의 변화 탐지
     func DetectChanges(){
-
         var photoLibraryArray:[String] = []
         var dbArray: [String] = []
         
@@ -293,8 +292,14 @@ extension AlbumGridVC {
         for album in AlbumGridVC.albumList{
             album.collection = albums[album.name]!
             album.count = albums[album.name]!.count
-            print("\(album.name)")
-            print("count : \(album.count)")
+            if let titleImage = albums[album.name]!.last{
+                manager.requestImage(for: titleImage,
+                                     targetSize: PHImageManagerMaximumSize,
+                                     contentMode: .aspectFill,
+                                     options: requestOptions,
+                                     resultHandler: { image, _ in
+                                        album.image = image!})
+            }else{album.image = UIImage(named: "LaunchScreen")!}
         }
         OperationQueue.main.addOperation {self.albumGridCollectionView.reloadData()}
     }
@@ -638,6 +643,14 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
         for album in AlbumGridVC.albumList{
             album.collection = albums[album.name]!
             album.count = albums[album.name]!.count
+            if let titleImage = albums[album.name]!.last{
+                manager.requestImage(for: titleImage,
+                                     targetSize: PHImageManagerMaximumSize,
+                                     contentMode: .aspectFill,
+                                     options: requestOptions,
+                                     resultHandler: { image, _ in
+                                        album.image = image!})
+            }else{album.image = UIImage(named: "LaunchScreen")!}
         }
         OperationQueue.main.addOperation {self.albumGridCollectionView.reloadData()}
     }
