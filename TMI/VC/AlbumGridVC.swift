@@ -51,6 +51,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     var searchController: UISearchController!
     var searchAssets: [PHAsset] = []
     var searchImages: [UIImage] = []
+    var isSearchButtonClicked = false
     
     
     
@@ -153,21 +154,22 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! AlbumCollectionViewCell
         
-        
         if isSearch() {
             let fetchText: Screenshot
-            
             fetchText = fetchedRecordArray[indexPath.item]
-            
-            for searchAsset in searchAssets {
-                searchImages.append(convertImageFromAsset(asset: searchAsset))
+            for searchAsset in self.searchAssets {
+                self.searchImages.append(self.convertImageFromAsset(asset: searchAsset))
             }
             
-            cell.titleImageView.image = searchImages[indexPath.item]
-            cell.titleLabel.text = fetchText.text
-            cell.imageCountLabel.text = fetchText.localIdentifier
-//            cell.textLabel!.text = fetchText.text
-//            cell.detailTextLabel!.text = fetchText.localIdentifier
+            DispatchQueue.main.async {
+                cell.titleImageView.image = self.searchImages[indexPath.item]
+                cell.titleLabel.text = fetchText.albumName
+                cell.imageCountLabel.text = nil
+            }
+            
+            
+//            cell.textLabel.text = fetchText.text
+//            cell.detailTextLabel.text = fetchText.localIdentifier
             
         } else {
             let album: AlbumModel = AlbumGridVC.albumList[indexPath.item]
