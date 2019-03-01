@@ -27,7 +27,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         detailCollectionView.delegate = self
         detailCollectionView.dataSource = self
         
-        setNavigationBar()
+//        setNavigationBar()
         setBackBtn(color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1))
         
         let selectButton = UIBarButtonItem(title: "선택", style: .plain, target: self, action: #selector(self.selectAlbum))
@@ -136,6 +136,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             sender.title = "취소"
         } else {
             sender.title = "선택"
+            detailCollectionView.allowsMultipleSelection = false
         }
     }
     

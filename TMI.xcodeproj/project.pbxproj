@@ -23,8 +23,11 @@
 		FA329B4921D8C30300C6C485 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA329B4721D8C30300C6C485 /* LaunchScreen.storyboard */; };
 		FA329B5421D8C30300C6C485 /* TMITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B5321D8C30300C6C485 /* TMITests.swift */; };
 		FA329B5F21D8C30300C6C485 /* TMIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B5E21D8C30300C6C485 /* TMIUITests.swift */; };
+		FA4F35A822229D38009BCB84 /* SearchImageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4F35A722229D38009BCB84 /* SearchImageVC.swift */; };
+		FA4F35AA2222C24E009BCB84 /* AlbumGridVC + Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4F35A92222C24D009BCB84 /* AlbumGridVC + Search.swift */; };
 		FA806BA02209867700EB38D6 /* PopupAlbumGridVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */; };
 		FAA9C350220AF216003A66A2 /* Photo+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */; };
+		FAB10815220D5BB40097E134 /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB10814220D5BB40097E134 /* SearchVC.swift */; };
 		FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */; };
 		FABA857D21DD1F2700E6F7F0 /* AlbumModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */; };
 		FAF0DF1A21F1CCBD003F341F /* AssetGridVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF1921F1CCBD003F341F /* AssetGridVC.swift */; };
@@ -78,8 +81,11 @@
 		FA329B5A21D8C30300C6C485 /* TMIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TMIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA329B5E21D8C30300C6C485 /* TMIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMIUITests.swift; sourceTree = "<group>"; };
 		FA329B6021D8C30300C6C485 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		FA4F35A722229D38009BCB84 /* SearchImageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchImageVC.swift; sourceTree = "<group>"; };
+		FA4F35A92222C24D009BCB84 /* AlbumGridVC + Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlbumGridVC + Search.swift"; sourceTree = "<group>"; };
 		FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupAlbumGridVC.swift; sourceTree = "<group>"; };
 		FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Photo+Extensions.swift"; sourceTree = "<group>"; };
+		FAB10814220D5BB40097E134 /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVC.swift; sourceTree = "<group>"; };
 		FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCollectionViewCell.swift; sourceTree = "<group>"; };
 		FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumModel.swift; sourceTree = "<group>"; };
 		FAF0DF1921F1CCBD003F341F /* AssetGridVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetGridVC.swift; sourceTree = "<group>"; };
@@ -165,15 +171,15 @@
 		FA329B3D21D8C30000C6C485 /* TMI */ = {
 			isa = PBXGroup;
 			children = (
-				FA329B3E21D8C30100C6C485 /* AppDelegate.swift */,
-				FA329B4221D8C30100C6C485 /* Main.storyboard */,
 				FAA9C34B220AE50F003A66A2 /* VC */,
 				FAA9C34C220AE549003A66A2 /* SupportingFiles */,
+				FAF0DF1F21F502B9003F341F /* ML */,
 				FA329B4521D8C30300C6C485 /* Assets.xcassets */,
+				FA329B4221D8C30100C6C485 /* Main.storyboard */,
 				FA329B4721D8C30300C6C485 /* LaunchScreen.storyboard */,
+				FA329B3E21D8C30100C6C485 /* AppDelegate.swift */,
 				FA329B4A21D8C30300C6C485 /* Info.plist */,
 				2F56E1AC21FB1E3E00CD75A4 /* GoogleService-Info.plist */,
-				FAF0DF1F21F502B9003F341F /* ML */,
 				2F3DB68F21FC4B6500DEE0C7 /* TMImodel.xcdatamodeld */,
 			);
 			path = TMI;
@@ -201,10 +207,16 @@
 			isa = PBXGroup;
 			children = (
 				FA329B4021D8C30100C6C485 /* AlbumGridVC.swift */,
+				FA4F35A92222C24D009BCB84 /* AlbumGridVC + Search.swift */,
 				FAF0DF1921F1CCBD003F341F /* AssetGridVC.swift */,
 				FAF0DF2021F5204F003F341F /* AssetVC.swift */,
 				FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */,
+
 				E7672B9C22025C0D005E105B /* DashBoard.swift */,
+
+				FAB10814220D5BB40097E134 /* SearchVC.swift */,
+				FA4F35A722229D38009BCB84 /* SearchImageVC.swift */,
+
 			);
 			path = VC;
 			sourceTree = "<group>";
@@ -470,15 +482,18 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FA4F35A822229D38009BCB84 /* SearchImageVC.swift in Sources */,
 				FA806BA02209867700EB38D6 /* PopupAlbumGridVC.swift in Sources */,
 				2F10214F21F05AB500C1B0CA /* inception_v3.mlmodel in Sources */,
 				FAA9C350220AF216003A66A2 /* Photo+Extensions.swift in Sources */,
 				FAF0DF2121F5204F003F341F /* AssetVC.swift in Sources */,
 				2F10214E21F05AB500C1B0CA /* inception_v3_with_class.mlmodel in Sources */,
 				FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */,
+				FAB10815220D5BB40097E134 /* SearchVC.swift in Sources */,
 				FABA857D21DD1F2700E6F7F0 /* AlbumModel.swift in Sources */,
 				2F74CCCD21E4D5E60052055D /* ImageProcessor.swift in Sources */,
 				FA329B4121D8C30100C6C485 /* AlbumGridVC.swift in Sources */,
+				FA4F35AA2222C24E009BCB84 /* AlbumGridVC + Search.swift in Sources */,
 				FAF0DF1E21F5025F003F341F /* Extensions.swift in Sources */,
 				FA329B3F21D8C30100C6C485 /* AppDelegate.swift in Sources */,
 				FAF0DF1A21F1CCBD003F341F /* AssetGridVC.swift in Sources */,

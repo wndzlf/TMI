@@ -11,8 +11,8 @@ import Photos
 
 class AssetVC: UIViewController, UIScrollViewDelegate {
 
-    var selectedImage: UIImage!
-    //var selectedAlbums: [PHAsset] = []
+
+    var selectedImage: UIImage?
     
     @IBOutlet weak var imageView: UIImageView!
     
@@ -23,10 +23,20 @@ class AssetVC: UIViewController, UIScrollViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        setNavigationBar()
+//        let bar: UINavigationBar! = self.navigationController?.navigationBar
+//
+//        bar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+//        bar.shadowImage = UIImage()
+//        bar.backgroundColor = navigationController?.toolbar.barTintColor
+//
         setBackBtn(color: .black)
         
         imageView.image = selectedImage
+        
+        if let image = selectedImage {
+            print("받을때 : \(image.description)")
+        }
+
     }
     
     override func viewWillLayoutSubviews() {
@@ -41,4 +51,12 @@ class AssetVC: UIViewController, UIScrollViewDelegate {
         
         navigationController?.hidesBarsOnTap = true //탭하면 사라짐
     }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        navigationController?.hidesBarsOnTap = false
+    }
+    
+  
 }
