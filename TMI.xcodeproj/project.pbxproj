@@ -23,7 +23,6 @@
 		FA329B4921D8C30300C6C485 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA329B4721D8C30300C6C485 /* LaunchScreen.storyboard */; };
 		FA329B5421D8C30300C6C485 /* TMITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B5321D8C30300C6C485 /* TMITests.swift */; };
 		FA329B5F21D8C30300C6C485 /* TMIUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B5E21D8C30300C6C485 /* TMIUITests.swift */; };
-		FA4F35A822229D38009BCB84 /* SearchImageVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4F35A722229D38009BCB84 /* SearchImageVC.swift */; };
 		FA4F35AA2222C24E009BCB84 /* AlbumGridVC + Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4F35A92222C24D009BCB84 /* AlbumGridVC + Search.swift */; };
 		FA806BA02209867700EB38D6 /* PopupAlbumGridVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */; };
 		FAA9C350220AF216003A66A2 /* Photo+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */; };
@@ -81,7 +80,6 @@
 		FA329B5A21D8C30300C6C485 /* TMIUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TMIUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA329B5E21D8C30300C6C485 /* TMIUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TMIUITests.swift; sourceTree = "<group>"; };
 		FA329B6021D8C30300C6C485 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		FA4F35A722229D38009BCB84 /* SearchImageVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchImageVC.swift; sourceTree = "<group>"; };
 		FA4F35A92222C24D009BCB84 /* AlbumGridVC + Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlbumGridVC + Search.swift"; sourceTree = "<group>"; };
 		FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupAlbumGridVC.swift; sourceTree = "<group>"; };
 		FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Photo+Extensions.swift"; sourceTree = "<group>"; };
@@ -215,8 +213,6 @@
 				E7672B9C22025C0D005E105B /* DashBoard.swift */,
 
 				FAB10814220D5BB40097E134 /* SearchVC.swift */,
-				FA4F35A722229D38009BCB84 /* SearchImageVC.swift */,
-
 			);
 			path = VC;
 			sourceTree = "<group>";
@@ -482,7 +478,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FA4F35A822229D38009BCB84 /* SearchImageVC.swift in Sources */,
 				FA806BA02209867700EB38D6 /* PopupAlbumGridVC.swift in Sources */,
 				2F10214F21F05AB500C1B0CA /* inception_v3.mlmodel in Sources */,
 				FAA9C350220AF216003A66A2 /* Photo+Extensions.swift in Sources */,

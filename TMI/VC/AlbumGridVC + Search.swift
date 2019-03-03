@@ -36,11 +36,13 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
     
     func updateSearchResults(for searchController: UISearchController) {
         print("업데이트")
-        //        isSearch = true
+        isSearchButtonClicked = false
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let searchBar = searchController.searchBar
         screenshotSearch(keyword: searchBar.text!)
-        
-        
+        isSearchButtonClicked = true
     }
     
     func searchBarIsEmpty() -> Bool {
@@ -49,7 +51,11 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
     
     func isSearch() -> Bool {
         //        let searchBarScopeIsFiltering = searchController.searchBar.selectedScopeButtonIndex != 0
-        return searchController.isActive && !searchBarIsEmpty()
+        if isSearchButtonClicked == true {
+            return true
+        } else {
+            return searchController.isActive && !searchBarIsEmpty()
+        }
     }
     
     func screenshotSearch(keyword: String){
@@ -73,8 +79,8 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         let requestOptions = PHImageRequestOptions()
         requestOptions.isSynchronous = false
         let assets = PHAsset.fetchAssets(withLocalIdentifiers: searchedLocalIdentifiers, options: nil)
-        print(assets.description)
         searchAssets.removeAll()
+        searchImages.removeAll()
         
         if assets.count == searchedLocalIdentifiers.count {
             print("asset count: \(assets.count)")
@@ -95,6 +101,7 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         
         if searchAssets.count == fetchedRecordArray.count {
             albumGridCollectionView.reloadData()
+
         }
     }
 }
