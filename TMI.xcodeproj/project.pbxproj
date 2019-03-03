@@ -15,6 +15,7 @@
 		61D748DCB08A62A818863BF9 /* Pods_TMIUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FB9E22F0CF031B1DE59E14E /* Pods_TMIUITests.framework */; };
 		B825E10AE775BEE9B3D39971 /* Pods_TMI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 38E1241082EAF87AEFB24792 /* Pods_TMI.framework */; };
 		CC2334D1A33B00163DEF553B /* Pods_TMITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF1C4C2DF2E73ABE005D7747 /* Pods_TMITests.framework */; };
+		E7672B9D22025C0D005E105B /* DashBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7672B9C22025C0D005E105B /* DashBoard.swift */; };
 		FA329B3F21D8C30100C6C485 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B3E21D8C30100C6C485 /* AppDelegate.swift */; };
 		FA329B4121D8C30100C6C485 /* AlbumGridVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B4021D8C30100C6C485 /* AlbumGridVC.swift */; };
 		FA329B4421D8C30100C6C485 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA329B4221D8C30100C6C485 /* Main.storyboard */; };
@@ -64,6 +65,7 @@
 		74E992A1E1AD348CD946F8B8 /* Pods-TMIUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TMIUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TMIUITests/Pods-TMIUITests.release.xcconfig"; sourceTree = "<group>"; };
 		85A35405D995A4859BC4E519 /* Pods-TMITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TMITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TMITests/Pods-TMITests.debug.xcconfig"; sourceTree = "<group>"; };
 		899DBDC4C576634DA5F0A2AC /* Pods-TMI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TMI.release.xcconfig"; path = "Pods/Target Support Files/Pods-TMI/Pods-TMI.release.xcconfig"; sourceTree = "<group>"; };
+		E7672B9C22025C0D005E105B /* DashBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashBoard.swift; sourceTree = "<group>"; };
 		E990F258EA0D4874C10C7DA4 /* Pods-TMIUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TMIUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TMIUITests/Pods-TMIUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		FA329B3B21D8C30000C6C485 /* TMI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TMI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA329B3E21D8C30100C6C485 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -207,6 +209,9 @@
 				FAF0DF1921F1CCBD003F341F /* AssetGridVC.swift */,
 				FAF0DF2021F5204F003F341F /* AssetVC.swift */,
 				FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */,
+
+				E7672B9C22025C0D005E105B /* DashBoard.swift */,
+
 				FAB10814220D5BB40097E134 /* SearchVC.swift */,
 			);
 			path = VC;
@@ -374,7 +379,7 @@
 			inputFileListPaths = (
 			);
 			inputPaths = (
-				"${SRCROOT}/Pods/Target Support Files/Pods-TMI/Pods-TMI-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-TMI/Pods-TMI-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleAPIClientForREST/GoogleAPIClientForREST.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
@@ -397,7 +402,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-TMI/Pods-TMI-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TMI/Pods-TMI-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		6231067014E8A5509EAC8F96 /* [CP] Check Pods Manifest.lock */ = {
@@ -487,6 +492,7 @@
 				FAF0DF1E21F5025F003F341F /* Extensions.swift in Sources */,
 				FA329B3F21D8C30100C6C485 /* AppDelegate.swift in Sources */,
 				FAF0DF1A21F1CCBD003F341F /* AssetGridVC.swift in Sources */,
+				E7672B9D22025C0D005E105B /* DashBoard.swift in Sources */,
 				FAF0DF1C21F1D313003F341F /* AssetGridViewCell.swift in Sources */,
 				2F3DB69121FC4B6500DEE0C7 /* TMImodel.xcdatamodeld in Sources */,
 			);

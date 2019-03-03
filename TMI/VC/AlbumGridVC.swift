@@ -128,7 +128,27 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
        
         PHPhotoLibrary.shared().register(self) //포토 라이브러리가 변화될 때마다 델리게이트가 호출됨
+        
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(deleteItem(_:)),
+                                               name: NSNotification.Name("deleteAsset"),
+                                               object: nil)
     }
+    
+    
+    @objc func deleteItem(_ notification: Notification) {
+        guard let selectedAlbum: String = notification.userInfo?["selectedAlbum"] as? String else {return}
+        guard let selectedAssetIndex: [Int] = notification.userInfo?["selectedAssetIndex"] as? [Int] else {return}
+        
+        print("1234567890::::::::::::::::::::::::::::::::::")
+        
+        for i in selectedAssetIndex{
+            print("-----",i)
+            //self.albums[selectedAlbum]?.remove(at: i)
+            //AlbumGridVC.albumList[selectedAlbum].collection.remove(at: i)
+        }
+        
+     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -186,6 +206,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         //self.performSegue(withIdentifier: "ToDetailAlbum", sender: self)
         
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
+
         if isSearch() {
             guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else { fatalError("Unexpected ViewController") }
             self.navigationController?.pushViewController(assetVC, animated: true)
@@ -198,6 +219,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             PopupAlbumGridVC.currentAlbumIndex = indexPath.item
             selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
         }
+
     }
     
     @objc
@@ -228,11 +250,10 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 extension AlbumGridVC {
     //앱 재실행시 포토라이브러리의 변화 탐지
     func DetectChanges(){
-
         var photoLibraryArray:[String] = []
         var dbArray: [String] = []
         
-        //포토라이브러리에서 스크린샷 패치
+        //포토라이브러리에서 스크린샷 패치 => 앱 실행시 한 번만 할 수 있도록 추후에 조정
         let getAlbums : PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumScreenshots, options: PHFetchOptions())
         guard let assetCollection: PHAssetCollection = getAlbums.firstObject else {return}
         
@@ -295,8 +316,14 @@ extension AlbumGridVC {
         for album in AlbumGridVC.albumList{
             album.collection = albums[album.name]!
             album.count = albums[album.name]!.count
-            print("\(album.name)")
-            print("count : \(album.count)")
+            if let titleImage = albums[album.name]!.last{
+                manager.requestImage(for: titleImage,
+                                     targetSize: PHImageManagerMaximumSize,
+                                     contentMode: .aspectFill,
+                                     options: requestOptions,
+                                     resultHandler: { image, _ in
+                                        album.image = image!})
+            }else{album.image = UIImage(named: "LaunchScreen")!}
         }
         OperationQueue.main.addOperation {self.albumGridCollectionView.reloadData()}
     }
@@ -640,6 +667,14 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
         for album in AlbumGridVC.albumList{
             album.collection = albums[album.name]!
             album.count = albums[album.name]!.count
+            if let titleImage = albums[album.name]!.last{
+                manager.requestImage(for: titleImage,
+                                     targetSize: PHImageManagerMaximumSize,
+                                     contentMode: .aspectFill,
+                                     options: requestOptions,
+                                     resultHandler: { image, _ in
+                                        album.image = image!})
+            }else{album.image = UIImage(named: "LaunchScreen")!}
         }
         OperationQueue.main.addOperation {self.albumGridCollectionView.reloadData()}
     }
