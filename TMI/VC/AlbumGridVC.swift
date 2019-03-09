@@ -58,10 +58,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     var searchImages: [UIImage] = []
     var isSearchButtonClicked = false
     
-    
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         albumGridCollectionView.delegate = self
@@ -79,7 +75,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         switch photoAuthorizationStatus {
             case .authorized:
                 print("접근 허가됨")
-                OperationQueue.main.addOperation {
+                DispatchQueue.main.async {
                     self.activityIndicator.startAnimating()
                     if defaults.object(forKey: "theFirstRun") != nil{
                         //TODO: - 뿌리기
@@ -94,9 +90,9 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                         print("theFirstRUN 존재안혀")
                         self.GetAlbums()
                     }
+                    self.resetCachedAssets()
                     self.albumGridCollectionView.reloadData()
                     self.activityIndicator.stopAnimating()
-                    
                 }
             case .denied:
                 print("접근 불허됨")
@@ -106,7 +102,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                     switch status {
                     case .authorized:
                         print("사용자가 허용함")
-                        OperationQueue.main.addOperation {
+                        DispatchQueue.main.async {
                             //                    self.requestCollection()
                             self.activityIndicator.startAnimating()
                             if defaults.object(forKey: "theFirstRun") != nil{
@@ -116,6 +112,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                                 //인트로 부르기
                                 self.GetAlbums()
                             }
+                            self.resetCachedAssets()
                             self.albumGridCollectionView.reloadData()
                             self.activityIndicator.stopAnimating()
                         }
@@ -133,7 +130,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         self.navigationItem.rightBarButtonItem = addButton
          */
         
-        resetCachedAssets()
+        
         PHPhotoLibrary.shared().register(self) //포토 라이브러리가 변화될 때마다 델리게이트가 호출됨
         
         
@@ -141,11 +138,12 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                                                name: NSNotification.Name("deleteAsset"),
                                                object: nil)
     }
+    
     /// - Tag: UnregisterChangeObserver
     deinit {
         PHPhotoLibrary.shared().unregisterChangeObserver(self)
     }
-    
+
   
     
     override func viewWillAppear(_ animated: Bool) {
@@ -683,6 +681,10 @@ extension AlbumGridVC: UICollectionViewDelegateFlowLayout {
 extension AlbumGridVC: PHPhotoLibraryChangeObserver {
     /// - Tag: RespondToChanges
     func photoLibraryDidChange(_ changeInstance: PHChange) {
+        
+        guard assetsFetchResult != nil else {
+            return
+        }
         
         guard let changes = changeInstance.changeDetails(for: assetsFetchResult) else {
             print("No change in fetchResultChangeDetails")
