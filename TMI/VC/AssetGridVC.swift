@@ -16,10 +16,16 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     @IBOutlet var trashButton: UIBarButtonItem!
     @IBOutlet var space: UIBarButtonItem!
     
+    @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
     var selectedAssetIndex: [Int] = []
     var selectedAlbums: [PHAsset] = []
+    var selectedIndexPath: [IndexPath] = []
     
     var currentAlbumIndex: Int = 0
+    
+    fileprivate let imageManager = PHCachingImageManager()
+    fileprivate var thumbnailSize: CGSize!
+    fileprivate var previousPreheatRect = CGRect.zero
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,7 +36,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 //        setNavigationBar()
         setBackBtn(color: #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1))
         
-        let selectButton = UIBarButtonItem(title: "선택", style: .plain, target: self, action: #selector(self.selectAlbum))
+        let selectButton = UIBarButtonItem(title: "선택", style: .plain, target: self, action: #selector(self.selectAssets))
         self.navigationItem.rightBarButtonItem = selectButton
         moveButton.isEnabled = false
         trashButton.isEnabled = false
@@ -55,6 +61,12 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         //            trashButton.isEnabled = asset.canPerform(.delete)
         //        }
         
+        let scale = UIScreen.main.scale
+        let cellSize = collectionViewFlowLayout.itemSize
+        thumbnailSize = CGSize(width: cellSize.width * scale, height: cellSize.height * scale)
+        
+        
+        
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -63,7 +75,18 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as! AssetGridViewCell
-        cell.detailImageView.image = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
+//        cell.detailImageView.image = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
+        let asset = selectedAlbums[indexPath.item]
+         cell.representedAssetIdentifier = asset.localIdentifier
+        
+//        cell.detailImageView.image = convertImageFromAsset(asset: selectedAlbums[indexPath.row], targetSize: thumbnailSize)
+        imageManager.requestImage(for: asset, targetSize: thumbnailSize, contentMode: .aspectFill, options: nil, resultHandler: { image, _ in
+            // UIKit may have recycled this cell by the handler's activation time.
+            // Set the cell's thumbnail image only if it's still showing the same asset.
+            if cell.representedAssetIdentifier == asset.localIdentifier {
+                cell.thumbnailImage = image
+            }
+        })
         return cell
     }
     
@@ -93,22 +116,40 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         }
         
         //선택버튼 눌러서 이미지 선택 시
+        
         if let currentCell = collectionView.cellForItem(at: indexPath) as? AssetGridViewCell {
             if currentCell.isChecked == true {
                 print("해제할것")
                 currentCell.isChecked = false
-                currentCell.layer.borderWidth = 0
+//                currentCell.layer.borderWidth = 0
                 currentCell.checkImageView.isHidden = true
                 
-                let index: Int? = selectedAssetIndex.firstIndex(of: indexPath.row)
-                selectedAssetIndex.remove(at: index!)
+//                let index: Int? = selectedAssetIndex.firstIndex(of: indexPath.item)
+//                selectedAssetIndex.remove(at: index!)
+                let deselectIndex = selectedAssetIndex.filter({ (index) -> Bool in
+                    if index == indexPath.item {
+                        let deselect = selectedAssetIndex.firstIndex(of: index)
+                        selectedAssetIndex.remove(at: deselect!)
+                        return true
+                    }
+                    return false
+                })
+                
+                if let indexPath = collectionView.indexPath(for: currentCell) {
+                    selectedIndexPath.removeAll { (index) -> Bool in
+                        return index == indexPath
+                    }
+                }
             } else {
                 currentCell.isChecked = true
                 print("선택됨")
-                currentCell.layer.borderWidth = 2
-                currentCell.layer.borderColor = UIColor.init(red: 201/255, green: 201/255, blue: 201/255, alpha: 0.5).cgColor
+//                currentCell.layer.borderWidth = 2
+//                currentCell.layer.borderColor = UIColor.init(red: 201/255, green: 201/255, blue: 201/255, alpha: 0.5).cgColor
                 currentCell.checkImageView.isHidden = false
-                selectedAssetIndex.append(indexPath.row)
+                selectedAssetIndex.append(indexPath.item)
+                if let indexPath = collectionView.indexPath(for: currentCell) {
+                    selectedIndexPath.append(indexPath)
+                }
             }
             print("selectedAsset: \(selectedAssetIndex)")
             
@@ -130,13 +171,18 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     }
     
     @objc
-    func selectAlbum(_ sender: UIBarButtonItem) {
+    func selectAssets(_ sender: UIBarButtonItem) {
         detailCollectionView.allowsMultipleSelection = true
+        
         if sender.title == "선택" {
             sender.title = "취소"
         } else {
             sender.title = "선택"
             detailCollectionView.allowsMultipleSelection = false
+            selectedAssetIndex.removeAll()
+//            selectedIndexPath.removeAll()
+            detailCollectionView.reloadItems(at: selectedIndexPath)
+//            detailCollectionView.reloadData()
         }
     }
     

@@ -20,6 +20,8 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     @IBOutlet weak var albumGridCollectionView: UICollectionView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
+    
     
     private var assetsFetchResult: PHFetchResult<PHAsset>!
     let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
@@ -47,11 +49,16 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     private var collection: PHAssetCollection!
     private var assetCollectionPlaceholder: PHObjectPlaceholder!
     
+    private var thumbnailSize: CGSize!
+    fileprivate var previousPreheatRect = CGRect.zero
+    
     
     var searchController: UISearchController!
     var searchAssets: [PHAsset] = []
     var searchImages: [UIImage] = []
     var isSearchButtonClicked = false
+    
+    
     
     
     
@@ -126,7 +133,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         self.navigationItem.rightBarButtonItem = addButton
          */
         
-       
+        resetCachedAssets()
         PHPhotoLibrary.shared().register(self) //포토 라이브러리가 변화될 때마다 델리게이트가 호출됨
         
         
@@ -134,21 +141,12 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                                                name: NSNotification.Name("deleteAsset"),
                                                object: nil)
     }
+    /// - Tag: UnregisterChangeObserver
+    deinit {
+        PHPhotoLibrary.shared().unregisterChangeObserver(self)
+    }
     
-    
-    @objc func deleteItem(_ notification: Notification) {
-        guard let selectedAlbum: String = notification.userInfo?["selectedAlbum"] as? String else {return}
-        guard let selectedAssetIndex: [Int] = notification.userInfo?["selectedAssetIndex"] as? [Int] else {return}
-        
-        print("1234567890::::::::::::::::::::::::::::::::::")
-        
-        for i in selectedAssetIndex{
-            print("-----",i)
-            //self.albums[selectedAlbum]?.remove(at: i)
-            //AlbumGridVC.albumList[selectedAlbum].collection.remove(at: i)
-        }
-        
-     }
+  
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(true)
@@ -157,7 +155,18 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 
         //메인화면 하단툴바 안보이도록 설정
         navigationController?.setToolbarHidden(true, animated: false)
+        
+        let scale = UIScreen.main.scale
+        let cellSize = collectionViewFlowLayout.itemSize
+        thumbnailSize = CGSize(width: cellSize.width * scale, height: cellSize.height * scale)
+        
     }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        updateCachedAssets()
+    }
+    
     
     
     
@@ -175,25 +184,43 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! AlbumCollectionViewCell
         
         if isSearch() {
+            
             let fetchText: Screenshot
-            fetchText = fetchedRecordArray[indexPath.item]
+                fetchText = self.fetchedRecordArray[indexPath.item]
+            activityIndicator.isHidden = false
+                activityIndicator.startAnimating()
             for searchAsset in self.searchAssets {
-                self.searchImages.append(self.convertImageFromAsset(asset: searchAsset))
+//                self.searchImages.append(self.convertImageFromAsset(asset: searchAsset))
+
+                cell.representedAssetIdentifier = searchAsset.localIdentifier
+                print("localIdentifier: \(searchAsset.localIdentifier)")
+                
+                self.imageManager.requestImage(for: searchAsset,
+                                               targetSize: self.thumbnailSize, contentMode: .aspectFill, options: nil, resultHandler: { image, _ in
+                                                // UIKit may have recycled this cell by the handler's activation time.
+                                                // Set the cell's thumbnail image only if it's still showing the same asset.
+                                                DispatchQueue.main.async {
+                                                    
+                                                    cell.thumbnailImage = image
+                                                    self.searchImages.append(cell.thumbnailImage)
+                                                    cell.titleLabel.text = fetchText.albumName
+                                                    cell.imageCountLabel.text = nil
+                                                }
+                                                
+                })
+                //                self.searchImages.append(self.convertImageFromAsset(asset: searchAsset, targetSize: self.thumbnailSize))
+                
+                //                cell.thumbnailImage = self.searchImages[indexPath.item]
+                
+                //            cell.textLabel.text = fetchText.text
+                //            cell.detailTextLabel.text = fetchText.localIdentifier
             }
+            activityIndicator.stopAnimating()
             
-            DispatchQueue.main.async {
-                cell.titleImageView.image = self.searchImages[indexPath.item]
-                cell.titleLabel.text = fetchText.albumName
-                cell.imageCountLabel.text = nil
-            }
-            
-            
-//            cell.textLabel.text = fetchText.text
-//            cell.detailTextLabel.text = fetchText.localIdentifier
             
         } else {
             let album: AlbumModel = AlbumGridVC.albumList[indexPath.item]
-            cell.titleImageView.image = album.image
+            cell.thumbnailImage = album.image
             cell.titleLabel.text = album.name
             cell.imageCountLabel.text = String(album.count)
         }
@@ -206,11 +233,12 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         //self.performSegue(withIdentifier: "ToDetailAlbum", sender: self)
         
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
-
+        
         if isSearch() {
             guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else { fatalError("Unexpected ViewController") }
             self.navigationController?.pushViewController(assetVC, animated: true)
-            assetVC.selectedImage = searchImages[indexPath.item]
+            //            assetVC.selectedImage = searchImages[indexPath.item]
+            assetVC.asset = assetsFetchResult.object(at: indexPath.item)
             
         } else {
             guard let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as? AssetGridVC else { fatalError("Unexpected ViewController") }
@@ -219,7 +247,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             PopupAlbumGridVC.currentAlbumIndex = indexPath.item
             selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
         }
-
+        
     }
     
     @objc
@@ -243,6 +271,20 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true, completion: nil)
+    }
+    
+    @objc func deleteItem(_ notification: Notification) {
+        guard let selectedAlbum: String = notification.userInfo?["selectedAlbum"] as? String else {return}
+        guard let selectedAssetIndex: [Int] = notification.userInfo?["selectedAssetIndex"] as? [Int] else {return}
+        
+        print("1234567890::::::::::::::::::::::::::::::::::")
+        
+        for i in selectedAssetIndex{
+            print("-----",i)
+            //self.albums[selectedAlbum]?.remove(at: i)
+            //AlbumGridVC.albumList[selectedAlbum].collection.remove(at: i)
+        }
+        
     }
 }
 
@@ -304,7 +346,7 @@ extension AlbumGridVC {
         for insertedAsset in insertedAssetArray{
             for i in 0..<self.assetsFetchResult.count {
                 if(insertedAsset == self.assetsFetchResult.object(at: i).localIdentifier){
-                    self.manager.requestImage(for: self.assetsFetchResult.object(at: i),targetSize: PHImageManagerMaximumSize,contentMode: .aspectFill,options: self.requestOptions,resultHandler: { image, _ in
+                    self.imageManager.requestImage(for: self.assetsFetchResult.object(at: i),targetSize: thumbnailSize,contentMode: .aspectFill,options: self.requestOptions,resultHandler: { image, _ in
                         if let image = image{
                             let maxIndex = self.screenshotPredict(image: image)
                             self.matchPlatform(maxIndex: maxIndex, imageAsset:self.assetsFetchResult.object(at: i))
@@ -317,13 +359,13 @@ extension AlbumGridVC {
             album.collection = albums[album.name]!
             album.count = albums[album.name]!.count
             if let titleImage = albums[album.name]!.last{
-                manager.requestImage(for: titleImage,
-                                     targetSize: PHImageManagerMaximumSize,
-                                     contentMode: .aspectFill,
-                                     options: requestOptions,
-                                     resultHandler: { image, _ in
-                                        album.image = image!})
-            }else{album.image = UIImage(named: "LaunchScreen")!}
+                imageManager.requestImage(for: titleImage,
+                                          targetSize: thumbnailSize,
+                                          contentMode: .aspectFill,
+                                          options: requestOptions,
+                                          resultHandler: { image, _ in
+                                            album.image = image!})
+            } else { album.image = UIImage(named: "LaunchScreen")!}
         }
         OperationQueue.main.addOperation {self.albumGridCollectionView.reloadData()}
     }
@@ -357,8 +399,8 @@ extension AlbumGridVC {
             for assetRecord in recordArray {
                 let albumRecord: Screenshot = assetRecord
                 assetLocalIdentifiers.append(albumRecord.localIdentifier!)
-//                print(albumRecord.localIdentifier)
-//                print(albumRecord.albumName)
+                //                print(albumRecord.localIdentifier)
+                //                print(albumRecord.albumName)
                 
             }
             
@@ -368,11 +410,11 @@ extension AlbumGridVC {
             
             for i in 0..<assetsFetchResult.count {
                 let imageAsset = assetsFetchResult.object(at: i)
-                manager.requestImage(for: imageAsset,
-                                     targetSize: PHImageManagerMaximumSize,
-                                     contentMode: .aspectFill,
-                                     options: requestOptions,
-                                     resultHandler: { image, _ in
+                imageManager.requestImage(for: imageAsset,
+                                          targetSize: thumbnailSize,
+                                          contentMode: .aspectFill,
+                                          options: requestOptions,
+                                          resultHandler: { image, _ in
                 })
                 self.albums[albumName]?.append(imageAsset)
             }
@@ -399,8 +441,8 @@ extension AlbumGridVC {
                     //스크린샷 앨범에서 가져온 사진 오브젝트 하나하나 반복
                     let imageAsset = assetsFetchResult.object(at: i)
                     //requestImageForAsset 을 이용해 이미지를 불러온다
-                    manager.requestImage(for: imageAsset,
-                                         targetSize: PHImageManagerMaximumSize,
+                    imageManager.requestImage(for: imageAsset,
+                                         targetSize: thumbnailSize,
                                          //원래의 이미지 사이즈로 가져온다.
                         contentMode: .aspectFill,
                         options: requestOptions,
@@ -427,8 +469,8 @@ extension AlbumGridVC {
             let albumCount = album.count
             if let titleImage = album.last{
                 //타이틀이미지를 따로 저장하기위해 한 번 더 리퀘스트한다.
-                manager.requestImage(for: titleImage,
-                                     targetSize: PHImageManagerMaximumSize,
+                imageManager.requestImage(for: titleImage,
+                                     targetSize: thumbnailSize,
                                      contentMode: .aspectFill,
                                      options: requestOptions,
                                      resultHandler: { image, _ in
@@ -509,24 +551,39 @@ extension AlbumGridVC {
     }
     
     func screenshotPredict(image: UIImage) -> Int {
+//        var returnMaxIndex:Int?
+        
+//        DispatchQueue.main.asyncAfter(deadline: .now()+0.01) { [weak self] in
         let model = inception_v3()
         let newSize = CGSize(width: 149.5, height: 149.5) //size 299..?
         //        let newSize = CGSize(width: availableWidth, height: availableHeight)
-        let image = resize(image: image, newSize: newSize)
-        if let pixelBuffer = ImageProcessor.pixelBuffer(forImage: image.cgImage!) {
+        
+            let image = resize(image: image, newSize: newSize)
+            
+            if let pixelBuffer = ImageProcessor.pixelBuffer(forImage: image.cgImage!) {
             //이미지의 사이즈와 타입을 바꾸기위한 전처리과정 후 추론
             guard let inception_v3Output = try? model.prediction(Mul__0: pixelBuffer) else {
                 fatalError("Unexpected runtime error.")}
             let featurePointer = UnsafePointer<Double>(OpaquePointer(inception_v3Output.final_result__0.dataPointer))
-            print(inception_v3Output.final_result__0)
-            let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
-            print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
-            return maxIndex
+//            print(inception_v3Output.final_result__0)
+                let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
+//            print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
+//            returnMaxIndex =  maxIndex
+                return maxIndex
             //추론 성공
         }
-        return -1
         //추론 실패
-    }
+        return -1
+        }
+//
+//        if returnMaxIndex == nil {
+//            return -1
+//        } else {
+//            return returnMaxIndex
+//        }
+//
+//
+//    }
 }
 
 //MARK:- OCR
@@ -626,29 +683,35 @@ extension AlbumGridVC: UICollectionViewDelegateFlowLayout {
 extension AlbumGridVC: PHPhotoLibraryChangeObserver {
     /// - Tag: RespondToChanges
     func photoLibraryDidChange(_ changeInstance: PHChange) {
-        let fetchResultChangeDetails = changeInstance.changeDetails(for: assetsFetchResult)
-        guard (fetchResultChangeDetails) != nil else {
+        
+        guard let changes = changeInstance.changeDetails(for: assetsFetchResult) else {
             print("No change in fetchResultChangeDetails")
             return;
         }
+        DispatchQueue.main.sync {
+
         print("Contains changes")
-        assetsFetchResult = (fetchResultChangeDetails?.fetchResultAfterChanges)!
-        if let insertedObjects = fetchResultChangeDetails?.insertedObjects{
+        assetsFetchResult = changes.fetchResultAfterChanges
+        let insertedObjects = changes.insertedObjects
+        if insertedObjects.count > 0 {
             print("Assets have been Inserted while TMI's running")
             for insertedAsset in insertedObjects{
-                manager.requestImage(for: insertedAsset,
-                                     targetSize: PHImageManagerMaximumSize,
+                imageManager.requestImage(for: insertedAsset,
+                                     targetSize: thumbnailSize,
                                      contentMode: .aspectFill,
                                      options: requestOptions,
                                      resultHandler: { image, _ in
-                                        let maxIndex = self.screenshotPredict(image: image!)
+                                        
+                                        let maxIndex =
+                                            self.screenshotPredict(image: image!)
                                         self.matchPlatform(maxIndex: maxIndex, imageAsset: insertedAsset)
                                         self.getText(screenshot: image!, localIdentifier: insertedAsset.localIdentifier, maxIndex: maxIndex)
                 })
             }//포토라이브러리에서 삽입된 이미지들 디비 저장 및 각 albums 배열에 저장완료
         }
         //삭제된 이미지 처리
-        if let removedObjects = fetchResultChangeDetails?.removedObjects{
+        let removedObjects = changes.removedObjects
+        if removedObjects.count > 0 {
             print("Assets have been Removed while TMI's running")
             let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
             for removedAsset in removedObjects{
@@ -664,19 +727,103 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
                 albums[key] = value.filter({!(removedObjects.contains($0))})
             }
         }
-        for album in AlbumGridVC.albumList{
+        for album in AlbumGridVC.albumList {
             album.collection = albums[album.name]!
             album.count = albums[album.name]!.count
             if let titleImage = albums[album.name]!.last{
-                manager.requestImage(for: titleImage,
-                                     targetSize: PHImageManagerMaximumSize,
-                                     contentMode: .aspectFill,
-                                     options: requestOptions,
-                                     resultHandler: { image, _ in
-                                        album.image = image!})
-            }else{album.image = UIImage(named: "LaunchScreen")!}
+                imageManager.requestImage(for: titleImage,
+                                          targetSize: thumbnailSize,
+                                          contentMode: .aspectFill,
+                                          options: requestOptions,
+                                          resultHandler: { image, _ in
+                                            album.image = image!})
+            } else {
+                album.image = UIImage(named: "LaunchScreen")!}
         }
-        OperationQueue.main.addOperation {self.albumGridCollectionView.reloadData()}
+//        OperationQueue.main.addOperation {
+        
+            self.albumGridCollectionView.reloadData()
+            resetCachedAssets()
+        
+        }
     }
 }
 
+extension AlbumGridVC {
+    // MARK: UIScrollView
+    
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        updateCachedAssets()
+    }
+    
+    // MARK: Asset Caching
+    
+    fileprivate func resetCachedAssets() {
+        imageManager.stopCachingImagesForAllAssets()
+        previousPreheatRect = .zero
+    }
+    /// - Tag: UpdateAssets
+    fileprivate func updateCachedAssets() {
+        // Update only if the view is visible.
+        guard isViewLoaded && view.window != nil else { return }
+        
+        // The window you prepare ahead of time is twice the height of the visible rect.
+        let visibleRect = CGRect(origin: albumGridCollectionView!.contentOffset, size: albumGridCollectionView!.bounds.size)
+        let preheatRect = visibleRect.insetBy(dx: 0, dy: -0.5 * visibleRect.height)
+        
+        // Update only if the visible area is significantly different from the last preheated area.
+        let delta = abs(preheatRect.midY - previousPreheatRect.midY)
+        guard delta > view.bounds.height / 3 else { return }
+        
+        // Compute the assets to start and stop caching.
+        let (addedRects, removedRects) = differencesBetweenRects(previousPreheatRect, preheatRect)
+        let addedAssets = addedRects
+            .flatMap { rect in albumGridCollectionView.indexPathsForElements(in: rect) }
+            .map { indexPath in assetsFetchResult.object(at: indexPath.item) }
+        let removedAssets = removedRects
+            .flatMap { rect in albumGridCollectionView.indexPathsForElements(in: rect) }
+            .map { indexPath in assetsFetchResult.object(at: indexPath.item) }
+        
+        // Update the assets the PHCachingImageManager is caching.
+        imageManager.startCachingImages(for: addedAssets,
+                                        targetSize: thumbnailSize, contentMode: .aspectFill, options: nil)
+        imageManager.stopCachingImages(for: removedAssets,
+                                       targetSize: thumbnailSize, contentMode: .aspectFill, options: nil)
+        // Store the computed rectangle for future comparison.
+        previousPreheatRect = preheatRect
+    }
+    
+    fileprivate func differencesBetweenRects(_ old: CGRect, _ new: CGRect) -> (added: [CGRect], removed: [CGRect]) {
+        if old.intersects(new) {
+            var added = [CGRect]()
+            if new.maxY > old.maxY {
+                added += [CGRect(x: new.origin.x, y: old.maxY,
+                                 width: new.width, height: new.maxY - old.maxY)]
+            }
+            if old.minY > new.minY {
+                added += [CGRect(x: new.origin.x, y: new.minY,
+                                 width: new.width, height: old.minY - new.minY)]
+            }
+            var removed = [CGRect]()
+            if new.maxY < old.maxY {
+                removed += [CGRect(x: new.origin.x, y: new.maxY,
+                                   width: new.width, height: old.maxY - new.maxY)]
+            }
+            if old.minY < new.minY {
+                removed += [CGRect(x: new.origin.x, y: old.minY,
+                                   width: new.width, height: new.minY - old.minY)]
+            }
+            return (added, removed)
+        } else {
+            return ([new], [old])
+        }
+    }
+    
+}
+
+private extension UICollectionView {
+    func indexPathsForElements(in rect: CGRect) -> [IndexPath] {
+        let allLayoutAttributes = collectionViewLayout.layoutAttributesForElements(in: rect)!
+        return allLayoutAttributes.map { $0.indexPath }
+    }
+}

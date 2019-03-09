@@ -15,6 +15,19 @@ class AlbumCollectionViewCell: UICollectionViewCell {
     
     var representedAssetIdentifier: String!
     
+    var thumbnailImage: UIImage! {
+        didSet {
+            titleImageView.image = thumbnailImage
+        }
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        titleImageView.image = nil
+        titleLabel.text = nil
+        imageCountLabel.text = nil
+    }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
         self.titleImageView.applyImageRadius(radius: 10)

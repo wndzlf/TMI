@@ -36,6 +36,8 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
     
     func updateSearchResults(for searchController: UISearchController) {
         print("업데이트")
+        let searchBar = searchController.searchBar
+//        screenshotSearch(keyword: searchBar.text!)
         isSearchButtonClicked = false
     }
     
@@ -62,9 +64,9 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
         //SQL query로는 (select * from Text where content LIKE '%keyword%')와 같은 작업
         request.predicate = NSPredicate(format: "text CONTAINS[cd] %@", keyword)
-        do{
+        do {
             fetchedRecordArray = try context.fetch(request) //조건에 맞는 레코드들 저장
-        }catch{
+        } catch {
             print("coredata fetch error")
         }
         if(fetchedRecordArray.count > 0){
@@ -78,17 +80,17 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         print(searchedLocalIdentifiers)
         let requestOptions = PHImageRequestOptions()
         requestOptions.isSynchronous = false
-        let assets = PHAsset.fetchAssets(withLocalIdentifiers: searchedLocalIdentifiers, options: nil)
+        let searchedAssests = PHAsset.fetchAssets(withLocalIdentifiers: searchedLocalIdentifiers, options: nil)
         searchAssets.removeAll()
         searchImages.removeAll()
         
-        if assets.count == searchedLocalIdentifiers.count {
-            print("asset count: \(assets.count)")
-            for i in 0..<assets.count {
-                let imageAsset = assets.object(at: i)
-                searchAssets.append(imageAsset)
+        if searchedAssests.count == searchedLocalIdentifiers.count {
+            print("asset count: \(searchedAssests.count)")
+            for asset in 0..<searchedAssests.count {
+                let asset = searchedAssests.object(at: asset)
+                searchAssets.append(asset)
             }
-            print("searchAsset: \(searchAssets)")
+//            print("searchAsset: \(searchAssets)")
         }
             
 //        imageManager.requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit, options: requestOptions, resultHandler: { result, info in
@@ -101,7 +103,7 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         
         if searchAssets.count == fetchedRecordArray.count {
             albumGridCollectionView.reloadData()
-
+            
         }
     }
 }

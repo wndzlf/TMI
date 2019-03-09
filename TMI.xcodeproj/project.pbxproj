@@ -209,9 +209,7 @@
 				FAF0DF1921F1CCBD003F341F /* AssetGridVC.swift */,
 				FAF0DF2021F5204F003F341F /* AssetVC.swift */,
 				FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */,
-
 				E7672B9C22025C0D005E105B /* DashBoard.swift */,
-
 				FAB10814220D5BB40097E134 /* SearchVC.swift */,
 			);
 			path = VC;

@@ -101,6 +101,7 @@
                     <connections>
                         <outlet property="activityIndicator" destination="9px-kL-4dg" id="1lB-Hq-orh"/>
                         <outlet property="albumGridCollectionView" destination="L0K-K9-NGl" id="ALG-hg-QsK"/>
+                        <outlet property="collectionViewFlowLayout" destination="8fQ-Bh-rzo" id="Ljd-io-vWN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -344,6 +345,7 @@
                         <viewLayoutGuide key="safeArea" id="p7u-BA-FT7"/>
                     </view>
                     <connections>
+                        <outlet property="collectionViewFlowLayout" destination="AgC-9A-EGO" id="0cE-yL-I8y"/>
                         <outlet property="detailCollectionView" destination="e1P-Oa-I88" id="88K-bl-oxF"/>
                         <outlet property="moveButton" destination="1gv-Ed-HKv" id="eP7-T0-4hO"/>
                         <outlet property="space" destination="P1L-Xz-jgc" id="aD5-ae-vUb"/>
@@ -365,7 +367,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" ambiguous="YES" maximumZoomScale="3" translatesAutoresizingMaskIntoConstraints="NO" id="EZn-Ae-dTY">
                                 <rect key="frame" x="0.0" y="20" width="375" height="647"/>
                                 <subviews>
@@ -385,7 +386,6 @@
                             <constraint firstItem="0hH-29-77y" firstAttribute="bottom" secondItem="EZn-Ae-dTY" secondAttribute="bottom" id="U6g-cN-xMS"/>
                             <constraint firstItem="0hH-29-77y" firstAttribute="trailing" secondItem="EZn-Ae-dTY" secondAttribute="trailing" id="X77-s1-Xsw"/>
                             <constraint firstItem="EZn-Ae-dTY" firstAttribute="top" secondItem="0hH-29-77y" secondAttribute="top" id="bXj-i7-iCx"/>
-
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="0hH-29-77y"/>
                     </view>
