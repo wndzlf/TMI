@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2F0A8A3B2233963700901C76 /* v3_everyTime.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F0A8A3A2233963700901C76 /* v3_everyTime.mlmodel */; };
 		2F10214E21F05AB500C1B0CA /* inception_v3_with_class.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F10214C21F05AB500C1B0CA /* inception_v3_with_class.mlmodel */; };
 		2F10214F21F05AB500C1B0CA /* inception_v3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F10214D21F05AB500C1B0CA /* inception_v3.mlmodel */; };
 		2F3DB69121FC4B6500DEE0C7 /* TMImodel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2F3DB68F21FC4B6500DEE0C7 /* TMImodel.xcdatamodeld */; };
@@ -54,6 +55,7 @@
 
 /* Begin PBXFileReference section */
 		087F69E7E33A7776257EB522 /* Pods-TMITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TMITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TMITests/Pods-TMITests.release.xcconfig"; sourceTree = "<group>"; };
+		2F0A8A3A2233963700901C76 /* v3_everyTime.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = v3_everyTime.mlmodel; sourceTree = "<group>"; };
 		2F10214C21F05AB500C1B0CA /* inception_v3_with_class.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = inception_v3_with_class.mlmodel; sourceTree = "<group>"; };
 		2F10214D21F05AB500C1B0CA /* inception_v3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = inception_v3.mlmodel; sourceTree = "<group>"; };
 		2F3DB69021FC4B6500DEE0C7 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
@@ -231,6 +233,7 @@
 			isa = PBXGroup;
 			children = (
 				2F74CCCC21E4D5E60052055D /* ImageProcessor.swift */,
+				2F0A8A3A2233963700901C76 /* v3_everyTime.mlmodel */,
 				2F10214C21F05AB500C1B0CA /* inception_v3_with_class.mlmodel */,
 				2F10214D21F05AB500C1B0CA /* inception_v3.mlmodel */,
 			);
@@ -478,6 +481,7 @@
 			files = (
 				FA4F35A822229D38009BCB84 /* SearchImageVC.swift in Sources */,
 				FA806BA02209867700EB38D6 /* PopupAlbumGridVC.swift in Sources */,
+				2F0A8A3B2233963700901C76 /* v3_everyTime.mlmodel in Sources */,
 				2F10214F21F05AB500C1B0CA /* inception_v3.mlmodel in Sources */,
 				FAA9C350220AF216003A66A2 /* Photo+Extensions.swift in Sources */,
 				FAF0DF2121F5204F003F341F /* AssetVC.swift in Sources */,

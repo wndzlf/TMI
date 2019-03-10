@@ -484,24 +484,46 @@ extension AlbumGridVC {
         return newImage!
     }
     
+//    func screenshotPredict(image: UIImage) -> Int {
+//        let model = v3_everyTime()
+//        let newSize = CGSize(width: 149.5, height: 149.5) //size 299..?
+//        //        let newSize = CGSize(width: availableWidth, height: availableHeight)
+//        let image = resize(image: image, newSize: newSize)
+//        if let pixelBuffer = ImageProcessor.pixelBuffer(forImage: image.cgImage!) {
+//            //이미지의 사이즈와 타입을 바꾸기위한 전처리과정 후 추론
+////            guard let inception_v3Output = try? model.prediction(fifo_queue_Dequeue__0: pixelBuffer) else {
+//            guard let inception_v3Output = try? model.predictions(inputs: [v3_everyTimeInput]) else {
+//                fatalError("Unexpected runtime error.")}
+////            print("stride : \(inception_v3Output.InceptionV3__Predictions__Reshape_1__0.strides)")
+////            print("shape : \(inception_v3Output.InceptionV3__Predictions__Reshape_1__0.shape)")
+////            for i in 0..<inception_v3Output.InceptionV3__Predictions__Reshape_1__0.count{
+////                let featurePointer = UnsafePointer<Double>(OpaquePointer(inception_v3Output.InceptionV3__Predictions__Reshape_1__0.dataPointer))
+//                let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
+//                print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
+//                return maxIndex
+////            }
+//            //추론 성공
+//        }
+//        return -1
+//        //추론 실패
+//    }
     func screenshotPredict(image: UIImage) -> Int {
-        let model = inception_v3()
-        let newSize = CGSize(width: 149.5, height: 149.5) //size 299..?
-        //        let newSize = CGSize(width: availableWidth, height: availableHeight)
+        var pixelBufferArray: [CVPixelBuffer] = []
+        let model = v3_everyTime()
+        let newSize = CGSize(width: 149.5, height: 149.5)
         let image = resize(image: image, newSize: newSize)
         if let pixelBuffer = ImageProcessor.pixelBuffer(forImage: image.cgImage!) {
-            //이미지의 사이즈와 타입을 바꾸기위한 전처리과정 후 추론
-            guard let inception_v3Output = try? model.prediction(Mul__0: pixelBuffer) else {
-                fatalError("Unexpected runtime error.")}
-            let featurePointer = UnsafePointer<Double>(OpaquePointer(inception_v3Output.final_result__0.dataPointer))
-            print(inception_v3Output.final_result__0)
-            let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
-            print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
-            return maxIndex
-            //추론 성공
+            pixelBufferArray.append(pixelBuffer)
+            if pixelBufferArray.count == 16{
+                guard let inception_v3Output = try? model.prediction(fifo_queue_Dequeue__0: pixelBuffer) else{
+                    fatalError("Unexpected runtime error.")}
+                 let featurePointer = UnsafePointer<Double>(OpaquePointer(inception_v3Output.InceptionV3__Predictions__Reshape_1__0.dataPointer))
+                let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
+                print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
+                return maxIndex//추론 성공
+            }
         }
-        return -1
-        //추론 실패
+        return -1//추론 실패
     }
 }
 
@@ -509,7 +531,6 @@ extension AlbumGridVC {
 extension AlbumGridVC {
     //ocr로 텍스트 추출하고 디비에 localIdentifier&text&albumName을 함께 저장하는 메소드
     func getText(screenshot: UIImage, localIdentifier: String, maxIndex: Int){
-        
         let vision = Vision.vision()// https://cloud.google.com/vision/docs/languages => 언어 약자 확인하는 사이트
         let options = VisionCloudTextRecognizerOptions()
         options.languageHints = ["ko", "en"] //ocr에게 어떤 언어인지 미리 힌트 주는거
@@ -603,6 +624,7 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
     /// - Tag: RespondToChanges
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         let fetchResultChangeDetails = changeInstance.changeDetails(for: assetsFetchResult)
+        //처음 설치했을 때 assetFetchResult가 없어서 에러남 => 여기서 리퀘스트하면 될 듯 ;가장먼저실행됨!!!!
         guard (fetchResultChangeDetails) != nil else {
             print("No change in fetchResultChangeDetails")
             return;
