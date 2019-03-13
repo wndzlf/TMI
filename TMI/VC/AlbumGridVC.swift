@@ -29,7 +29,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     private let availableHeight = UIScreen.main.bounds.size.height
     
     static var albumList: [AlbumModel] = []
-    private var albums: [String:[PHAsset]] = ["kakaoTalk":[], "daumCafe": [], "instagram":[], "others":[]]
+    private var albums: [String:[PHAsset]] = ["kakaoTalk":[], "everyTime": [], "instagram":[], "others":[]]
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var recordArray = [Screenshot]()
@@ -308,7 +308,7 @@ extension AlbumGridVC {
         let retrieveGroup = DispatchGroup()
         DispatchQueue.main.async(group: retrieveGroup) {
             self.fetchCoreData(albumName: "kakaoTalk")
-            self.fetchCoreData(albumName: "daumCafe")
+            self.fetchCoreData(albumName: "everyTime")
             self.fetchCoreData(albumName: "instagram")
             self.fetchCoreData(albumName: "others")
         }
@@ -387,7 +387,7 @@ extension AlbumGridVC {
                     })//리퀘스트 완료
                 }//for문 끝
                 makeAlbumModel(albumTitle: "kakaoTalk")
-                makeAlbumModel(albumTitle: "daumCafe")
+                makeAlbumModel(albumTitle: "everyTime")
                 makeAlbumModel(albumTitle: "instagram")
                 makeAlbumModel(albumTitle: "others")
                 //각각 어레이를 collection으로 해서 앨범모델을 만들고 albumList에 추가한다.
@@ -428,11 +428,11 @@ extension AlbumGridVC {
         switch maxIndex{
         //결과에 따라 각각의 어레이에 imageAsset자체를 넣는다(UIImage 타입 아님)
         case 0:
-            albums["kakaoTalk"]?.append(imageAsset)
+            albums["everyTime"]?.append(imageAsset)
         case 1:
-            albums["daumCafe"]?.append(imageAsset)
-        case 2:
             albums["instagram"]?.append(imageAsset)
+        case 2:
+            albums["kakaoTalk"]?.append(imageAsset)
         case 3:
             albums["others"]?.append(imageAsset)
         default:
@@ -471,7 +471,7 @@ extension AlbumGridVC {
         var maxValue: Double = 0
         var maxIndex: vDSP_Length = 0
         vDSP_maxviD(array, 1, &maxValue, &maxIndex, vDSP_Length(count))
-        if(maxValue > 0.6){ return (Int(maxIndex), maxValue)}
+        if(maxValue > 0.5){ return (Int(maxIndex), maxValue)}
         else{ return (3, maxValue)}
         
     }
@@ -484,47 +484,23 @@ extension AlbumGridVC {
         return newImage!
     }
     
-//    func screenshotPredict(image: UIImage) -> Int {
-//        let model = v3_everyTime()
-//        let newSize = CGSize(width: 149.5, height: 149.5) //size 299..?
-//        //        let newSize = CGSize(width: availableWidth, height: availableHeight)
-//        let image = resize(image: image, newSize: newSize)
-//        if let pixelBuffer = ImageProcessor.pixelBuffer(forImage: image.cgImage!) {
-//            //이미지의 사이즈와 타입을 바꾸기위한 전처리과정 후 추론
-////            guard let inception_v3Output = try? model.prediction(fifo_queue_Dequeue__0: pixelBuffer) else {
-//            guard let inception_v3Output = try? model.predictions(inputs: [v3_everyTimeInput]) else {
-//                fatalError("Unexpected runtime error.")}
-////            print("stride : \(inception_v3Output.InceptionV3__Predictions__Reshape_1__0.strides)")
-////            print("shape : \(inception_v3Output.InceptionV3__Predictions__Reshape_1__0.shape)")
-////            for i in 0..<inception_v3Output.InceptionV3__Predictions__Reshape_1__0.count{
-////                let featurePointer = UnsafePointer<Double>(OpaquePointer(inception_v3Output.InceptionV3__Predictions__Reshape_1__0.dataPointer))
-//                let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
-//                print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
-//                return maxIndex
-////            }
-//            //추론 성공
-//        }
-//        return -1
-//        //추론 실패
-//    }
     func screenshotPredict(image: UIImage) -> Int {
-        var pixelBufferArray: [CVPixelBuffer] = []
-        let model = v3_everyTime()
-        let newSize = CGSize(width: 149.5, height: 149.5)
+        let model = final_v3()
+        let newSize = CGSize(width: 149.5, height: 149.5) //size 299..?
+        //        let newSize = CGSize(width: availableWidth, height: availableHeight)
         let image = resize(image: image, newSize: newSize)
         if let pixelBuffer = ImageProcessor.pixelBuffer(forImage: image.cgImage!) {
-            pixelBufferArray.append(pixelBuffer)
-            if pixelBufferArray.count == 16{
-                guard let inception_v3Output = try? model.prediction(fifo_queue_Dequeue__0: pixelBuffer) else{
-                    fatalError("Unexpected runtime error.")}
-                 let featurePointer = UnsafePointer<Double>(OpaquePointer(inception_v3Output.InceptionV3__Predictions__Reshape_1__0.dataPointer))
-                let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
-                print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
-                return maxIndex//추론 성공
+            //이미지의 사이즈와 타입을 바꾸기위한 전처리과정 후 추론
+            guard let final_v3Output = try? model.prediction(Mul__0: pixelBuffer) else{
+                fatalError("error")
             }
+            let featurePointer = UnsafePointer<Double>(OpaquePointer(final_v3Output.final_result__0.dataPointer))
+            let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
+            print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
+            return maxIndex//추론 성공
+            }
+            return -1//추론 실패
         }
-        return -1//추론 실패
-    }
 }
 
 //MARK:- OCR
@@ -552,11 +528,11 @@ extension AlbumGridVC {
             newRecord.text = resultText
             switch maxIndex{
                 case 0:
-                    newRecord.albumName = "kakaoTalk"
+                    newRecord.albumName = "everyTime"
                 case 1:
-                    newRecord.albumName = "daumCafe"
-                case 2:
                     newRecord.albumName = "instagram"
+                case 2:
+                    newRecord.albumName = "kakaoTalk"
                 case 3:
                     newRecord.albumName = "others"
                 default:
@@ -568,28 +544,6 @@ extension AlbumGridVC {
             self.recordArray.removeAll()
         }
     }
-    
-    //키워드로 스크린샷 서치
-/*   func screenshotSearch(keyword: String){
-        let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
-        request.predicate = NSPredicate(format: "content CONTAINS[cd] %@", keyword)
-        do{
-            fetchedRecordArray = try context.fetch(request) //조건에 맞는 레코드들 저장
-        }catch{
-            print("coredata fetch error")
-        }
-        if(fetchedRecordArray.count > 0){
-            for textRecord in fetchedRecordArray{
-                //각 레코드들의 localIdentifier만 따로 배열에 저장 후 이를 이용해 뷰에 사진 보여주기
-                let aTextRecord:Screenshot = textRecord
-                searchedLocalIdentifier.append(aTextRecord.localIdentifier!)
-            }
-        }
-        fetchedRecordArray.removeAll()
-        searchedLocalIdentifier.removeAll()
-    }
- */
-    
     func saveRecord(){
         do{ //디비에 변화 저장하는 메소드
             try context.save()
@@ -624,7 +578,6 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
     /// - Tag: RespondToChanges
     func photoLibraryDidChange(_ changeInstance: PHChange) {
         let fetchResultChangeDetails = changeInstance.changeDetails(for: assetsFetchResult)
-        //처음 설치했을 때 assetFetchResult가 없어서 에러남 => 여기서 리퀘스트하면 될 듯 ;가장먼저실행됨!!!!
         guard (fetchResultChangeDetails) != nil else {
             print("No change in fetchResultChangeDetails")
             return;
