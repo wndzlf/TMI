@@ -61,6 +61,9 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
     }
     
     func screenshotSearch(keyword: String){
+        
+        guard let searchVC = storyboard?.instantiateViewController(withIdentifier: "SearchCollectionVC") as? SearchCollectionVC else { return }
+        
         let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
         //SQL query로는 (select * from Text where content LIKE '%keyword%')와 같은 작업
         request.predicate = NSPredicate(format: "text CONTAINS[cd] %@", keyword)
@@ -80,17 +83,22 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         print(searchedLocalIdentifiers)
         let requestOptions = PHImageRequestOptions()
         requestOptions.isSynchronous = false
-        let searchedAssests = PHAsset.fetchAssets(withLocalIdentifiers: searchedLocalIdentifiers, options: nil)
+        
         searchedAssetArray.removeAll()
         searchImages.removeAll()
         
-        if searchedAssests.count == searchedLocalIdentifiers.count {
-            print("asset count: \(searchedAssests.count)")
-            for asset in 0..<searchedAssests.count {
-                let asset = searchedAssests.object(at: asset)
-                searchedAssetArray.append(asset)
+        searchedAssests = PHAsset.fetchAssets(withLocalIdentifiers: searchedLocalIdentifiers, options: nil)
+        if searchedAssests != nil {
+            if searchedAssests.count == searchedLocalIdentifiers.count {
+                print("asset count: \(searchedAssests.count)")
+                for asset in 0..<searchedAssests.count {
+                    let asset = searchedAssests.object(at: asset)
+                    searchedAssetArray.append(asset)
+                    
+                }
+    //            print("searchAsset: \(searchAssets)")
+    //            searchVC.searchedAssetArray = searchedAssetArray
             }
-//            print("searchAsset: \(searchAssets)")
         }
             
 //        imageManager.requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit, options: requestOptions, resultHandler: { result, info in
@@ -102,6 +110,9 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         searchedLocalIdentifiers.removeAll()
         
         if searchedAssetArray.count == fetchedRecordArray.count {
+//            searchVC.fetchedRecordArray = fetchedRecordArray
+//            searchVC.searchedAssetArray = searchedAssetArray
+//            navigationController?.pushViewController(searchVC, animated: true)
             albumGridCollectionView.reloadData()
             
         }

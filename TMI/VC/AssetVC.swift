@@ -71,6 +71,7 @@ class AssetVC: UIViewController, UIScrollViewDelegate {
         // Prepare the options to pass when fetching the (photo, or video preview) image.
         let options = PHImageRequestOptions()
         options.deliveryMode = .highQualityFormat
+        options.resizeMode = .fast
         options.isNetworkAccessAllowed = true
 
         PHImageManager.default().requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFit, options: options,

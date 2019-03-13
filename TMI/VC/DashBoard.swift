@@ -11,10 +11,20 @@ import Photos
 
 class DashBoard: UIViewController, UIPageViewControllerDataSource {
     
+    
+    var asset: PHAsset!
+    
+    var targetSize: CGSize {
+        let scale = UIScreen.main.scale
+        return CGSize(width: PageView.bounds.width * scale, height: PageView.bounds.height * scale)
+    }
+    
+    var fetchResult: PHFetchResult<PHAsset>!
     var selectedImage: UIImage!
     var selectedAlbums: [PHAsset] = []
     var albumIndex: IndexPath = IndexPath()
     var selectedIndex: Int = 0
+
     
     @IBOutlet weak var PageView: UIView!
     
@@ -40,7 +50,7 @@ class DashBoard: UIViewController, UIPageViewControllerDataSource {
     func AssetVCIndex(index: Int) -> AssetVC {
         
         let AssetVC = self.storyboard?.instantiateViewController(withIdentifier: "AssetVC") as! AssetVC
-        AssetVC.selectedImage = convertImageFromAsset(asset: selectedAlbums[index])
+        AssetVC.asset = fetchResult.object(at: index)
         return AssetVC
     }
     

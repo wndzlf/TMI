@@ -17,7 +17,13 @@ import FirebaseMLVision
 
 
 class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
+
+
+    @IBAction func mlBtn(_ sender: Any) {
+        GetAlbums()
+    }
     
+    var searchedAssests : PHFetchResult<PHAsset>!
     @IBOutlet weak var albumGridCollectionView: UICollectionView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
@@ -27,6 +33,8 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
     private let manager = PHImageManager.default()
     private let requestOptions = PHImageRequestOptions()
+    private let options = PHImageRequestOptions()
+
     private let availableWidth = UIScreen.main.bounds.size.width
     private let availableHeight = UIScreen.main.bounds.size.height
     
@@ -164,35 +172,29 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         if isSearch() {
             
             let fetchText: Screenshot
-                fetchText = self.fetchedRecordArray[indexPath.item]
+                fetchText = fetchedRecordArray[indexPath.item]
             activityIndicator.isHidden = false
                 activityIndicator.startAnimating()
-            for searchAsset in self.searchedAssetArray {
-//                self.searchImages.append(self.convertImageFromAsset(asset: searchAsset))
-
-                cell.representedAssetIdentifier = searchAsset.localIdentifier
-                print("localIdentifier: \(searchAsset.localIdentifier)")
-                
-                self.imageManager.requestImage(for: searchAsset,
-                                               targetSize: self.thumbnailSize, contentMode: .aspectFill, options: nil, resultHandler: { image, _ in
+            let option = PHImageRequestOptions()
+            option.resizeMode = .fast
+//            option.deliveryMode = .opportunistic
+            let asset = searchedAssests.object(at: indexPath.item)
+//            for searchAsset in searchedAssetArray {
+                cell.representedAssetIdentifier = asset.localIdentifier
+                print("localIdentifier: \(asset.localIdentifier)")
+                imageManager.requestImage(for: asset,
+                                               targetSize: thumbnailSize, contentMode: .aspectFill, options: option, resultHandler: { image, _ in
                                                 // UIKit may have recycled this cell by the handler's activation time.
                                                 // Set the cell's thumbnail image only if it's still showing the same asset.
-                                                DispatchQueue.main.async {
+                                                if cell.representedAssetIdentifier == asset.localIdentifier {
                                                     cell.thumbnailImage = image
-                                                    self.searchImages.append(cell.thumbnailImage)
                                                     cell.titleLabel.text = fetchText.albumName
                                                     cell.imageCountLabel.text = nil
-                                                    }
-                                                
+                                                    
+                                                }
                                                 
                 })
-                //                self.searchImages.append(self.convertImageFromAsset(asset: searchAsset, targetSize: self.thumbnailSize))
-                
-                //                cell.thumbnailImage = self.searchImages[indexPath.item]
-                
-                //            cell.textLabel.text = fetchText.text
-                //            cell.detailTextLabel.text = fetchText.localIdentifier
-            }
+            
             activityIndicator.stopAnimating()
             
             
@@ -215,8 +217,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         if isSearch() {
             guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else { fatalError("Unexpected ViewController") }
             self.navigationController?.pushViewController(assetVC, animated: true)
-            //            assetVC.selectedImage = searchImages[indexPath.item]
-            assetVC.asset = assetsFetchResult.object(at: indexPath.item)
+            assetVC.asset = searchedAssests.object(at: indexPath.item)
             
         } else {
             guard let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as? AssetGridVC else { fatalError("Unexpected ViewController") }
@@ -224,6 +225,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             self.navigationController?.pushViewController(selectedVC, animated: true)
             PopupAlbumGridVC.currentAlbumIndex = indexPath.item
             selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
+            selectedVC.fetchResult = assetsFetchResult
         }
         
     }
@@ -320,11 +322,12 @@ extension AlbumGridVC {
         //포토라이브러리에서 패치된 사진을 기준으로 디비에서 패치된 사진을 차집합하고 남은 집합이 앱이 중지된 동안에 삽입된 사진을 의미한다.
         let insertedAssetArray  = photoLibraryArray.filter({!(dbArray.contains($0))})
         print("삽입된 사진들 : \(insertedAssetArray)")
-        
+        options.resizeMode = .fast
         for insertedAsset in insertedAssetArray{
             for i in 0..<self.assetsFetchResult.count {
+                
                 if(insertedAsset == self.assetsFetchResult.object(at: i).localIdentifier){
-                    self.imageManager.requestImage(for: self.assetsFetchResult.object(at: i),targetSize: thumbnailSize,contentMode: .aspectFill,options: self.requestOptions,resultHandler: { image, _ in
+                    self.imageManager.requestImage(for: self.assetsFetchResult.object(at: i),targetSize: thumbnailSize,contentMode: .aspectFill,options: self.options ,resultHandler: { image, _ in
                         if let image = image{
                             let maxIndex = self.screenshotPredict(image: image)
                             self.matchPlatform(maxIndex: maxIndex, imageAsset:self.assetsFetchResult.object(at: i))
@@ -334,6 +337,7 @@ extension AlbumGridVC {
             }
         }
         
+        options.resizeMode = .fast
         for album in AlbumGridVC.albumList{
             album.collection = albumDictionary[album.name]!
             album.count = albumDictionary[album.name]!.count
@@ -341,7 +345,7 @@ extension AlbumGridVC {
                 imageManager.requestImage(for: titleImage,
                                           targetSize: thumbnailSize,
                                           contentMode: .aspectFill,
-                                          options: requestOptions,
+                                          options: options,
                                           resultHandler: { image, _ in
                                             album.image = image!})
             } else { album.image = UIImage(named: "LaunchScreen")!}
@@ -416,6 +420,7 @@ extension AlbumGridVC {
                 requestOptions.isSynchronous = true //순차적으로 진행되게 하기위해 true!
                 
 //                requestOptions.deliveryMode = .highQualityFormat
+                requestOptions.resizeMode = .fast
                 for asset in 0..<assetsFetchResult.count {
                     //스크린샷 앨범에서 가져온 사진 오브젝트 하나하나 반복
                     let imageAsset = assetsFetchResult.object(at: asset)
@@ -530,6 +535,29 @@ extension AlbumGridVC {
     }
     
     func screenshotPredict(image: UIImage) -> Int {
+//        var pixelBufferArray: [CVPixelBuffer] = []
+        let model = v3_everyTime()
+        let newSize = CGSize(width: 149.5, height: 149.5)
+        let image = resize(image: image, newSize: newSize)
+        if let pixelBuffer = ImageProcessor.pixelBuffer(forImage: image.cgImage!) {
+//            pixelBufferArray.append(pixelBuffer)
+//            if pixelBufferArray.count == 16 {
+                guard let v3_everyTimeOutput = try? model.prediction(fifo_queue_Dequeue__0: pixelBuffer) else {
+                    fatalError("Unexpected runtime error.")}
+            
+                let featurePointer = UnsafePointer<Double>(OpaquePointer(v3_everyTimeOutput.InceptionV3__Predictions__Reshape_1__0.dataPointer))
+                let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
+                print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
+                return maxIndex//추론 성공
+//            }
+        
+        }
+        return -1//추론 실패
+    }
+    
+    
+    
+    func screenshotPredictOrigin(image: UIImage) -> Int {
 //        var returnMaxIndex:Int?
         
 //        DispatchQueue.main.asyncAfter(deadline: .now()+0.01) { [weak self] in
@@ -563,7 +591,10 @@ extension AlbumGridVC {
 //
 //
 //    }
+ 
 }
+ 
+ 
 
 //MARK:- OCR
 extension AlbumGridVC {

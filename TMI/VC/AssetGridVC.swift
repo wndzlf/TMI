@@ -22,6 +22,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     var selectedIndexPath: [IndexPath] = []
     
     var currentAlbumIndex: Int = 0
+    var fetchResult: PHFetchResult<PHAsset>!
     
     fileprivate let imageManager = PHCachingImageManager()
     fileprivate var thumbnailSize: CGSize!
@@ -76,7 +77,8 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as! AssetGridViewCell
 //        cell.detailImageView.image = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
-        let asset = selectedAlbums[indexPath.item]
+//        let asset = selectedAlbums[indexPath.item]
+        let asset = fetchResult.object(at: indexPath.item)
          cell.representedAssetIdentifier = asset.localIdentifier
         
 //        cell.detailImageView.image = convertImageFromAsset(asset: selectedAlbums[indexPath.row], targetSize: thumbnailSize)
@@ -99,10 +101,12 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             
             ////
             let dashBoard = storyBoard.instantiateViewController(withIdentifier: "DashBoard") as! DashBoard
-            dashBoard.selectedImage = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
+//            dashBoard.selectedImage = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
+            
             dashBoard.selectedAlbums = selectedAlbums
             dashBoard.albumIndex = indexPath
             dashBoard.selectedIndex = indexPath.row
+            dashBoard.fetchResult = fetchResult
             
             self.navigationController?.pushViewController(dashBoard, animated: true)
             
