@@ -9,7 +9,6 @@
 import Foundation
 import UIKit
 
-
 extension UIViewController {
     class func displaySpinner(onView : UIView) -> UIView {
         let spinnerView = UIView.init(frame: onView.bounds)

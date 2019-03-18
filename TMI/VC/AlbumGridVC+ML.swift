@@ -15,21 +15,25 @@ import Accelerate
 import FirebaseMLVision
 //import FirebaseDatabase
 
-
 extension AlbumGridVC {
     //앱 재실행시 포토라이브러리의 변화 탐지
     func DetectChanges() {
+        
         var photoLibraryArray:[String] = []
         var dbArray: [String] = []
         
         //포토라이브러리에서 스크린샷 패치 => 앱 실행시 한 번만 할 수 있도록 추후에 조정
-        let getAlbums : PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumScreenshots, options: PHFetchOptions())
+        let getAlbums : PHFetchResult = PHAssetCollection.fetchAssetCollections(with: .smartAlbum,
+                                                                                subtype: .smartAlbumScreenshots,
+                                                                                options: PHFetchOptions())
+        let fetchOptions = PHFetchOptions()
+        
         guard let assetCollection: PHAssetCollection = getAlbums.firstObject else {return}
         
-        let fetchOptions = PHFetchOptions()
         fetchOptions.predicate = NSPredicate(format: "mediaType = %d", PHAssetMediaType.image.rawValue)
         
         assetsFetchResult = PHAsset.fetchAssets(in: assetCollection, options: fetchOptions)
+        
         if assetsFetchResult.count > 0 {
             for i in 0..<assetsFetchResult.count {
                 let imageAsset = assetsFetchResult.object(at: i)
@@ -39,27 +43,41 @@ extension AlbumGridVC {
         
         //디비에서 모든 스크린샷 레코드의 패치 및 로컬아이덴티파이어 배열에 저장
         let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
+        
         do{
             fetchedRecordArray = try context.fetch(request)
         }catch{
             print("coredata fetch error when detectin changes from PhotoLibrary")
         }
-        if(fetchedRecordArray.count > 0){
-            for record in fetchedRecordArray{
-                dbArray.append(record.localIdentifier!)
+        
+        if fetchedRecordArray.count > 0 {
+            for fetchedRecord in fetchedRecordArray{
+                
+                guard let fetchedRecordLocalIdentifer = fetchedRecord.localIdentifier else {
+                    return
+                }
+                
+                dbArray.append(fetchedRecordLocalIdentifer)
             }
         }
         
         //포토라이브러리에서 삭제된 스크린샷 디비에서 삭제
         //디비에서 패치된 사진을 기준으로 포토라이브러리에서 패치된 사진을 차집합하고 남은 집합이 앱이 중지된 동안에 삭제된 사진을 의미한다.
+        
         let removedAssetArray = dbArray.filter({!(photoLibraryArray.contains($0))})
+        
         print("삭제된 사진들 : \(removedAssetArray)")
         
         for removedAsset in removedAssetArray{
-            for record in fetchedRecordArray{
-                if(removedAsset == record.localIdentifier){
-                    context.delete(record)
-                    do{try context.save()} catch {print("error occurs when record try to be destroyed from db in DetectChanges method : \(error)")}
+            for fetchedRecord in fetchedRecordArray{
+                if removedAsset == fetchedRecord.localIdentifier {
+                    context.delete(fetchedRecord)
+                    
+                    do{
+                        try context.save()
+                    } catch {
+                        print("error occurs when record try to be destroyed from db in DetectChanges method : \(error)")
+                    }
                     break
                 }
             }
@@ -68,7 +86,9 @@ extension AlbumGridVC {
         //포토라이브러리에 삽입된 스크린샷 디비에 추가
         //포토라이브러리에서 패치된 사진을 기준으로 디비에서 패치된 사진을 차집합하고 남은 집합이 앱이 중지된 동안에 삽입된 사진을 의미한다.
         let insertedAssetArray  = photoLibraryArray.filter({!(dbArray.contains($0))})
+        
         print("삽입된 사진들 : \(insertedAssetArray)")
+        
         options.resizeMode = .fast
         for insertedAsset in insertedAssetArray{
             for i in 0..<self.assetsFetchResult.count {
@@ -264,7 +284,12 @@ extension AlbumGridVC {
         //Check return value - If found, then get the first album out
         if let _: AnyObject = collection.firstObject {
             self.albumFound = true
-            assetCollection = collection.firstObject as! PHAssetCollection
+            
+            guard let phAssetCollection = collection.firstObject else {
+                return
+            }
+            
+            assetCollection = phAssetCollection
         } else {
             //If not found - Then create a new album
             PHPhotoLibrary.shared().performChanges({
@@ -276,7 +301,12 @@ extension AlbumGridVC {
                 if (success) {
                     let collectionFetchResult = PHAssetCollection.fetchAssetCollections(withLocalIdentifiers: [self.assetCollectionPlaceholder.localIdentifier], options: nil)
                     print(collectionFetchResult)
-                    self.assetCollection = collectionFetchResult.firstObject as! PHAssetCollection
+                    
+                    guard let phAssetCollection = collection.firstObject else {
+                        return
+                    }
+                    
+                    self.assetCollection = phAssetCollection
                 }
             })
         }
@@ -287,7 +317,7 @@ extension AlbumGridVC {
         var maxValue: Double = 0
         var maxIndex: vDSP_Length = 0
         vDSP_maxviD(array, 1, &maxValue, &maxIndex, vDSP_Length(count))
-        if(maxValue > 0.7){ return (Int(maxIndex), maxValue)}
+        if(maxValue > 0.8){ return (Int(maxIndex), maxValue)}
         else{ return (3, maxValue)}
         
     }

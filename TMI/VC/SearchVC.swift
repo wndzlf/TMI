@@ -15,8 +15,6 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet var tableView: UITableView!
     let searchController = UISearchController(searchResultsController: nil)
 
-//    var candies = [Candy]()
-//    var filteredCandies = [Candy]()
     private let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     private var recordArray = [Screenshot]()
     private var fetchedRecordArray = [Screenshot]()
@@ -31,13 +29,12 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         searchController.searchResultsUpdater = self
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.placeholder = "키워드 입력"
+        
         navigationItem.searchController = searchController
         definesPresentationContext = true
-//        screenshotSearch(keyword: "Instagram")
-//        searchController.searchBar.scopeButtonTitles = ["All", "다음카페", "에브리타임", "Other"]
+        
         searchController.searchBar.delegate = self
     }
-
 
     // MARK: - Table View
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -45,26 +42,13 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-//        if isFiltering() {
-//            searchFooter.setIsFilteringToShow(filteredItemCount: filteredCandies.count, of: candies.count)
-//            return searchedLocalIdentifier.count
-//        }
-
-//        searchFooter.setNotFiltering()
         return fetchedRecordArray.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-//        let candy: Candy
-//        if isFiltering() {
-//            candy = filteredCandies[indexPath.row]
-//        } else {
-//            candy = candies[indexPath.row]
-//        }
-        let fetchText: Screenshot
+        let fetchText: Screenshot = fetchedRecordArray[indexPath.row]
         
-        fetchText = fetchedRecordArray[indexPath.row]
         cell.textLabel!.text = fetchText.text
         cell.detailTextLabel!.text = fetchText.localIdentifier
         return cell
@@ -77,7 +61,7 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
        guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else { fatalError("Unexpected view controller") }
         
-        guard let mainNav = storyBoard.instantiateViewController(withIdentifier: "MainNavigation") as? UINavigationController else { fatalError("Unexpected navi view controller") }
+        guard let _ = storyBoard.instantiateViewController(withIdentifier: "MainNavigation") as? UINavigationController else { fatalError("Unexpected navi view controller") }
         
         let selectedLocalIdentifier = currentCell.detailTextLabel?.text
         
@@ -88,7 +72,7 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
 //            if cell.representedAssetIdentifier =="someuri" {
             
             assetVC.selectedImage = result
-            print("보낼때 이미지: \(assetVC.selectedImage)")
+            print("보낼때 이미지: \(String(describing: assetVC.selectedImage))")
 //                cell.imageview.image = result
             
 //            }
@@ -181,7 +165,7 @@ class SearchVC: UIViewController, UITableViewDataSource, UITableViewDelegate {
         let deleteRequest = NSBatchDeleteRequest(fetchRequest: deleteFetch)
         do {
             try context.execute(deleteRequest)
-        } catch let error as NSError {
+        } catch _ as NSError {
             print("deleteAllCDRecords error")
         }
     }
