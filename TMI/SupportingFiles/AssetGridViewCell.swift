@@ -14,6 +14,7 @@ class AssetGridViewCell: UICollectionViewCell {
     @IBOutlet weak var checkImageView: UIImageView!
     
     var isChecked = false
+    var representedAssetIdentifier: String!
     
     var thumbnailImage: UIImage! {
         didSet {
@@ -31,7 +32,6 @@ class AssetGridViewCell: UICollectionViewCell {
     override func prepareForReuse() {
         
         super.prepareForReuse()
-//        detailImageView.image = nil
-        checkImageView.image = nil
+        detailImageView.image = nil
     }
 }
