@@ -78,12 +78,14 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as! AssetGridViewCell
+
 //        cell.detailImageView.image = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
         let asset = selectedAlbums[indexPath.item]
 //        let asset = fetchResult.object(at: indexPath.item)
+
+
          cell.representedAssetIdentifier = asset.localIdentifier
-        
-//        cell.detailImageView.image = convertImageFromAsset(asset: selectedAlbums[indexPath.row], targetSize: thumbnailSize)
+
         imageManager.requestImage(for: asset, targetSize: thumbnailSize, contentMode: .aspectFill, options: nil, resultHandler: { image, _ in
             // UIKit may have recycled this cell by the handler's activation time.
             // Set the cell's thumbnail image only if it's still showing the same asset.
@@ -132,14 +134,16 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 
 //                let index: Int? = selectedAssetIndex.firstIndex(of: indexPath.item)
 //                selectedAssetIndex.remove(at: index!)
-                let deselectIndex = selectedAssetIndex.filter({ (index) -> Bool in
-                    if index == indexPath.item {
-                        let deselect = selectedAssetIndex.firstIndex(of: index)
-                        selectedAssetIndex.remove(at: deselect!)
-                        return true
-                    }
-                    return false
-                })
+//                let deselectIndex = selectedAssetIndex.filter({ (index) -> Bool in
+//                    if index == indexPath.item {
+//                        let deselect = selectedAssetIndex.firstIndex(of: index)
+//                        print(deselect)
+//                        selectedAssetIndex.remove(at: deselect!)
+//                        print(selectedAssetIndex)
+//                        return true
+//                    }
+//                    return false
+//                })
                 
                 if let indexPath = collectionView.indexPath(for: currentCell) {
                     selectedIndexPath.removeAll { (index) -> Bool in
@@ -152,15 +156,15 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 //                currentCell.layer.borderWidth = 2
 //                currentCell.layer.borderColor = UIColor.init(red: 201/255, green: 201/255, blue: 201/255, alpha: 0.5).cgColor
                 currentCell.checkImageView.isHidden = false
-                selectedAssetIndex.append(indexPath.item)
+
                 if let indexPath = collectionView.indexPath(for: currentCell) {
                     selectedIndexPath.append(indexPath)
+                    print(selectedIndexPath)
                 }
             }
-            print("selectedAsset: \(selectedAssetIndex)")
             
             //이동버튼 활성화 비활성화
-            if selectedAssetIndex.count > 0 {
+            if selectedIndexPath.count > 0 {
                 moveButton.isEnabled = true
                 trashButton.isEnabled = true
                 moveButton.target = self
@@ -186,9 +190,20 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             sender.title = "선택"
             detailCollectionView.allowsMultipleSelection = false
             selectedAssetIndex.removeAll()
-//            selectedIndexPath.removeAll()
-            detailCollectionView.reloadItems(at: selectedIndexPath)
+           
+            for index in selectedIndexPath {
+                if let currentCell = detailCollectionView.cellForItem(at: index) as? AssetGridViewCell {
+                    currentCell.isChecked = false
+                    currentCell.checkImageView.isHidden = true
+                }
+            }
+             detailCollectionView.reloadItems(at: selectedIndexPath)
 //            detailCollectionView.reloadData()
+            selectedIndexPath.removeAll()
+            
+            
+            
+            
         }
     }
     
@@ -237,11 +252,11 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         popVC.didMove(toParent: self)
         
-        for i in selectedAssetIndex {
-            print("selectedImage: \(selectedAlbums[i])")
-            popVC.movingAssets.append(selectedAlbums[i])
+        for i in selectedIndexPath {
+            print("selectedImage: \(selectedAlbums[i.item])")
+            popVC.movingAssets.append(selectedAlbums[i.item])
         }
-        popVC.movingAssetIndexs = selectedAssetIndex
+//        popVC.movingAssetIndexs = selectedAssetIndex
     }
 }
 

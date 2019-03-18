@@ -59,10 +59,12 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     var searchImages: [UIImage] = []
     var isSearchButtonClicked = false
     
+
+    
     fileprivate func setCollectionView() {
         DispatchQueue.main.async {
             self.activityIndicator.startAnimating()
-            if UserDefaults.standard.object(forKey: "theFirstRun") != nil{
+            if UserDefaults.standard.object(forKey: "theFirstRun") != nil {
                 //앱 처음 실행 아님
                 //                        print("recordArray: \(self.recordArray)")
                 self.retrieveAssets()
@@ -89,7 +91,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         setUpSearchController()
         
         let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
-        
         
         //사용자가 사진첩에 접근을 허가했는지
         switch photoAuthorizationStatus {

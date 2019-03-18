@@ -33,6 +33,5 @@ class AssetGridViewCell: UICollectionViewCell {
         
         super.prepareForReuse()
         detailImageView.image = nil
-        checkImageView.image = nil
     }
 }
