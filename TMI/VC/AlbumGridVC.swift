@@ -60,7 +60,12 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     var searchImages: [UIImage] = []
     
+
     var isSearchButtonClicked = false
+
+    var pixelBufferArray: [CVPixelBuffer] = []
+    var maxIndexArray: [Int] = []
+    
 
     fileprivate func setCollectionView() {
         DispatchQueue.main.async {
