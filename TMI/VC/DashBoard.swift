@@ -50,7 +50,7 @@ class DashBoard: UIViewController, UIPageViewControllerDataSource {
     func AssetVCIndex(index: Int) -> AssetVC {
         
         let AssetVC = self.storyboard?.instantiateViewController(withIdentifier: "AssetVC") as! AssetVC
-        AssetVC.asset = fetchResult.object(at: index)
+        AssetVC.asset = selectedAlbums[index]
         return AssetVC
     }
     

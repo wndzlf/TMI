@@ -28,6 +28,8 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     fileprivate var thumbnailSize: CGSize!
     fileprivate var previousPreheatRect = CGRect.zero
     
+    var assetCollection: PHAssetCollection!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -77,8 +79,8 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as! AssetGridViewCell
 //        cell.detailImageView.image = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
-//        let asset = selectedAlbums[indexPath.item]
-        let asset = fetchResult.object(at: indexPath.item)
+        let asset = selectedAlbums[indexPath.item]
+//        let asset = fetchResult.object(at: indexPath.item)
          cell.representedAssetIdentifier = asset.localIdentifier
         
 //        cell.detailImageView.image = convertImageFromAsset(asset: selectedAlbums[indexPath.row], targetSize: thumbnailSize)
@@ -115,7 +117,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             
             //imageVC.selectedImage = convertImageFromAsset(asset: selectedAlbums[indexPath.row])
             //imageVC.selectedAlbums = selectedAlbums
-            print(convertImageFromAsset(asset: selectedAlbums[indexPath.row]))
+//            print(convertImageFromAsset(asset: selectedAlbums[indexPath.row]))
             return
         }
         

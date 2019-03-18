@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		2F10214E21F05AB500C1B0CA /* inception_v3_with_class.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F10214C21F05AB500C1B0CA /* inception_v3_with_class.mlmodel */; };
-		2F10214F21F05AB500C1B0CA /* inception_v3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 2F10214D21F05AB500C1B0CA /* inception_v3.mlmodel */; };
 		2F3DB69121FC4B6500DEE0C7 /* TMImodel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 2F3DB68F21FC4B6500DEE0C7 /* TMImodel.xcdatamodeld */; };
 		2F56E1AD21FB1E3E00CD75A4 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2F56E1AC21FB1E3E00CD75A4 /* GoogleService-Info.plist */; };
 		2F74CCCD21E4D5E60052055D /* ImageProcessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F74CCCC21E4D5E60052055D /* ImageProcessor.swift */; };
@@ -27,6 +25,7 @@
 		FA806BA02209867700EB38D6 /* PopupAlbumGridVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */; };
 		FAA4D7672237B14400E58EFB /* SearchCollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4D7662237B14300E58EFB /* SearchCollectionVC.swift */; };
 		FAA4D7692239189900E58EFB /* AlbumGridVC+ML.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4D7682239189800E58EFB /* AlbumGridVC+ML.swift */; };
+		FAA4D76D22396AF700E58EFB /* final_v3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = FAA4D76C22396AF600E58EFB /* final_v3.mlmodel */; };
 		FAA9C350220AF216003A66A2 /* Photo+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */; };
 		FAB10815220D5BB40097E134 /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB10814220D5BB40097E134 /* SearchVC.swift */; };
 		FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */; };
@@ -35,7 +34,6 @@
 		FAF0DF1C21F1D313003F341F /* AssetGridViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF1B21F1D313003F341F /* AssetGridViewCell.swift */; };
 		FAF0DF1E21F5025F003F341F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF1D21F5025F003F341F /* Extensions.swift */; };
 		FAF0DF2121F5204F003F341F /* AssetVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF2021F5204F003F341F /* AssetVC.swift */; };
-		FAF6DEE62235335A001C70CC /* v3_everyTime.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = FAF6DEE522353350001C70CC /* v3_everyTime.mlmodel */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,8 +55,6 @@
 
 /* Begin PBXFileReference section */
 		087F69E7E33A7776257EB522 /* Pods-TMITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TMITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-TMITests/Pods-TMITests.release.xcconfig"; sourceTree = "<group>"; };
-		2F10214C21F05AB500C1B0CA /* inception_v3_with_class.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = inception_v3_with_class.mlmodel; sourceTree = "<group>"; };
-		2F10214D21F05AB500C1B0CA /* inception_v3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = inception_v3.mlmodel; sourceTree = "<group>"; };
 		2F3DB69021FC4B6500DEE0C7 /* Model.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Model.xcdatamodel; sourceTree = "<group>"; };
 		2F56E1AC21FB1E3E00CD75A4 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "TMI/GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
 		2F74CCCC21E4D5E60052055D /* ImageProcessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageProcessor.swift; sourceTree = "<group>"; };
@@ -87,6 +83,7 @@
 		FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupAlbumGridVC.swift; sourceTree = "<group>"; };
 		FAA4D7662237B14300E58EFB /* SearchCollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCollectionVC.swift; sourceTree = "<group>"; };
 		FAA4D7682239189800E58EFB /* AlbumGridVC+ML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlbumGridVC+ML.swift"; sourceTree = "<group>"; };
+		FAA4D76C22396AF600E58EFB /* final_v3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = final_v3.mlmodel; sourceTree = "<group>"; };
 		FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Photo+Extensions.swift"; sourceTree = "<group>"; };
 		FAB10814220D5BB40097E134 /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVC.swift; sourceTree = "<group>"; };
 		FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCollectionViewCell.swift; sourceTree = "<group>"; };
@@ -95,7 +92,6 @@
 		FAF0DF1B21F1D313003F341F /* AssetGridViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetGridViewCell.swift; sourceTree = "<group>"; };
 		FAF0DF1D21F5025F003F341F /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		FAF0DF2021F5204F003F341F /* AssetVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetVC.swift; sourceTree = "<group>"; };
-		FAF6DEE522353350001C70CC /* v3_everyTime.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = v3_everyTime.mlmodel; sourceTree = "<group>"; };
 		FF1C4C2DF2E73ABE005D7747 /* Pods_TMITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_TMITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -239,9 +235,7 @@
 			isa = PBXGroup;
 			children = (
 				2F74CCCC21E4D5E60052055D /* ImageProcessor.swift */,
-				FAF6DEE522353350001C70CC /* v3_everyTime.mlmodel */,
-				2F10214C21F05AB500C1B0CA /* inception_v3_with_class.mlmodel */,
-				2F10214D21F05AB500C1B0CA /* inception_v3.mlmodel */,
+				FAA4D76C22396AF600E58EFB /* final_v3.mlmodel */,
 			);
 			path = ML;
 			sourceTree = "<group>";
@@ -486,12 +480,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				FA806BA02209867700EB38D6 /* PopupAlbumGridVC.swift in Sources */,
-				2F10214F21F05AB500C1B0CA /* inception_v3.mlmodel in Sources */,
 				FAA4D7672237B14400E58EFB /* SearchCollectionVC.swift in Sources */,
-				FAF6DEE62235335A001C70CC /* v3_everyTime.mlmodel in Sources */,
 				FAA9C350220AF216003A66A2 /* Photo+Extensions.swift in Sources */,
 				FAF0DF2121F5204F003F341F /* AssetVC.swift in Sources */,
-				2F10214E21F05AB500C1B0CA /* inception_v3_with_class.mlmodel in Sources */,
 				FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */,
 				FAB10815220D5BB40097E134 /* SearchVC.swift in Sources */,
 				FABA857D21DD1F2700E6F7F0 /* AlbumModel.swift in Sources */,
@@ -504,6 +495,7 @@
 				E7672B9D22025C0D005E105B /* DashBoard.swift in Sources */,
 				FAF0DF1C21F1D313003F341F /* AssetGridViewCell.swift in Sources */,
 				2F3DB69121FC4B6500DEE0C7 /* TMImodel.xcdatamodeld in Sources */,
+				FAA4D76D22396AF700E58EFB /* final_v3.mlmodel in Sources */,
 				FAA4D7692239189900E58EFB /* AlbumGridVC+ML.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

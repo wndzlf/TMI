@@ -15,13 +15,20 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     
     @IBAction func mlBtn(_ sender: Any) {
-        GetAlbums()
+        UserDefaults.standard.set(false, forKey: "theFirstRun")
+//        GetAlbums()
+//        albumGridCollectionView.reloadData()
     }
     
     
     @IBOutlet weak var albumGridCollectionView: UICollectionView!
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
+    
+    var kakaoTalkCollection: PHAssetCollection?
+    var everyTimeCollection: PHAssetCollection?
+    var instagramCollection: PHAssetCollection?
+    var othersCollection: PHAssetCollection?
     
     var assetsFetchResult: PHFetchResult<PHAsset>!
     let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
@@ -32,7 +39,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     let availableHeight = UIScreen.main.bounds.size.height
     
     static var albumList: [AlbumModel] = []
-    var albumDictionary: [String:[PHAsset]] = ["kakaoTalk":[], "daumCafe": [], "instagram":[], "others":[]]
+    var albumDictionary: [String:[PHAsset]] = ["kakaoTalk":[], "everyTime": [], "instagram":[], "others":[]]
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
     var recordArray = [Screenshot]()
@@ -203,8 +210,10 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             
             self.navigationController?.pushViewController(selectedVC, animated: true)
             PopupAlbumGridVC.currentAlbumIndex = indexPath.item
+
             selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
-            selectedVC.fetchResult = assetsFetchResult
+//            selectedVC.fetchResult = assetsFetchResult
+            
         }
         
     }
