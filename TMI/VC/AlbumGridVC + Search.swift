@@ -36,8 +36,12 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
     
     func updateSearchResults(for searchController: UISearchController) {
         print("업데이트")
-//        let searchBar = searchController.searchBar
-//        screenshotSearch(keyword: searchBar.text!)
+        let searchBar = searchController.searchBar
+        
+        guard let serachBarText = searchBar.text else {
+            return
+        }
+        screenshotSearch(keyword: serachBarText)
         isSearchButtonClicked = false
     }
     
@@ -62,7 +66,9 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
     
     func screenshotSearch(keyword: String){
         
-        guard let searchVC = storyboard?.instantiateViewController(withIdentifier: "SearchCollectionVC") as? SearchCollectionVC else { return }
+        guard let _ = storyboard?.instantiateViewController(withIdentifier: "SearchCollectionVC") as? SearchCollectionVC else {
+            return
+        }
         
         let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
         //SQL query로는 (select * from Text where content LIKE '%keyword%')와 같은 작업
