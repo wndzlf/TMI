@@ -261,11 +261,12 @@ extension AlbumGridVC {
                 
                 requestOptions.deliveryMode = .opportunistic
                 requestOptions.resizeMode = .fast
-                for asset in 0..<assetsFetchResult.count {
-                    
+
+                for index in 0..<assetsFetchResult.count {
+                  
                     //스크린샷 앨범에서 가져온 사진 오브젝트 하나하나 반복
-                    
-                    let imageAsset = assetsFetchResult.object(at: asset)
+                  
+                    let imageAsset = assetsFetchResult.object(at: index)
                     //requestImageForAsset 을 이용해 이미지를 불러온다
                     
                     imageManager.requestImage(for: imageAsset,
@@ -273,9 +274,32 @@ extension AlbumGridVC {
                                               contentMode: .aspectFill,
                                               options: requestOptions,
                                               resultHandler: { image, _ in
-                                                let maxIndex = self.screenshotPredict(image: image!)
-                                                self.matchPlatform(maxIndex: maxIndex, imageAsset: imageAsset)
-                                                self.getText(screenshot: image!, localIdentifier: imageAsset.localIdentifier, maxIndex: maxIndex)
+                                                let newSize = CGSize(width: 149.5, height: 149.5)
+                                                let newImage = self.resize(image: image!, newSize: newSize)
+                                                
+                                                if let pixelBuffer = ImageProcessor.pixelBuffer(forImage: newImage.cgImage!) {                                                self.pixelBufferArray.append(pixelBuffer)
+                                                }
+//                                                let maxIndex = self.screenshotPredict(image: image!)
+//                                                self.matchPlatform(maxIndex: maxIndex, imageAsset: imageAsset)
+//                                                self.getText(screenshot: image!, localIdentifier: imageAsset.localIdentifier, maxIndex: maxIndex)
+                    })
+                }
+                
+                batchScreenshotPredict()
+                
+                for index in 0..<assetsFetchResult.count {
+                    //스크린샷 앨범에서 가져온 사진 오브젝트 하나하나 반복
+                    let imageAsset = assetsFetchResult.object(at: index)
+                    //requestImageForAsset 을 이용해 이미지를 불러온다
+                    imageManager.requestImage(for: imageAsset,
+                                              targetSize: thumbnailSize,
+                                              contentMode: .aspectFill,
+                                              options: requestOptions,
+                                              resultHandler: { image, _ in
+                                                    self.matchPlatform(maxIndex: self.maxIndexArray[index], imageAsset: imageAsset)
+                                                    self.getText(screenshot: image!, localIdentifier: imageAsset.localIdentifier, maxIndex: self.maxIndexArray[index])
+                                                
+                                                
                     })
                 }
                 
@@ -415,9 +439,7 @@ extension AlbumGridVC {
     
     func screenshotPredict(image: UIImage) -> Int {
         let model = final_v3()
-        let newSize = CGSize(width: 149.5, height: 149.5) //size 299..?
-        
-        //let newSize = CGSize(width: availableWidth, height: availableHeight)
+        let newSize = CGSize(width: 149.5, height: 149.5)
         let image = resize(image: image, newSize: newSize)
         
         guard let cgImage = image.cgImage else {
@@ -439,6 +461,25 @@ extension AlbumGridVC {
         print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
         
         return maxIndex//추론 성공
+    }
+    
+    func batchScreenshotPredict(){
+        let model = final_v3()
+        var finalInputArray: [final_v3Input] = []
+        for i in pixelBufferArray {
+            finalInputArray.append(final_v3Input(Mul__0: i))
+        }
+        print(finalInputArray)
+        guard let final_v3OutputArray = try? model.predictions(inputs: finalInputArray) else {
+            fatalError("predictions error")
+        }
+        
+        for final_v3Output in final_v3OutputArray {
+            let featurePointer = UnsafePointer<Double>(OpaquePointer(final_v3Output.final_result__0.dataPointer))
+            let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
+            print("이름은 " + String(maxIndex) + ", 값은 " + String(maxValue))
+            maxIndexArray.append(maxIndex)
+        }
     }
 }
 
