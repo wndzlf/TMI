@@ -376,8 +376,6 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
                     
                 }
             }
-            //        OperationQueue.main.addOperation {
-            
             self.albumGridCollectionView.reloadData()
             resetCachedAssets()
             
@@ -402,6 +400,7 @@ extension AlbumGridVC {
     fileprivate func updateCachedAssets() {
         // Update only if the view is visible.
         guard isViewLoaded && view.window != nil else { return }
+        guard assetsFetchResult != nil else { return }
         
         // The window you prepare ahead of time is twice the height of the visible rect.
         let visibleRect = CGRect(origin: albumGridCollectionView!.contentOffset, size: albumGridCollectionView!.bounds.size)

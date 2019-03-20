@@ -49,7 +49,7 @@ extension PopupAlbumGridVC: UICollectionViewDelegate, UICollectionViewDataSource
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? AlbumCollectionViewCell else {
-            return .init()
+            fatalError("no album collection view cell")
         }
         
         let album: AlbumModel = AlbumGridVC.albumList[indexPath.item]

@@ -30,6 +30,7 @@
 		FAB10815220D5BB40097E134 /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAB10814220D5BB40097E134 /* SearchVC.swift */; };
 		FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */; };
 		FABA857D21DD1F2700E6F7F0 /* AlbumModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */; };
+		FAC879832241576E00414C55 /* UIColor+Additions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC879822241576E00414C55 /* UIColor+Additions.swift */; };
 		FAF0DF1A21F1CCBD003F341F /* AssetGridVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF1921F1CCBD003F341F /* AssetGridVC.swift */; };
 		FAF0DF1C21F1D313003F341F /* AssetGridViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF1B21F1D313003F341F /* AssetGridViewCell.swift */; };
 		FAF0DF1E21F5025F003F341F /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAF0DF1D21F5025F003F341F /* Extensions.swift */; };
@@ -88,6 +89,7 @@
 		FAB10814220D5BB40097E134 /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVC.swift; sourceTree = "<group>"; };
 		FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumCollectionViewCell.swift; sourceTree = "<group>"; };
 		FABA857C21DD1F2700E6F7F0 /* AlbumModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumModel.swift; sourceTree = "<group>"; };
+		FAC879822241576E00414C55 /* UIColor+Additions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Additions.swift"; path = "SupportingFiles/UIColor+Additions.swift"; sourceTree = SOURCE_ROOT; };
 		FAF0DF1921F1CCBD003F341F /* AssetGridVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetGridVC.swift; sourceTree = "<group>"; };
 		FAF0DF1B21F1D313003F341F /* AssetGridViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetGridViewCell.swift; sourceTree = "<group>"; };
 		FAF0DF1D21F5025F003F341F /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -227,6 +229,7 @@
 				FAF0DF1B21F1D313003F341F /* AssetGridViewCell.swift */,
 				FAF0DF1D21F5025F003F341F /* Extensions.swift */,
 				FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */,
+				FAC879822241576E00414C55 /* UIColor+Additions.swift */,
 			);
 			path = SupportingFiles;
 			sourceTree = "<group>";
@@ -484,6 +487,7 @@
 				FAA9C350220AF216003A66A2 /* Photo+Extensions.swift in Sources */,
 				FAF0DF2121F5204F003F341F /* AssetVC.swift in Sources */,
 				FABA857721DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift in Sources */,
+				FAC879832241576E00414C55 /* UIColor+Additions.swift in Sources */,
 				FAB10815220D5BB40097E134 /* SearchVC.swift in Sources */,
 				FABA857D21DD1F2700E6F7F0 /* AlbumModel.swift in Sources */,
 				2F74CCCD21E4D5E60052055D /* ImageProcessor.swift in Sources */,
@@ -672,8 +676,9 @@
 			baseConfigurationReference = 748311B5CAC1C2DE12142978 /* Pods-TMI.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 43FKD7C656;
+				DEVELOPMENT_TEAM = P3RSK6JP95;
 				INFOPLIST_FILE = TMI/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -682,6 +687,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.hait.TMI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -692,8 +698,9 @@
 			baseConfigurationReference = 899DBDC4C576634DA5F0A2AC /* Pods-TMI.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 43FKD7C656;
+				DEVELOPMENT_TEAM = P3RSK6JP95;
 				INFOPLIST_FILE = TMI/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -702,6 +709,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.hait.TMI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
