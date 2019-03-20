@@ -251,6 +251,29 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
     }
     
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard
+            let headerView = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: "AlbumGridHeaderView",
+                for: indexPath) as? AlbumGridCollectionReusableView
+            else {
+                fatalError("Invalid view type")
+        }
+        var totalScreenshotCount = 0
+        for album in AlbumGridVC.albumList {
+            totalScreenshotCount += album.count
+        }
+        headerView.label.text = "\(totalScreenshotCount)개의 스크린샷을"
+        
+        if let myLabel = headerView.label.text {
+            let attributedString = NSMutableAttributedString(string: myLabel)
+            attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.neonBlue, range: (attributedString.string as NSString).range(of:"\(totalScreenshotCount)개"))
+            headerView.label.attributedText = attributedString
+        }
+        return headerView
+    }
+    
     @objc func addAlbum(_ sender: AnyObject) {
         let alertController = UIAlertController(title: NSLocalizedString("New Album", comment: ""), message: nil, preferredStyle: .alert)
         
@@ -361,6 +384,7 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
                     albumDictionary[key] = value.filter({!(removedObjects.contains($0))})
                 }
             }
+            
             for album in AlbumGridVC.albumList {
                 album.collection = albumDictionary[album.name]!
                 album.count = albumDictionary[album.name]!.count

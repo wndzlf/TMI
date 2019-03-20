@@ -78,25 +78,42 @@
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
-                                <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="E1h-pI-NqX">
+                                <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="AlbumGridHeaderView" id="E1h-pI-NqX" customClass="AlbumGridCollectionReusableView" customModule="TMI" customModuleProvider="target">
                                     <rect key="frame" x="0.0" y="0.0" width="375" height="62"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="개의 스크린 샷을" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ubf-If-ePg">
-                                            <rect key="frame" x="8" y="8" width="193" height="28"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="정리해드렸어요" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ew3-BJ-ABx">
+                                            <rect key="frame" x="16" y="28" width="140" height="28"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="정리해드렸어요" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ew3-BJ-ABx">
-                                            <rect key="frame" x="8" y="30" width="140" height="28"/>
-                                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UxV-1Z-JhL">
+                                            <rect key="frame" x="162" y="31" width="20" height="22"/>
+                                            <state key="normal" image="buttonsReset"/>
+                                            <connections>
+                                                <action selector="resetAction:" destination="E1h-pI-NqX" eventType="touchUpInside" id="q1D-v0-4je"/>
+                                            </connections>
+                                        </button>
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="개의 스크린 샷을" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ubf-If-ePg">
+                                            <rect key="frame" x="16" y="0.0" width="155" height="28"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
+                                    <constraints>
+                                        <constraint firstItem="ew3-BJ-ABx" firstAttribute="centerY" secondItem="UxV-1Z-JhL" secondAttribute="centerY" id="1Kt-3K-pX4"/>
+                                        <constraint firstItem="ew3-BJ-ABx" firstAttribute="leading" secondItem="Ubf-If-ePg" secondAttribute="leading" id="4Cx-kd-f8O"/>
+                                        <constraint firstItem="Ubf-If-ePg" firstAttribute="top" secondItem="E1h-pI-NqX" secondAttribute="top" id="4iQ-ll-Rcb"/>
+                                        <constraint firstItem="ew3-BJ-ABx" firstAttribute="top" secondItem="Ubf-If-ePg" secondAttribute="bottom" id="TiO-l1-Go4"/>
+                                        <constraint firstItem="UxV-1Z-JhL" firstAttribute="leading" secondItem="ew3-BJ-ABx" secondAttribute="trailing" constant="6" id="moT-iz-wqX"/>
+                                        <constraint firstItem="Ubf-If-ePg" firstAttribute="leading" secondItem="E1h-pI-NqX" secondAttribute="leading" constant="16" id="rko-Z8-JEn"/>
+                                    </constraints>
+                                    <connections>
+                                        <outlet property="label" destination="Ubf-If-ePg" id="FgA-Hc-Ope"/>
+                                        <outlet property="label2" destination="ew3-BJ-ABx" id="kiH-Hi-iai"/>
+                                    </connections>
                                 </collectionReusableView>
                             </collectionView>
                             <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="avK-hm-xfv">
@@ -699,6 +716,7 @@
     </scenes>
     <resources>
         <image name="btCheckActive" width="20" height="20"/>
+        <image name="buttonsReset" width="20" height="20"/>
         <image name="imgFolder" width="120" height="120"/>
         <image name="imgLogoBar32Px" width="32" height="32"/>
         <image name="imgLogoMain92Px" width="92" height="147"/>
