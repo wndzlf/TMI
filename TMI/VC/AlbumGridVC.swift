@@ -10,63 +10,69 @@ import UIKit
 import Photos
 import CoreData
 
-
 class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
-    
     
     @IBAction func mlBtn(_ sender: Any) {
         UserDefaults.standard.set(false, forKey: "theFirstRun")
-//        GetAlbums()
-//        albumGridCollectionView.reloadData()
     }
     
-    
     @IBOutlet weak var albumGridCollectionView: UICollectionView!
+    
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
+    
     @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
     
-    var kakaoTalkCollection: PHAssetCollection?
-    var everyTimeCollection: PHAssetCollection?
-    var instagramCollection: PHAssetCollection?
-    var othersCollection: PHAssetCollection?
-    
     var assetsFetchResult: PHFetchResult<PHAsset>!
+    
     let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
+    
     let requestOptions = PHImageRequestOptions()
+    
     let options = PHImageRequestOptions()
     
-    let availableWidth = UIScreen.main.bounds.size.width
-    let availableHeight = UIScreen.main.bounds.size.height
-    
     static var albumList: [AlbumModel] = []
+    
     var albumDictionary: [String:[PHAsset]] = ["kakaoTalk":[], "everyTime": [], "instagram":[], "others":[]]
     
     let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
     var recordArray = [Screenshot]()
+    
     var fetchedRecordArray = [Screenshot]()
+    
     var searchedLocalIdentifiers: [String] = []
+    
     var searchedAssests : PHFetchResult<PHAsset>!
     
     var assetCollection: PHAssetCollection!
+    
     var albumFound : Bool = false
+    
     var assetCollectionPlaceholder: PHObjectPlaceholder!
     
     var thumbnailSize: CGSize!
+    
     var previousPreheatRect = CGRect.zero
     
     var searchController: UISearchController!
+    
     var searchedAssetArray: [PHAsset] = []
+    
     var searchImages: [UIImage] = []
-    var isSearchButtonClicked = false
     
 
+    var isSearchButtonClicked = false
+
+    var pixelBufferArray: [CVPixelBuffer] = []
+    var maxIndexArray: [Int] = []
     
+
     fileprivate func setCollectionView() {
         DispatchQueue.main.async {
+            
             self.activityIndicator.startAnimating()
+            
             if UserDefaults.standard.object(forKey: "theFirstRun") != nil {
-                //앱 처음 실행 아님
-                //                        print("recordArray: \(self.recordArray)")
                 self.retrieveAssets()
             } else {
                 UserDefaults.standard.set(true, forKey: "theFirstRun")
@@ -74,22 +80,16 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 //TODO: 인트로 부르기
                 self.GetAlbums()
             }
+            
             self.resetCachedAssets()
+            
             self.albumGridCollectionView.reloadData()
+            
             self.activityIndicator.stopAnimating()
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        albumGridCollectionView.delegate = self
-        albumGridCollectionView.dataSource = self
-        
-        activityIndicator.hidesWhenStopped = true
-        activityIndicator.startAnimating()
-        
-        setUpSearchController()
-        
+    private func authorizatePhotoState() {
         let photoAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
         
         //사용자가 사진첩에 접근을 허가했는지
@@ -120,7 +120,19 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
          */
         
         PHPhotoLibrary.shared().register(self) //포토 라이브러리가 변화될 때마다 델리게이트가 호출됨
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        albumGridCollectionView.delegate = self
+        albumGridCollectionView.dataSource = self
         
+        activityIndicator.hidesWhenStopped = true
+        activityIndicator.startAnimating()
+        
+        setUpSearchController()
+        authorizatePhotoState()
+       
         NotificationCenter.default.addObserver(self, selector: #selector(deleteItem(_:)),
                                                name: NSNotification.Name("deleteAsset"),
                                                object: nil)
@@ -128,6 +140,9 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     /// - Tag: UnregisterChangeObserver
     deinit {
+        NotificationCenter.default.removeObserver(self,
+                                                  name: NSNotification.Name("deleteAsset"),
+                                                  object: nil)
         PHPhotoLibrary.shared().unregisterChangeObserver(self)
     }
     
@@ -136,14 +151,19 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         albumGridCollectionView.reloadData()
         
-        //메인화면 하단툴바 안보이도록 설정
-        navigationController?.setToolbarHidden(true, animated: false)
+        hideBottomToolbar()
         
-        //콜렉션 뷰 thumbnailSize
+        setThumNailSize()
+    }
+    
+    private func hideBottomToolbar() {
+        navigationController?.setToolbarHidden(true, animated: false)
+    }
+    
+    private func setThumNailSize() {
         let scale = UIScreen.main.scale
         let cellSize = collectionViewFlowLayout.itemSize
         thumbnailSize = CGSize(width: cellSize.width * scale, height: cellSize.height * scale)
-        
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -161,33 +181,39 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as! AlbumCollectionViewCell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? AlbumCollectionViewCell else {
+            return .init()
+        }
         
         if isSearch() {
-            let fetchText: Screenshot
-            fetchText = fetchedRecordArray[indexPath.item]
-            activityIndicator.isHidden = false
-            activityIndicator.startAnimating()
+            let fetchText: Screenshot = fetchedRecordArray[indexPath.item]
+            
             let option = PHImageRequestOptions()
-            option.resizeMode = .fast
-            //            option.deliveryMode = .opportunistic
+            
             let asset = searchedAssests.object(at: indexPath.item)
-            //            for searchAsset in searchedAssetArray {
+        
+            activityIndicator.isHidden = false
+            
+            activityIndicator.startAnimating()
+            
+            option.resizeMode = .fast
+            
             cell.representedAssetIdentifier = asset.localIdentifier
+            
             print("localIdentifier: \(asset.localIdentifier)")
             imageManager.requestImage(for: asset,
-                                      targetSize: thumbnailSize, contentMode: .aspectFill, options: option, resultHandler: { image, _ in
+                                      targetSize: thumbnailSize,
+                                      contentMode: .aspectFill,
+                                      options: option, resultHandler: { image, _ in
                                         // UIKit may have recycled this cell by the handler's activation time.
                                         // Set the cell's thumbnail image only if it's still showing the same asset.
                                         if cell.representedAssetIdentifier == asset.localIdentifier {
                                             cell.thumbnailImage = image
                                             cell.titleLabel.text = fetchText.albumName
                                             cell.imageCountLabel.text = nil
-                                            
                                         }
             })
             activityIndicator.stopAnimating()
-            
         } else {
             let album: AlbumModel = AlbumGridVC.albumList[indexPath.item]
             cell.thumbnailImage = album.image
@@ -202,26 +228,32 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         
         if isSearch() {
-            guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else { fatalError("Unexpected ViewController") }
+            guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else {
+                fatalError("Unexpected ViewController")
+            }
+            
             self.navigationController?.pushViewController(assetVC, animated: true)
+            
             assetVC.asset = searchedAssests.object(at: indexPath.item)
             
         } else {
-            guard let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as? AssetGridVC else { fatalError("Unexpected ViewController") }
+            
+            guard let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as? AssetGridVC else {
+                fatalError("Unexpected ViewController")
+            }
             
             self.navigationController?.pushViewController(selectedVC, animated: true)
+            
             PopupAlbumGridVC.currentAlbumIndex = indexPath.item
 
             selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
-//            selectedVC.fetchResult = assetsFetchResult
-            
         }
         
     }
     
-    @objc
-    func addAlbum(_ sender: AnyObject) {
+    @objc func addAlbum(_ sender: AnyObject) {
         let alertController = UIAlertController(title: NSLocalizedString("New Album", comment: ""), message: nil, preferredStyle: .alert)
+        
         alertController.addTextField { textField in
             textField.placeholder = NSLocalizedString("Album Name", comment: "")
         }
@@ -237,27 +269,28 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 })
             }
         })
+        
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alertController.addAction(cancelAction)
         self.present(alertController, animated: true, completion: nil)
     }
     
     @objc func deleteItem(_ notification: Notification) {
-        guard let selectedAlbum: String = notification.userInfo?["selectedAlbum"] as? String else {return}
-        guard let selectedAssetIndex: [Int] = notification.userInfo?["selectedAssetIndex"] as? [Int] else {return}
+        guard let _: String = notification.userInfo?["selectedAlbum"] as? String else {
+            return
+        }
+        
+        guard let selectedAssetIndex: [Int] = notification.userInfo?["selectedAssetIndex"] as? [Int] else {
+            return
+        }
         
         print("1234567890::::::::::::::::::::::::::::::::::")
         
         for i in selectedAssetIndex{
             print("-----",i)
-            //self.albums[selectedAlbum]?.remove(at: i)
-            //AlbumGridVC.albumList[selectedAlbum].collection.remove(at: i)
         }
-        
     }
 }
-
-
 
 //MARK:- CollectionViewFlowLayout
 //cgImage.size = UIImage.size * UIImage.scale
@@ -276,9 +309,6 @@ extension AlbumGridVC: UICollectionViewDelegateFlowLayout {
         return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
     }
 }
-
-
-
 
 extension AlbumGridVC: PHPhotoLibraryChangeObserver {
     /// - Tag: RespondToChanges
@@ -346,8 +376,6 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
                     
                 }
             }
-            //        OperationQueue.main.addOperation {
-            
             self.albumGridCollectionView.reloadData()
             resetCachedAssets()
             
@@ -372,6 +400,7 @@ extension AlbumGridVC {
     fileprivate func updateCachedAssets() {
         // Update only if the view is visible.
         guard isViewLoaded && view.window != nil else { return }
+        guard assetsFetchResult != nil else { return }
         
         // The window you prepare ahead of time is twice the height of the visible rect.
         let visibleRect = CGRect(origin: albumGridCollectionView!.contentOffset, size: albumGridCollectionView!.bounds.size)
