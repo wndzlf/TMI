@@ -614,6 +614,7 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
             for (key, value) in albums {
                 albums[key] = value.filter({!(removedObjects.contains($0))})
             }
+            //앨범 배열 업데이트 => filter로 삭제된 asset을 걸러냄
         }
         for album in AlbumGridVC.albumList{
             album.collection = albums[album.name]!
