@@ -22,6 +22,8 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
     
+    @IBOutlet weak var tempView: UIView!
+    
     var assetsFetchResult: PHFetchResult<PHAsset>!
     
     let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
@@ -38,12 +40,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     var recordArray = [Screenshot]()
     
-    var fetchedRecordArray = [Screenshot]()
-    
-    var searchedLocalIdentifiers: [String] = []
-    
-    var searchedAssests : PHFetchResult<PHAsset>!
-    
     var assetCollection: PHAssetCollection!
     
     var albumFound : Bool = false
@@ -54,7 +50,13 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     var previousPreheatRect = CGRect.zero
     
+    var fetchedRecordArray = [Screenshot]()
+    
+    var searchedLocalIdentifiers: [String] = []
+    
     var searchController: UISearchController!
+    
+    var searchedAssests : PHFetchResult<PHAsset>!
     
     var searchedAssetArray: [PHAsset] = []
     
@@ -132,7 +134,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         setUpSearchController()
         authorizatePhotoState()
-       
+       addButtonsToNavigationBar()
         NotificationCenter.default.addObserver(self, selector: #selector(deleteItem(_:)),
                                                name: NSNotification.Name("deleteAsset"),
                                                object: nil)
@@ -154,6 +156,32 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         hideBottomToolbar()
         
         setThumNailSize()
+    }
+    
+    func addButtonsToNavigationBar(){
+        let plusButton = UIButton(type: UIButton.ButtonType.custom)
+        
+        plusButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+//        plusButton.addTarget(self, action: "plusButtonTapped", for: .touchUpInside)
+        plusButton.setImage(UIImage(named: "buttonsPlus"), for: .normal)
+        
+        let plusBarButtonItem = UIBarButtonItem(customView: plusButton)
+        
+        let searchButton = UIButton(type: UIButton.ButtonType.custom)
+        searchButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        searchButton.addTarget(self, action: "searchButtonTapped", for: .touchUpInside)
+        searchButton.setImage(UIImage(named: "buttonsSearch"), for: .normal)
+        
+        let userBarButtonItem = UIBarButtonItem(customView: searchButton)
+        
+        self.navigationItem.leftBarButtonItems = [plusBarButtonItem, userBarButtonItem]
+    }
+    
+    @objc func searchButtonTapped() {
+        guard let searchVC = storyboard?.instantiateViewController(withIdentifier: "SearchVC") else {
+            fatalError("No searchVC")
+        }
+        navigationController?.pushViewController(searchVC, animated: true)
     }
     
     private func hideBottomToolbar() {

@@ -75,7 +75,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         let asset = selectedAlbums[indexPath.item]
         
         guard let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as? AssetGridViewCell else {
-            return .init()
+            fatalError("no assetGridViewCell")
         }
         
         cell.representedAssetIdentifier = asset.localIdentifier

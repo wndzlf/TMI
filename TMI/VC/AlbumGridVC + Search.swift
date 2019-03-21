@@ -25,7 +25,8 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         
         searchController.searchBar.becomeFirstResponder()
         
-        navigationItem.titleView = searchController.searchBar
+//        navigationItem.titleView = searchController.searchBar
+//        tempView.addSubview(searchController.searchBar)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -41,6 +42,7 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         guard let serachBarText = searchBar.text else {
             return
         }
+        
         screenshotSearch(keyword: serachBarText)
         isSearchButtonClicked = false
     }

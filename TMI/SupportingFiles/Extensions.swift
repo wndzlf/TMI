@@ -75,7 +75,7 @@ extension UIViewController {
     //커스텀 백버튼 설정
     func setBackBtn(color : UIColor){
         
-        let backBTN = UIBarButtonItem(image: UIImage(named: "icHeaderArrowBack"), //백버튼 이미지 파일 이름에 맞게 변경해주세요.
+        let backBTN = UIBarButtonItem(image: UIImage(named: "buttonsArrowBack"), //백버튼 이미지 파일 이름에 맞게 변경해주세요.
             style: .plain,
             target: self,
             action: #selector(self.pop))
@@ -129,7 +129,7 @@ extension UIView {
     //뷰 그림자 설정
     //color: 색상, opacity: 그림자 투명도, offset: 그림자 위치, radius: 그림자 크기
     func dropShadow(color: UIColor, opacity: Float = 0.5, offSet: CGSize, radius: CGFloat = 1, scale: Bool = true) {
-        layer.masksToBounds = false
+//        layer.masksToBounds = false
         layer.shadowColor = color.cgColor
         layer.shadowOpacity = opacity
         layer.shadowOffset = offSet
@@ -216,3 +216,31 @@ extension Array where Element: Equatable {
 }
 
 
+extension String {
+    
+    var estimateCGRect: CGRect {
+        let size = CGSize(width: 200, height: 1000)
+        let option = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+        
+        return NSString(string: self)
+            .boundingRect(with: size,
+                          options: option,
+                          attributes: [NSAttributedString.Key.font:
+                            UIFont.systemFont(ofSize: 16)],
+                          context: nil)
+    }
+    
+    func getEstimateCGRectWith(_ fontSize: CGFloat) -> CGRect {
+        let width = UIScreen.main.bounds.width - 135
+        let size = CGSize(width: width, height: 500)
+        let option = NSStringDrawingOptions.usesFontLeading.union(.usesLineFragmentOrigin)
+        
+        return NSString(string: self)
+            .boundingRect(with: size,
+                          options: option,
+                          attributes: [NSAttributedString.Key.font:
+                            UIFont.systemFont(ofSize: fontSize)],
+                          context: nil)
+    }
+    
+}
