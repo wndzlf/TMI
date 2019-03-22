@@ -36,6 +36,12 @@ class AssetGridLayout: UICollectionViewLayout {
         guard cache.isEmpty == true, let collectionView = collectionView else {
             return
         }
+        
+        // Add Attributes for section header
+        let headerAtrributes = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, with: IndexPath(item: 0, section: 0))
+        headerAtrributes.frame = CGRect(x: 0, y: 0, width: self.collectionView!.bounds.size.width, height: 70)
+        cache.append(headerAtrributes)
+        
         // 2. Pre-Calculates the X Offset for every column and adds an array to increment the currently max Y Offset for each column
         let columnWidth = contentWidth / CGFloat(numberOfColumns)
         var xOffset = [CGFloat]()
@@ -43,7 +49,7 @@ class AssetGridLayout: UICollectionViewLayout {
             xOffset.append(CGFloat(column) * columnWidth)
         }
         var column = 0
-        var yOffset = [CGFloat](repeating: 0, count: numberOfColumns)
+        var yOffset = [CGFloat](repeating: headerAtrributes.frame.height, count: numberOfColumns)
         
         // 3. Iterates through the list of items in the first section
         for item in 0 ..< collectionView.numberOfItems(inSection: 0) {
@@ -85,5 +91,15 @@ class AssetGridLayout: UICollectionViewLayout {
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         return cache[indexPath.item]
     }
+    
+    override func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        let attributes = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: elementKind, with: indexPath)
+        attributes.size.height = 70.0
+        attributes.frame = (collectionView?.frame)!
+        //attributes.frame = (self.collectionView?.frame)!
+        return attributes
+    }
+    
+
     
 }

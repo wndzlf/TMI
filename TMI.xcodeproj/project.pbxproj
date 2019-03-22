@@ -26,6 +26,8 @@
 		FA806BA02209867700EB38D6 /* PopupAlbumGridVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */; };
 		FA8A9B922243D97500D9F2C6 /* SearchWordCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8A9B912243D97500D9F2C6 /* SearchWordCollectionViewCell.swift */; };
 		FA8A9B942243FA2D00D9F2C6 /* AssetGridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8A9B932243FA2C00D9F2C6 /* AssetGridLayout.swift */; };
+		FA8A9B9E22454ED800D9F2C6 /* AssetGridCollectionReusableView.xib in Resources */ = {isa = PBXBuildFile; fileRef = FA8A9B9C22454ED700D9F2C6 /* AssetGridCollectionReusableView.xib */; };
+		FA8A9B9F22454ED800D9F2C6 /* AssetGridCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8A9B9D22454ED700D9F2C6 /* AssetGridCollectionReusableView.swift */; };
 		FAA4D7672237B14400E58EFB /* SearchCollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4D7662237B14300E58EFB /* SearchCollectionVC.swift */; };
 		FAA4D7692239189900E58EFB /* AlbumGridVC+ML.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4D7682239189800E58EFB /* AlbumGridVC+ML.swift */; };
 		FAA4D76D22396AF700E58EFB /* final_v3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = FAA4D76C22396AF600E58EFB /* final_v3.mlmodel */; };
@@ -88,6 +90,8 @@
 		FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupAlbumGridVC.swift; sourceTree = "<group>"; };
 		FA8A9B912243D97500D9F2C6 /* SearchWordCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchWordCollectionViewCell.swift; sourceTree = "<group>"; };
 		FA8A9B932243FA2C00D9F2C6 /* AssetGridLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AssetGridLayout.swift; path = TMI/SupportingFiles/AssetGridLayout.swift; sourceTree = SOURCE_ROOT; };
+		FA8A9B9C22454ED700D9F2C6 /* AssetGridCollectionReusableView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AssetGridCollectionReusableView.xib; sourceTree = "<group>"; };
+		FA8A9B9D22454ED700D9F2C6 /* AssetGridCollectionReusableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetGridCollectionReusableView.swift; sourceTree = "<group>"; };
 		FAA4D7662237B14300E58EFB /* SearchCollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCollectionVC.swift; sourceTree = "<group>"; };
 		FAA4D7682239189800E58EFB /* AlbumGridVC+ML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlbumGridVC+ML.swift"; sourceTree = "<group>"; };
 		FAA4D76C22396AF600E58EFB /* final_v3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = final_v3.mlmodel; sourceTree = "<group>"; };
@@ -234,6 +238,8 @@
 				FA01646F22425D7C00DBDF60 /* AlbumGridCollectionReusableView.swift */,
 				FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */,
 				FAF0DF1B21F1D313003F341F /* AssetGridViewCell.swift */,
+				FA8A9B9D22454ED700D9F2C6 /* AssetGridCollectionReusableView.swift */,
+				FA8A9B9C22454ED700D9F2C6 /* AssetGridCollectionReusableView.xib */,
 				FA8A9B912243D97500D9F2C6 /* SearchWordCollectionViewCell.swift */,
 				FA8A9B932243FA2C00D9F2C6 /* AssetGridLayout.swift */,
 				FAF0DF1D21F5025F003F341F /* Extensions.swift */,
@@ -364,6 +370,7 @@
 				2F56E1AD21FB1E3E00CD75A4 /* GoogleService-Info.plist in Resources */,
 				FA329B4621D8C30300C6C485 /* Assets.xcassets in Resources */,
 				FA329B4421D8C30100C6C485 /* Main.storyboard in Resources */,
+				FA8A9B9E22454ED800D9F2C6 /* AssetGridCollectionReusableView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -501,6 +508,7 @@
 				FAC879832241576E00414C55 /* UIColor+Additions.swift in Sources */,
 				FAB10815220D5BB40097E134 /* SearchVC.swift in Sources */,
 				FABA857D21DD1F2700E6F7F0 /* AlbumModel.swift in Sources */,
+				FA8A9B9F22454ED800D9F2C6 /* AssetGridCollectionReusableView.swift in Sources */,
 				2F74CCCD21E4D5E60052055D /* ImageProcessor.swift in Sources */,
 				FA329B4121D8C30100C6C485 /* AlbumGridVC.swift in Sources */,
 				FA4F35AA2222C24E009BCB84 /* AlbumGridVC + Search.swift in Sources */,

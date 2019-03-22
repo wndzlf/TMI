@@ -32,6 +32,8 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     var assetCollection: PHAssetCollection!
     
+    var availableWidth: CGFloat = 0
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -50,11 +52,29 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         if let layout = detailCollectionView.collectionViewLayout as? AssetGridLayout {
             layout.delegate = self
         }
+        let headerNib = UINib(nibName: "AssetGridCollectionReusableView", bundle: nil)
+        detailCollectionView.register(headerNib, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header")
+        
+//        detailCollectionView.contentInset = UIEdgeInsets(top: 23, left: 10, bottom: 10, right: 10)
+    
     }
     
     override func viewWillLayoutSubviews() {
+         super.viewWillLayoutSubviews()
+        
         let isNavigationBarHidden = navigationController?.isNavigationBarHidden ?? false
         view.backgroundColor = isNavigationBarHidden ? .black : .white
+        
+        
+//            let width = view.bounds.inset(by: view.safeAreaInsets).width
+//            // Adjust the item size if the available width has changed.
+//            if availableWidth != width {
+//                availableWidth = width
+//                let columnCount = (availableWidth / 166).rounded(.towardZero)
+//                let itemLength = (availableWidth - columnCount - 1) / columnCount
+//                collectionViewFlowLayout.itemSize = CGSize(width: itemLength, height: itemLength)
+//            }
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -68,6 +88,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         let scale = UIScreen.main.scale
         
         let cellSize = collectionViewFlowLayout.collectionViewContentSize
+//        let cellSize = collectionViewFlowLayout.itemSize
         
         
         thumbnailSize = CGSize(width: cellSize.width * scale, height: cellSize.height * scale)
@@ -89,6 +110,23 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         cell.layer.shadowOpacity = 0.15
         cell.layer.masksToBounds = false
         cell.layer.shadowPath = UIBezierPath(roundedRect: cell.bounds, cornerRadius: cell.contentView.layer.cornerRadius).cgPath
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            
+            guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Header", for: indexPath) as? AssetGridCollectionReusableView else {return .init()}
+            
+            headerView.albumNameLabel.text = "Instagram"
+            headerView.albumCountLabel.text = "\(selectedAlbums.count)"
+            
+            return headerView
+            
+        default://I only needed a header so if not header I return an empty view
+            return UICollectionReusableView()
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -264,18 +302,28 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 //MARK:- CollectionViewFlowLayout
 extension AssetGridVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = (view.frame.width) / 4 - 8
-        let height: CGFloat = (view.frame.width) / 4
-        return CGSize(width: width, height: height)
+        
+        let insets = collectionView.contentInset
+        let width: CGFloat = collectionView.bounds.width - (insets.left + insets.right) - 20
+        let columnWidth = width / CGFloat(2)
+        
+        var height: CGFloat = CGFloat()
+        let number = indexPath.item % 4
+        
+        if number == 0 {
+            height = view.frame.height * 0.42
+        } else if number == 1{
+            height = view.frame.height * 0.25
+        } else if number == 2 {
+            height = view.frame.height * 0.19
+        } else if number == 3 {
+            height = view.frame.height * 0.42
+        }
+        
+        return CGSize(width: columnWidth, height: height)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 2
-    }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)
-    }
 }
 
 extension AssetGridVC : AssetGridLayoutDelegate {
