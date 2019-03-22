@@ -46,7 +46,6 @@ class SearchWordCollectionViewCell: UICollectionViewCell {
         layer.shadowRadius = 1
         layer.masksToBounds = false
         
-        
         addSubview(searchWordLabel)
         
         NSLayoutConstraint.activate([
@@ -56,6 +55,4 @@ class SearchWordCollectionViewCell: UICollectionViewCell {
             searchWordLabel.centerYAnchor.constraint(equalTo: centerYAnchor)
             ])
     }
-    
-    
 }

@@ -15,6 +15,7 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
     @IBOutlet weak var searchBarView: UIView!
     
     @IBOutlet weak var searchWordCollectionView: UICollectionView!
+     @IBOutlet weak var searchCollectionView: UICollectionView!
     
     var searchWordArray = ["Instagram", "이체", "에타"]
     
@@ -45,6 +46,28 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
         
         searchWordCollectionView.delegate = self
         searchWordCollectionView.dataSource = self
+//        searchCollectionView.delegate = self
+//        searchCollectionView.dataSource = self
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+//        var bound = CGRect()
+//        bound = searchController.searchBar.frame
+//        bound.size.width = 343
+//        searchController.searchBar.bounds = bound
+        
+          if let textField = searchController.searchBar.value(forKey: "searchField") as? UITextField {
+                    var bounds: CGRect
+                    bounds = textField.frame
+                    bounds.size.height = 60 //(set height whatever you want)
+                    textField.bounds = bounds
+                    textField.borderStyle = UITextField.BorderStyle.none
+            textField.autoresizingMask = UIView.AutoresizingMask.flexibleWidth
+            
+                    textField.font = UIFont.systemFont(ofSize: 20)
+            
+                }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -73,18 +96,32 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
         searchController.obscuresBackgroundDuringPresentation = false
         
         searchController.searchBar.becomeFirstResponder()
+        
+        
         if #available(iOS 11.0, *) {
             searchController.searchBar.backgroundImage = UIImage(named: "searchBarBackGround")
             searchController.searchBar.tintColor = UIColor.black
-            searchController.searchBar.barTintColor = UIColor.white
+            searchController.searchBar.barTintColor = UIColor.red
             
             searchController.searchBar.placeholder = "사진 속의 단어를 검색해보세요"
-            
+            if let textfield = searchController.searchBar.value(forKey: "searchField") as? UITextField {
+                
+                let clearButton = textfield.value(forKey: "clearButton") as! UIButton
+                clearButton.setImage(UIImage(named: "buttonsCancel"), for: .normal)
+                let glassIconView = textfield.leftView as? UIImageView
+                                glassIconView?.image = glassIconView?.image?.withRenderingMode(.alwaysTemplate)
+                                glassIconView?.tintColor = UIColor.white
+//                glassIconView?.image = nil
+                
+            }
         }
-        
-        
      
         searchBarView.addSubview(searchController.searchBar)
+//        searchController.searchBar.translatesAutoresizingMaskIntoConstraints = false
+//        searchController.searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+//        searchController.searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+//        searchController.searchBar.topAnchor.constraint(equalTo: searchBarView.topAnchor).isActive = true
+        searchController.searchBar.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
     }
     
