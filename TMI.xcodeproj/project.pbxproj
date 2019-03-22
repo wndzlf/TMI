@@ -25,6 +25,7 @@
 		FA4F35AA2222C24E009BCB84 /* AlbumGridVC + Search.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA4F35A92222C24D009BCB84 /* AlbumGridVC + Search.swift */; };
 		FA806BA02209867700EB38D6 /* PopupAlbumGridVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */; };
 		FA8A9B922243D97500D9F2C6 /* SearchWordCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8A9B912243D97500D9F2C6 /* SearchWordCollectionViewCell.swift */; };
+		FA8A9B942243FA2D00D9F2C6 /* AssetGridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA8A9B932243FA2C00D9F2C6 /* AssetGridLayout.swift */; };
 		FAA4D7672237B14400E58EFB /* SearchCollectionVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4D7662237B14300E58EFB /* SearchCollectionVC.swift */; };
 		FAA4D7692239189900E58EFB /* AlbumGridVC+ML.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAA4D7682239189800E58EFB /* AlbumGridVC+ML.swift */; };
 		FAA4D76D22396AF700E58EFB /* final_v3.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = FAA4D76C22396AF600E58EFB /* final_v3.mlmodel */; };
@@ -86,6 +87,7 @@
 		FA4F35A92222C24D009BCB84 /* AlbumGridVC + Search.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlbumGridVC + Search.swift"; sourceTree = "<group>"; };
 		FA806B9F2209867700EB38D6 /* PopupAlbumGridVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopupAlbumGridVC.swift; sourceTree = "<group>"; };
 		FA8A9B912243D97500D9F2C6 /* SearchWordCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchWordCollectionViewCell.swift; sourceTree = "<group>"; };
+		FA8A9B932243FA2C00D9F2C6 /* AssetGridLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AssetGridLayout.swift; path = TMI/SupportingFiles/AssetGridLayout.swift; sourceTree = SOURCE_ROOT; };
 		FAA4D7662237B14300E58EFB /* SearchCollectionVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCollectionVC.swift; sourceTree = "<group>"; };
 		FAA4D7682239189800E58EFB /* AlbumGridVC+ML.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AlbumGridVC+ML.swift"; sourceTree = "<group>"; };
 		FAA4D76C22396AF600E58EFB /* final_v3.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = final_v3.mlmodel; sourceTree = "<group>"; };
@@ -233,6 +235,7 @@
 				FABA857621DCBCDF00E6F7F0 /* AlbumCollectionViewCell.swift */,
 				FAF0DF1B21F1D313003F341F /* AssetGridViewCell.swift */,
 				FA8A9B912243D97500D9F2C6 /* SearchWordCollectionViewCell.swift */,
+				FA8A9B932243FA2C00D9F2C6 /* AssetGridLayout.swift */,
 				FAF0DF1D21F5025F003F341F /* Extensions.swift */,
 				FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */,
 				FAC879822241576E00414C55 /* UIColor+Additions.swift */,
@@ -508,6 +511,7 @@
 				FAF0DF1C21F1D313003F341F /* AssetGridViewCell.swift in Sources */,
 				2F3DB69121FC4B6500DEE0C7 /* TMImodel.xcdatamodeld in Sources */,
 				FAA4D76D22396AF700E58EFB /* final_v3.mlmodel in Sources */,
+				FA8A9B942243FA2D00D9F2C6 /* AssetGridLayout.swift in Sources */,
 				FAA4D7692239189900E58EFB /* AlbumGridVC+ML.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

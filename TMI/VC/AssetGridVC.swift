@@ -16,7 +16,8 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     @IBOutlet var trashButton: UIBarButtonItem!
     @IBOutlet var space: UIBarButtonItem!
     
-    @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
+    @IBOutlet weak var collectionViewFlowLayout: AssetGridLayout!
+    
     
     var selectedAssetIndex: [Int] = []
     var selectedAlbums: [PHAsset] = []
@@ -45,6 +46,10 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         moveButton.isEnabled = false
         trashButton.isEnabled = false
+        
+        if let layout = detailCollectionView.collectionViewLayout as? AssetGridLayout {
+            layout.delegate = self
+        }
     }
     
     override func viewWillLayoutSubviews() {
@@ -62,7 +67,8 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         let scale = UIScreen.main.scale
         
-        let cellSize = collectionViewFlowLayout.itemSize
+        let cellSize = collectionViewFlowLayout.collectionViewContentSize
+        
         
         thumbnailSize = CGSize(width: cellSize.width * scale, height: cellSize.height * scale)
     }
@@ -71,12 +77,27 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         return selectedAlbums.count
     }
     
+    fileprivate func setCellAppearance(_ cell: AssetGridViewCell) {
+        cell.contentView.layer.cornerRadius = 8
+        cell.contentView.layer.borderWidth = 0.5
+        cell.contentView.layer.borderColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.1).cgColor
+        cell.contentView.layer.masksToBounds = true
+        
+        cell.layer.shadowColor = UIColor.black.cgColor
+        cell.layer.shadowOffset = CGSize(width: 0, height: 5.0)
+        cell.layer.shadowRadius = 2.0
+        cell.layer.shadowOpacity = 0.15
+        cell.layer.masksToBounds = false
+        cell.layer.shadowPath = UIBezierPath(roundedRect: cell.bounds, cornerRadius: cell.contentView.layer.cornerRadius).cgPath
+    }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let asset = selectedAlbums[indexPath.item]
         
         guard let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as? AssetGridViewCell else {
             fatalError("no assetGridViewCell")
         }
+        setCellAppearance(cell)
         
         cell.representedAssetIdentifier = asset.localIdentifier
         
@@ -257,3 +278,24 @@ extension AssetGridVC: UICollectionViewDelegateFlowLayout {
     }
 }
 
+extension AssetGridVC : AssetGridLayoutDelegate {
+    
+    // 1. Returns the photo height
+    func collectionView(_ collectionView: UICollectionView, heightForPhotoAtIndexPath indexPath:IndexPath) -> CGFloat {
+        
+        let number = indexPath.item % 4
+        
+        if number == 0 {
+            return view.frame.height * 0.42
+        } else if number == 1{
+            return view.frame.height * 0.25
+        } else if number == 2 {
+            return view.frame.height * 0.19
+        } else if number == 3 {
+            return view.frame.height * 0.42
+        }
+        
+        return CGFloat()
+    }
+    
+}
