@@ -22,7 +22,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
     
-    @IBOutlet weak var tempView: UIView!
     
     var assetsFetchResult: PHFetchResult<PHAsset>!
     
@@ -128,6 +127,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         super.viewDidLoad()
         albumGridCollectionView.delegate = self
         albumGridCollectionView.dataSource = self
+        albumGridCollectionView.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 10, right: 0)
         
         activityIndicator.hidesWhenStopped = true
         activityIndicator.startAnimating()
@@ -207,11 +207,28 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         return AlbumGridVC.albumList.count
     }
     
+    fileprivate func setCellAppearance(_ cell: AlbumCollectionViewCell) {
+        cell.titleImageView.layer.cornerRadius = 8
+        cell.titleImageView.layer.borderWidth = 0.5
+        cell.titleImageView.layer.borderColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.1).cgColor
+        cell.titleImageView.layer.masksToBounds = true
+        
+        cell.layer.shadowColor = UIColor.black.cgColor
+        cell.layer.shadowOffset = CGSize(width: 0, height: 5.0)
+        cell.layer.shadowRadius = 25.0
+        cell.layer.shadowOpacity = 0.15
+        cell.layer.masksToBounds = false
+        cell.layer.shadowPath = UIBezierPath(roundedRect: cell.titleImageView.bounds, cornerRadius: cell.titleImageView.layer.cornerRadius).cgPath
+    }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? AlbumCollectionViewCell else {
             return .init()
         }
+        
+        setCellAppearance(cell)
+      
         
         if isSearch() {
             let fetchText: Screenshot = fetchedRecordArray[indexPath.item]
@@ -347,17 +364,17 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 //cgImage.size = UIImage.size * UIImage.scale
 extension AlbumGridVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = (view.frame.width) / 2 - 20
-        let height: CGFloat = (view.frame.width) / 2 + 28
+        let width: CGFloat = (collectionView.frame.width) / 2 - 8
+        let height: CGFloat = width
         return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
+        return 38 + 8 + 12
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        return UIEdgeInsets(top: 28, left: 0, bottom: 10, right: 0)
     }
 }
 

@@ -50,6 +50,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         moveButton.isEnabled = false
         trashButton.isEnabled = false
         
+        detailCollectionView.contentInset = UIEdgeInsets(top: 30, left: 10, bottom: 10, right: 10)
         if let layout = detailCollectionView.collectionViewLayout as? AssetGridLayout {
             layout.delegate = self
         }
@@ -107,7 +108,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         cell.layer.shadowColor = UIColor.black.cgColor
         cell.layer.shadowOffset = CGSize(width: 0, height: 5.0)
-        cell.layer.shadowRadius = 2.0
+        cell.layer.shadowRadius = 25.0
         cell.layer.shadowOpacity = 0.15
         cell.layer.masksToBounds = false
         cell.layer.shadowPath = UIBezierPath(roundedRect: cell.bounds, cornerRadius: cell.contentView.layer.cornerRadius).cgPath

@@ -18,44 +18,44 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="L0K-K9-NGl">
-                                <rect key="frame" x="0.0" y="104" width="375" height="563"/>
+                                <rect key="frame" x="16" y="64" width="343" height="603"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="15" id="8fQ-Bh-rzo">
-                                    <size key="itemSize" width="170" height="220"/>
+                                    <size key="itemSize" width="157" height="216"/>
                                     <size key="headerReferenceSize" width="50" height="62"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <activityIndicatorView key="backgroundView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="gray" id="9px-kL-4dg">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="563"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="343" height="603"/>
                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 </activityIndicatorView>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="zbV-iO-wmm" customClass="AlbumCollectionViewCell" customModule="TMI" customModuleProvider="target">
-                                        <rect key="frame" x="10" y="62" width="170" height="220"/>
+                                        <rect key="frame" x="93" y="62" width="157" height="216"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
-                                            <rect key="frame" x="0.0" y="0.0" width="170" height="220"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="157" height="216"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="med-RU-kL9">
-                                                    <rect key="frame" x="0.0" y="0.0" width="170" height="170"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" secondItem="med-RU-kL9" secondAttribute="height" multiplier="1:1" id="h1G-yK-pG1"/>
-                                                    </constraints>
-                                                </imageView>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="앨범 이름" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0d7-Qf-C8T">
-                                                    <rect key="frame" x="0.0" y="178" width="170" height="19.5"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                                                    <rect key="frame" x="0.0" y="165" width="157" height="19.5"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                                     <nil key="textColor"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="개수" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OJg-vW-44o" userLabel="개수">
-                                                    <rect key="frame" x="0.0" y="199.5" width="170" height="17"/>
-                                                    <fontDescription key="fontDescription" type="system" weight="medium" pointSize="14"/>
+                                                    <rect key="frame" x="0.0" y="186.5" width="157" height="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                                     <color key="textColor" red="0.68235294117647061" green="0.68235294117647061" blue="0.68235294117647061" alpha="1" colorSpace="calibratedRGB"/>
                                                     <nil key="highlightedColor"/>
                                                 </label>
+                                                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="med-RU-kL9">
+                                                    <rect key="frame" x="0.0" y="0.0" width="157" height="157"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="med-RU-kL9" secondAttribute="height" multiplier="1:1" id="h1G-yK-pG1"/>
+                                                    </constraints>
+                                                </imageView>
                                             </subviews>
                                         </view>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -79,24 +79,24 @@
                                     </collectionViewCell>
                                 </cells>
                                 <collectionReusableView key="sectionHeaderView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" reuseIdentifier="AlbumGridHeaderView" id="E1h-pI-NqX" customClass="AlbumGridCollectionReusableView" customModule="TMI" customModuleProvider="target">
-                                    <rect key="frame" x="0.0" y="0.0" width="375" height="62"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="343" height="62"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="정리해드렸어요" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ew3-BJ-ABx">
-                                            <rect key="frame" x="16" y="28" width="140" height="28"/>
+                                            <rect key="frame" x="0.0" y="28" width="140" height="28"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UxV-1Z-JhL">
-                                            <rect key="frame" x="162" y="31" width="20" height="22"/>
+                                            <rect key="frame" x="146" y="31" width="20" height="22"/>
                                             <state key="normal" image="buttonsReset"/>
                                             <connections>
                                                 <action selector="resetAction:" destination="E1h-pI-NqX" eventType="touchUpInside" id="q1D-v0-4je"/>
                                             </connections>
                                         </button>
                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="개의 스크린 샷을" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ubf-If-ePg">
-                                            <rect key="frame" x="16" y="0.0" width="149.5" height="28"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="149.5" height="28"/>
                                             <fontDescription key="fontDescription" type="boldSystem" pointSize="23"/>
                                             <nil key="textColor"/>
                                             <nil key="highlightedColor"/>
@@ -108,7 +108,7 @@
                                         <constraint firstItem="Ubf-If-ePg" firstAttribute="top" secondItem="E1h-pI-NqX" secondAttribute="top" id="4iQ-ll-Rcb"/>
                                         <constraint firstItem="ew3-BJ-ABx" firstAttribute="top" secondItem="Ubf-If-ePg" secondAttribute="bottom" id="TiO-l1-Go4"/>
                                         <constraint firstItem="UxV-1Z-JhL" firstAttribute="leading" secondItem="ew3-BJ-ABx" secondAttribute="trailing" constant="6" id="moT-iz-wqX"/>
-                                        <constraint firstItem="Ubf-If-ePg" firstAttribute="leading" secondItem="E1h-pI-NqX" secondAttribute="leading" constant="16" id="rko-Z8-JEn"/>
+                                        <constraint firstItem="Ubf-If-ePg" firstAttribute="leading" secondItem="E1h-pI-NqX" secondAttribute="leading" id="rko-Z8-JEn"/>
                                     </constraints>
                                     <connections>
                                         <outlet property="label" destination="Ubf-If-ePg" id="FgA-Hc-Ope"/>
@@ -137,18 +137,13 @@
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="검색"/>
                             </button>
-                            <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jGl-gO-ZWe">
-                                <rect key="frame" x="0.0" y="64" width="375" height="42"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                            </view>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
+                            <constraint firstItem="L0K-K9-NGl" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="16" id="FWB-OS-3ql"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="L0K-K9-NGl" secondAttribute="bottom" id="JZ2-Xw-Ow3"/>
-                            <constraint firstItem="L0K-K9-NGl" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="40" id="L9d-j6-puI"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="L0K-K9-NGl" secondAttribute="trailing" id="ZoK-Qx-9Dd"/>
-                            <constraint firstItem="L0K-K9-NGl" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="tTM-hN-2lb"/>
+                            <constraint firstItem="L0K-K9-NGl" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="L9d-j6-puI"/>
+                            <constraint firstItem="L0K-K9-NGl" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" constant="-16" id="QnP-4d-VlP"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
@@ -162,7 +157,6 @@
                         <outlet property="activityIndicator" destination="9px-kL-4dg" id="1lB-Hq-orh"/>
                         <outlet property="albumGridCollectionView" destination="L0K-K9-NGl" id="ALG-hg-QsK"/>
                         <outlet property="collectionViewFlowLayout" destination="8fQ-Bh-rzo" id="Ljd-io-vWN"/>
-                        <outlet property="tempView" destination="jGl-gO-ZWe" id="Jsm-2h-yFp"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

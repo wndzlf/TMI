@@ -39,7 +39,7 @@ class AssetGridLayout: UICollectionViewLayout {
         
         // Add Attributes for section header
         let headerAtrributes = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, with: IndexPath(item: 0, section: 0))
-        headerAtrributes.frame = CGRect(x: 0, y: 0, width: self.collectionView!.bounds.size.width, height: 100)
+        headerAtrributes.frame = CGRect(x: 0, y: 0, width: self.collectionView!.bounds.size.width, height: 70)
         cache.append(headerAtrributes)
         
         // 2. Pre-Calculates the X Offset for every column and adds an array to increment the currently max Y Offset for each column
@@ -94,7 +94,7 @@ class AssetGridLayout: UICollectionViewLayout {
     
     override func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
         let attributes = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: elementKind, with: indexPath)
-        attributes.size.height = 100.0
+        attributes.size.height = 70.0
         attributes.frame = (collectionView?.frame)!
         //attributes.frame = (self.collectionView?.frame)!
         return attributes
