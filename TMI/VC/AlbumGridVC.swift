@@ -273,7 +273,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             self.navigationController?.pushViewController(selectedVC, animated: true)
             
             PopupAlbumGridVC.currentAlbumIndex = indexPath.item
-
+            selectedVC.selectedAlbumTitleString = AlbumGridVC.albumList[indexPath.item].name
             selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
         }
         

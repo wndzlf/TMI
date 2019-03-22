@@ -22,6 +22,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     var selectedAssetIndex: [Int] = []
     var selectedAlbums: [PHAsset] = []
     var selectedIndexPath: [IndexPath] = []
+    var selectedAlbumTitleString = String()
     
     var currentAlbumIndex: Int = 0
     var fetchResult: PHFetchResult<PHAsset>!
@@ -119,7 +120,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             
             guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Header", for: indexPath) as? AssetGridCollectionReusableView else {return .init()}
             
-            headerView.albumNameLabel.text = "Instagram"
+            headerView.albumNameLabel.text = selectedAlbumTitleString
             headerView.albumCountLabel.text = "\(selectedAlbums.count)"
             
             return headerView
