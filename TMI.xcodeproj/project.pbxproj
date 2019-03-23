@@ -15,6 +15,7 @@
 		CC2334D1A33B00163DEF553B /* Pods_TMITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF1C4C2DF2E73ABE005D7747 /* Pods_TMITests.framework */; };
 		E7672B9D22025C0D005E105B /* DashBoard.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7672B9C22025C0D005E105B /* DashBoard.swift */; };
 		FA01647022425D7C00DBDF60 /* AlbumGridCollectionReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA01646F22425D7C00DBDF60 /* AlbumGridCollectionReusableView.swift */; };
+		FA247294224629800080784A /* SearchGridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA247293224629800080784A /* SearchGridLayout.swift */; };
 		FA329B3F21D8C30100C6C485 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B3E21D8C30100C6C485 /* AppDelegate.swift */; };
 		FA329B4121D8C30100C6C485 /* AlbumGridVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA329B4021D8C30100C6C485 /* AlbumGridVC.swift */; };
 		FA329B4421D8C30100C6C485 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FA329B4221D8C30100C6C485 /* Main.storyboard */; };
@@ -73,6 +74,7 @@
 		E7672B9C22025C0D005E105B /* DashBoard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashBoard.swift; sourceTree = "<group>"; };
 		E990F258EA0D4874C10C7DA4 /* Pods-TMIUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TMIUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-TMIUITests/Pods-TMIUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		FA01646F22425D7C00DBDF60 /* AlbumGridCollectionReusableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumGridCollectionReusableView.swift; sourceTree = "<group>"; };
+		FA247293224629800080784A /* SearchGridLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchGridLayout.swift; sourceTree = "<group>"; };
 		FA329B3B21D8C30000C6C485 /* TMI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TMI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FA329B3E21D8C30100C6C485 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FA329B4021D8C30100C6C485 /* AlbumGridVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumGridVC.swift; sourceTree = "<group>"; };
@@ -242,6 +244,7 @@
 				FA8A9B9C22454ED700D9F2C6 /* AssetGridCollectionReusableView.xib */,
 				FA8A9B912243D97500D9F2C6 /* SearchWordCollectionViewCell.swift */,
 				FA8A9B932243FA2C00D9F2C6 /* AssetGridLayout.swift */,
+				FA247293224629800080784A /* SearchGridLayout.swift */,
 				FAF0DF1D21F5025F003F341F /* Extensions.swift */,
 				FAA9C34F220AF216003A66A2 /* Photo+Extensions.swift */,
 				FAC879822241576E00414C55 /* UIColor+Additions.swift */,
@@ -517,6 +520,7 @@
 				FAF0DF1A21F1CCBD003F341F /* AssetGridVC.swift in Sources */,
 				E7672B9D22025C0D005E105B /* DashBoard.swift in Sources */,
 				FAF0DF1C21F1D313003F341F /* AssetGridViewCell.swift in Sources */,
+				FA247294224629800080784A /* SearchGridLayout.swift in Sources */,
 				2F3DB69121FC4B6500DEE0C7 /* TMImodel.xcdatamodeld in Sources */,
 				FAA4D76D22396AF700E58EFB /* final_v3.mlmodel in Sources */,
 				FA8A9B942243FA2D00D9F2C6 /* AssetGridLayout.swift in Sources */,

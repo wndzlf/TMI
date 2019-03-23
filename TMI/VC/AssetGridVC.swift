@@ -67,16 +67,6 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         let isNavigationBarHidden = navigationController?.isNavigationBarHidden ?? false
         view.backgroundColor = isNavigationBarHidden ? .black : .white
         
-        
-//            let width = view.bounds.inset(by: view.safeAreaInsets).width
-//            // Adjust the item size if the available width has changed.
-//            if availableWidth != width {
-//                availableWidth = width
-//                let columnCount = (availableWidth / 166).rounded(.towardZero)
-//                let itemLength = (availableWidth - columnCount - 1) / columnCount
-//                collectionViewFlowLayout.itemSize = CGSize(width: itemLength, height: itemLength)
-//            }
-        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -89,9 +79,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         let scale = UIScreen.main.scale
         
-        let cellSize = collectionViewFlowLayout.collectionViewContentSize
-//        let cellSize = collectionViewFlowLayout.itemSize
-        
+        let cellSize = collectionViewFlowLayout.collectionViewContentSize        
         
         thumbnailSize = CGSize(width: cellSize.width * scale, height: cellSize.height * scale)
     }

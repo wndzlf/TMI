@@ -12,10 +12,17 @@ import Photos
 
 class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UISearchControllerDelegate, UISearchBarDelegate, UISearchResultsUpdating {
     
+    
+    
     @IBOutlet weak var searchBarView: UIView!
     
     @IBOutlet weak var searchWordCollectionView: UICollectionView!
-     @IBOutlet weak var searchCollectionView: UICollectionView!
+    @IBOutlet weak var searchCollectionView: UICollectionView!
+    
+  
+    @IBOutlet weak var collectionViewFlowLayout: SearchGridLayout!
+    
+    let imageManager: PHCachingImageManager = PHCachingImageManager()
     
     var searchWordArray = ["Instagram", "이체", "에타", "토스"]
     
@@ -28,7 +35,7 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
     var searchImages: [UIImage] = []
     
     var isSearchButtonClicked = false
-
+    
     var fetchedRecordArray = [Screenshot]()
     
     var searchedLocalIdentifiers: [String] = []
@@ -37,71 +44,156 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
     
     var recordArray = [Screenshot]()
     
+    fileprivate var thumbnailSize: CGSize!
+    fileprivate var previousPreheatRect = CGRect.zero
     
+    @objc func popSearch(){
+        self.searchController.dismiss(animated: true, completion: nil)
+        self.navigationController?.popViewController(animated: true)
+    }
     override func viewDidLoad() {
         super.viewDidLoad()
         setNavigationBar()
-        setBackBtn(color: .black)
+        
+        let backBTN = UIBarButtonItem(image: UIImage(named: "buttonsArrowBack"),
+            style: .plain,
+            target: self,
+            action: #selector(self.popSearch))
+        navigationItem.leftBarButtonItem = backBTN
+        navigationItem.leftBarButtonItem?.tintColor = .black
+        navigationController?.interactivePopGestureRecognizer?.delegate = self as? UIGestureRecognizerDelegate
+        
+        
         setUpSearchController()
         
         searchWordCollectionView.delegate = self
         searchWordCollectionView.dataSource = self
         
+        searchCollectionView.delegate = self
+        searchCollectionView.dataSource = self
         
-//        searchCollectionView.delegate = self
-//        searchCollectionView.dataSource = self
+        searchCollectionView.contentInset = UIEdgeInsets(top: 34, left: 16, bottom: 0, right: 16)
+        
+        if let layout = searchCollectionView.collectionViewLayout as? SearchGridLayout {
+            layout.delegate = self
+        }
+        
+        searchWordCollectionView.isHidden = false
+        searchCollectionView.isHidden = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        var bound = CGRect()
-//        bound = searchController.searchBar.frame
-//        bound.size.width = 343
-//        searchController.searchBar.bounds = bound
+        //        var bound = CGRect()
+        //        bound = searchController.searchBar.frame
+        //        bound.size.width = 343
+        //        searchController.searchBar.bounds = bound
         
-          if let textField = searchController.searchBar.value(forKey: "searchField") as? UITextField {
-                    var bounds: CGRect
-                    bounds = textField.frame
-                    bounds.size.height = 60 //(set height whatever you want)
-                    textField.bounds = bounds
-                    textField.borderStyle = UITextField.BorderStyle.none
+        let scale = UIScreen.main.scale
+        
+        let cellSize = collectionViewFlowLayout.collectionViewContentSize
+        
+        thumbnailSize = CGSize(width: cellSize.width * scale, height: cellSize.height * scale)
+        
+        if let textField = searchController.searchBar.value(forKey: "searchField") as? UITextField {
+            var bounds: CGRect
+            bounds = textField.frame
+            bounds.size.height = 60 //(set height whatever you want)
+            textField.bounds = bounds
+            textField.borderStyle = UITextField.BorderStyle.none
             textField.autoresizingMask = UIView.AutoresizingMask.flexibleWidth
             
-                    textField.font = UIFont.systemFont(ofSize: 20)
+            textField.font = UIFont.systemFont(ofSize: 20)
             
-                }
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return searchWordArray.count
+        
+        if collectionView == searchCollectionView {
+            
+            return fetchedRecordArray.count
+        } else {
+            return searchWordArray.count
+        }
     }
     
-    fileprivate func setCellAppearance(_ cell: SearchWordCollectionViewCell) {
-        cell.contentView.layer.cornerRadius = 19
-        cell.contentView.layer.borderWidth = 0.5
-        cell.contentView.layer.borderColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.1).cgColor
-        cell.contentView.layer.masksToBounds = true
+    fileprivate func setCellAppearance(_ cell: UICollectionViewCell) {
         
-        cell.layer.shadowColor = UIColor.black.cgColor
-        cell.layer.shadowOffset = CGSize(width: 0, height: 4.0)
-        cell.layer.shadowRadius = 15.0
-        cell.layer.shadowOpacity = 0.05
-        cell.layer.masksToBounds = false
-        cell.layer.shadowPath = UIBezierPath(roundedRect: cell.contentView.bounds, cornerRadius: cell.contentView.layer.cornerRadius).cgPath
+        if cell is SearchWordCollectionViewCell {
+            cell.contentView.layer.cornerRadius = 19
+            cell.contentView.layer.borderWidth = 0.5
+            cell.contentView.layer.borderColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.1).cgColor
+            cell.contentView.layer.masksToBounds = true
+            
+            cell.layer.shadowColor = UIColor.black.cgColor
+            cell.layer.shadowOffset = CGSize(width: 0, height: 4.0)
+            cell.layer.shadowRadius = 15.0
+            cell.layer.shadowOpacity = 0.05
+            cell.layer.masksToBounds = false
+            cell.layer.shadowPath = UIBezierPath(roundedRect: cell.contentView.bounds, cornerRadius: cell.contentView.layer.cornerRadius).cgPath
+        } else if cell is AssetGridViewCell {
+            cell.contentView.layer.cornerRadius = 19
+            cell.contentView.layer.borderWidth = 0.5
+            cell.contentView.layer.borderColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.1).cgColor
+            cell.contentView.layer.masksToBounds = true
+            
+            cell.layer.shadowColor = UIColor.black.cgColor
+            cell.layer.shadowOffset = CGSize(width: 0, height: 5.0)
+            cell.layer.shadowRadius = 25.0
+            cell.layer.shadowOpacity = 0.15
+            cell.layer.masksToBounds = false
+            cell.layer.shadowPath = UIBezierPath(roundedRect: cell.bounds, cornerRadius: cell.contentView.layer.cornerRadius).cgPath
+        }
+        
     }
+    
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchWordCell", for: indexPath) as? SearchWordCollectionViewCell else {
-            fatalError("no searchWordCollectionView Cell")
+        
+        if collectionView == searchCollectionView {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as? AssetGridViewCell else {
+                fatalError("no assetgridviewcell")
+            }
+        
+            setCellAppearance(cell)
+        
+            let fetchText: Screenshot = fetchedRecordArray[indexPath.item]
+        
+            let option = PHImageRequestOptions()
+        
+            let asset = searchedAssests.object(at: indexPath.item)
+        
+            option.resizeMode = .fast
+        
+            cell.representedAssetIdentifier = asset.localIdentifier
+        
+            print("localIdentifier: \(asset.localIdentifier)")
+            imageManager.requestImage(for: asset,
+                                      targetSize: thumbnailSize,
+                                      contentMode: .aspectFill,
+                                      options: option, resultHandler: { image, _ in
+                                        if cell.representedAssetIdentifier == asset.localIdentifier {
+                                            cell.thumbnailImage = image
+                                        }
+            })
+            return cell
+        
+        } else {
+
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchWordCell", for: indexPath) as? SearchWordCollectionViewCell else {
+                fatalError("no searchWordCollectionView Cell")
+            }
+            cell.searchWordLabel.text = searchWordArray[indexPath.item]
+            setCellAppearance(cell)
+            return cell
+            
         }
-        cell.searchWordLabel.text = searchWordArray[indexPath.item]
-        setCellAppearance(cell)
-        return cell
     }
     
     
     
-  
+    
     func setUpSearchController() {
         searchController = UISearchController(searchResultsController: nil)
         searchController.searchResultsUpdater = self
@@ -126,27 +218,27 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
                 let clearButton = textfield.value(forKey: "clearButton") as! UIButton
                 clearButton.setImage(UIImage(named: "buttonsCancel"), for: .normal)
                 let glassIconView = textfield.leftView as? UIImageView
-                                glassIconView?.image = glassIconView?.image?.withRenderingMode(.alwaysTemplate)
-                                glassIconView?.tintColor = UIColor.white
-//                glassIconView?.image = nil
+                glassIconView?.image = glassIconView?.image?.withRenderingMode(.alwaysTemplate)
+                glassIconView?.tintColor = UIColor.white
+                //                glassIconView?.image = nil
                 
             }
         }
-     
+        
         searchBarView.addSubview(searchController.searchBar)
-//        searchController.searchBar.translatesAutoresizingMaskIntoConstraints = false
-//        searchController.searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-//        searchController.searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
-//        searchController.searchBar.topAnchor.constraint(equalTo: searchBarView.topAnchor).isActive = true
+        //        searchController.searchBar.translatesAutoresizingMaskIntoConstraints = false
+        //        searchController.searchBar.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        //        searchController.searchBar.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        //        searchController.searchBar.topAnchor.constraint(equalTo: searchBarView.topAnchor).isActive = true
         searchController.searchBar.heightAnchor.constraint(equalToConstant: 60).isActive = true
         
     }
     
-//    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-//        //        isSearch = false
-////        albumGridCollectionView.reloadData()
-//        self.dismiss(animated: true, completion: nil)
-//    }
+        func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+//            albumGridCollectionView.reloadData()
+            
+            searchWordCollectionView.reloadData()
+        }
     
     func updateSearchResults(for searchController: UISearchController) {
         print("업데이트")
@@ -158,6 +250,7 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
         
         screenshotSearch(keyword: serachBarText)
         isSearchButtonClicked = false
+        hiddenCollectionView()
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
@@ -176,6 +269,16 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
             return true
         } else {
             return searchController.isActive && !searchBarIsEmpty()
+        }
+    }
+    
+    func hiddenCollectionView() {
+        if isSearch() == true {
+            searchWordCollectionView.isHidden = true
+            searchCollectionView.isHidden = false
+        } else {
+            searchWordCollectionView.isHidden = false
+            searchCollectionView.isHidden = true
         }
     }
     
@@ -215,18 +318,9 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
                 for asset in 0..<searchedAssests.count {
                     let asset = searchedAssests.object(at: asset)
                     searchedAssetArray.append(asset)
-                    
                 }
-                //            print("searchAsset: \(searchAssets)")
-                //            searchVC.searchedAssetArray = searchedAssetArray
             }
         }
-        
-        //        imageManager.requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit, options: requestOptions, resultHandler: { result, info in
-        //                if let image = result {
-        //                    self.searchAssets.append(image)
-        //                }
-        //            })
         
         searchedLocalIdentifiers.removeAll()
         
@@ -234,27 +328,48 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
             //            searchVC.fetchedRecordArray = fetchedRecordArray
             //            searchVC.searchedAssetArray = searchedAssetArray
             //            navigationController?.pushViewController(searchVC, animated: true)
-            
-//            albumGridCollectionView.reloadData()
-            
+            searchCollectionView.reloadData()
+            searchCollectionView.collectionViewLayout.invalidateLayout()
         }
     }
 }
-
-
-extension SearchVC: UICollectionViewDelegateFlowLayout {
+extension SearchVC : SearchGridLayoutDelegate {
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = (view.frame.width) * 0.26
-        let height: CGFloat = (view.frame.height) * 0.06
-        return CGSize(width: width, height: height)
+    // 1. Returns the photo height
+    func collectionView(_ collectionView: UICollectionView, heightForPhotoAtIndexPath indexPath:IndexPath) -> CGFloat {
+        
+        let number = indexPath.item % 4
+        
+        if number == 0 {
+            return view.frame.height * 0.42
+        } else if number == 1{
+            return view.frame.height * 0.25
+        } else if number == 2 {
+            return view.frame.height * 0.19
+        } else if number == 3 {
+            return view.frame.height * 0.42
+        }
+        
+        return CGFloat()
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 8
-    }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-    }
 }
+
+
+//extension SearchVC: UICollectionViewDelegateFlowLayout {
+//
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+//        let width: CGFloat = (view.frame.width) * 0.26
+//        let height: CGFloat = (view.frame.height) * 0.06
+//        return CGSize(width: width, height: height)
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+//        return 8
+//    }
+//
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+//        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+//    }
+//}

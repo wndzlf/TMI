@@ -25,7 +25,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     var assetsFetchResult: PHFetchResult<PHAsset>!
     
-    let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
+    let imageManager: PHCachingImageManager = PHCachingImageManager()
     
     let requestOptions = PHImageRequestOptions()
     
@@ -201,9 +201,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     //MARK: - CollectionView
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if isSearch() {
-            return fetchedRecordArray.count
-        }
         return AlbumGridVC.albumList.count
     }
     
@@ -224,47 +221,15 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? AlbumCollectionViewCell else {
-            return .init()
+            fatalError("no albumcollectionviewcell")
         }
         
         setCellAppearance(cell)
-      
-        
-        if isSearch() {
-            let fetchText: Screenshot = fetchedRecordArray[indexPath.item]
-            
-            let option = PHImageRequestOptions()
-            
-            let asset = searchedAssests.object(at: indexPath.item)
-        
-            activityIndicator.isHidden = false
-            
-            activityIndicator.startAnimating()
-            
-            option.resizeMode = .fast
-            
-            cell.representedAssetIdentifier = asset.localIdentifier
-            
-            print("localIdentifier: \(asset.localIdentifier)")
-            imageManager.requestImage(for: asset,
-                                      targetSize: thumbnailSize,
-                                      contentMode: .aspectFill,
-                                      options: option, resultHandler: { image, _ in
-                                        // UIKit may have recycled this cell by the handler's activation time.
-                                        // Set the cell's thumbnail image only if it's still showing the same asset.
-                                        if cell.representedAssetIdentifier == asset.localIdentifier {
-                                            cell.thumbnailImage = image
-                                            cell.titleLabel.text = fetchText.albumName
-                                            cell.imageCountLabel.text = nil
-                                        }
-            })
-            activityIndicator.stopAnimating()
-        } else {
             let album: AlbumModel = AlbumGridVC.albumList[indexPath.item]
             cell.thumbnailImage = album.image
             cell.titleLabel.text = album.name
             cell.imageCountLabel.text = String(album.count)
-        }
+        
         
         return cell
     }
@@ -272,17 +237,17 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         
-        if isSearch() {
-            guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else {
-                fatalError("Unexpected ViewController")
-            }
-            
-            self.navigationController?.pushViewController(assetVC, animated: true)
-            
-            assetVC.asset = searchedAssests.object(at: indexPath.item)
-            
-        } else {
-            
+//        if isSearch() {
+//            guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else {
+//                fatalError("Unexpected ViewController")
+//            }
+//
+//            self.navigationController?.pushViewController(assetVC, animated: true)
+//
+//            assetVC.asset = searchedAssests.object(at: indexPath.item)
+//
+//        } else {
+        
             guard let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as? AssetGridVC else {
                 fatalError("Unexpected ViewController")
             }
@@ -292,7 +257,7 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             PopupAlbumGridVC.currentAlbumIndex = indexPath.item
             selectedVC.selectedAlbumTitleString = AlbumGridVC.albumList[indexPath.item].name
             selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
-        }
+//        }
         
     }
     
