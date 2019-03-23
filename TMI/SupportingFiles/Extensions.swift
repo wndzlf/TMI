@@ -88,6 +88,29 @@ extension UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
+    func setBackBtnSearch(color : UIColor){
+        
+        let backBTN = UIBarButtonItem(image: UIImage(named: "buttonsArrowBack"), //백버튼 이미지 파일 이름에 맞게 변경해주세요.
+            style: .plain,
+            target: self,
+            action: #selector(self.popSearch))
+        navigationItem.leftBarButtonItem = backBTN
+        navigationItem.leftBarButtonItem?.tintColor = color
+        navigationController?.interactivePopGestureRecognizer?.delegate = self as? UIGestureRecognizerDelegate
+    }
+    
+    @objc func popSearch() {
+        guard let count = self.navigationController?.viewControllers.count else {
+            return
+        }
+        guard let searcVC = self.navigationController?.viewControllers[count-2] as? SearchVC else {
+            return
+        }
+        
+        searcVC.searchController.searchBar.isHidden = false
+        self.navigationController?.popViewController(animated: true)
+    }
+    
     //커스텀 팝업 띄우기 애니메이션
     func showAnimate()
     {

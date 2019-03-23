@@ -24,7 +24,7 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
     
     let imageManager: PHCachingImageManager = PHCachingImageManager()
     
-    var searchWordArray = ["Instagram", "이체", "에타", "토스"]
+    var searchWordArray = ["Instagram", "민지", "에타", "토스"]
     
     var searchController: UISearchController!
     
@@ -47,7 +47,7 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
     fileprivate var thumbnailSize: CGSize!
     fileprivate var previousPreheatRect = CGRect.zero
     
-    @objc func popSearch(){
+    @objc func popSearchs(){
         self.searchController.dismiss(animated: true, completion: nil)
         self.navigationController?.popViewController(animated: true)
     }
@@ -58,7 +58,7 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
         let backBTN = UIBarButtonItem(image: UIImage(named: "buttonsArrowBack"),
             style: .plain,
             target: self,
-            action: #selector(self.popSearch))
+            action: #selector(self.popSearchs))
         navigationItem.leftBarButtonItem = backBTN
         navigationItem.leftBarButtonItem?.tintColor = .black
         navigationController?.interactivePopGestureRecognizer?.delegate = self as? UIGestureRecognizerDelegate
@@ -187,6 +187,27 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
             cell.searchWordLabel.text = searchWordArray[indexPath.item]
             setCellAppearance(cell)
             return cell
+            
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        if collectionView == searchCollectionView {
+            guard let assetVC = storyboard?.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else {
+                fatalError("Unexpected ViewController")
+            }
+            
+            self.searchController.dismiss(animated: false, completion: nil)
+            self.navigationController?.pushViewController(assetVC, animated: true)
+            
+            assetVC.asset = searchedAssests.object(at: indexPath.item)
+            
+        } else {
+            guard let currentCell = collectionView.cellForItem(at: indexPath) as? SearchWordCollectionViewCell else {
+                fatalError("no cell")
+            }
+            searchController.searchBar.text = currentCell.searchWordLabel.text
+            searchController.searchBar.becomeFirstResponder()
             
         }
     }
