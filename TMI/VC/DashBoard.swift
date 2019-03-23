@@ -11,36 +11,55 @@ import Photos
 
 class DashBoard: UIViewController, UIPageViewControllerDataSource {
     
-    var selectedImage: UIImage!
+    private var asset: PHAsset!
+    
+    var fetchResult: PHFetchResult<PHAsset>!
+    
     var selectedAlbums: [PHAsset] = []
+    
     var albumIndex: IndexPath = IndexPath()
+    
     var selectedIndex: Int = 0
+    
+    private var targetSize: CGSize {
+        let scale = UIScreen.main.scale
+        return CGSize(width: PageView.bounds.width * scale, height: PageView.bounds.height * scale)
+    }
     
     @IBOutlet weak var PageView: UIView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+    
+        setPageVC()
+    }
+    
+    private func setPageVC() {
+        guard let PageVC = self.storyboard?.instantiateViewController(withIdentifier: "PageVC") as? UIPageViewController else {
+            return
+        }
         
         let InitialView = AssetVCIndex(index: selectedIndex) as AssetVC
         let ViewController = NSArray(object: InitialView)
         
-
-        let PageVC = self.storyboard?.instantiateViewController(withIdentifier: "PageVC") as! UIPageViewController
         PageVC.view.frame = PageView.bounds
         PageView.addSubview(PageVC.view)
         addChild(PageVC)
+        
         PageVC.didMove(toParent: self)
         PageVC.dataSource = self
-        PageVC.setViewControllers(ViewController as? [UIViewController], direction: .forward, animated: true, completion: nil)
         
+        PageVC.setViewControllers(ViewController as? [UIViewController], direction: .forward, animated: true, completion: nil)
     }
     
     //MARK: - Page View
-    
-    func AssetVCIndex(index: Int) -> AssetVC {
+    private func AssetVCIndex(index: Int) -> AssetVC {
         
-        let AssetVC = self.storyboard?.instantiateViewController(withIdentifier: "AssetVC") as! AssetVC
-        AssetVC.selectedImage = convertImageFromAsset(asset: selectedAlbums[index])
+        guard let AssetVC = self.storyboard?.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else {
+            return .init()
+        }
+        AssetVC.asset = selectedAlbums[index]
+        
         return AssetVC
     }
     
@@ -56,6 +75,7 @@ class DashBoard: UIViewController, UIPageViewControllerDataSource {
             selectedIndex += 1
             return nil
         }
+        
         return AssetVCIndex(index: selectedIndex)
     }
     
@@ -68,6 +88,7 @@ class DashBoard: UIViewController, UIPageViewControllerDataSource {
         selectedIndex += 1
         
         print(selectedIndex)
+        
         if selectedIndex > albumIndex.endIndex {
             selectedIndex -= 1
             return nil
@@ -75,6 +96,4 @@ class DashBoard: UIViewController, UIPageViewControllerDataSource {
         return AssetVCIndex(index: selectedIndex)
     }
     //Page View_End
-    
-
 }

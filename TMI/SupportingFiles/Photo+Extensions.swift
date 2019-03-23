@@ -26,11 +26,22 @@ extension UIViewController {
     }
     
     func convertImageFromAsset(asset: PHAsset) -> UIImage {
-        let manager = PHImageManager.default()
+        let manager = PHCachingImageManager.default()
         let option = PHImageRequestOptions()
         var image = UIImage()
         option.isSynchronous = true
         manager.requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFill, options: option, resultHandler: {(result, info) -> Void in
+            image = result!
+        })
+        return image
+    }
+    
+    func convertImageFromAsset(asset: PHAsset, targetSize: CGSize) -> UIImage {
+        let manager = PHCachingImageManager.default()
+        let option = PHImageRequestOptions()
+        var image = UIImage()
+        option.isSynchronous = true
+        manager.requestImage(for: asset, targetSize: targetSize, contentMode: .aspectFill, options: option, resultHandler: {(result, info) -> Void in
             image = result!
         })
         return image

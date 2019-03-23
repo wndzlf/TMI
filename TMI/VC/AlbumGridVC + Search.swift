@@ -25,7 +25,8 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         
         searchController.searchBar.becomeFirstResponder()
         
-        navigationItem.titleView = searchController.searchBar
+//        navigationItem.titleView = searchController.searchBar
+//        tempView.addSubview(searchController.searchBar)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
@@ -36,11 +37,20 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
     
     func updateSearchResults(for searchController: UISearchController) {
         print("업데이트")
-        //        isSearch = true
+        let searchBar = searchController.searchBar
+        
+        guard let serachBarText = searchBar.text else {
+            return
+        }
+        
+        screenshotSearch(keyword: serachBarText)
+        isSearchButtonClicked = false
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         let searchBar = searchController.searchBar
         screenshotSearch(keyword: searchBar.text!)
-        
-        
+        isSearchButtonClicked = true
     }
     
     func searchBarIsEmpty() -> Bool {
@@ -49,16 +59,25 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
     
     func isSearch() -> Bool {
         //        let searchBarScopeIsFiltering = searchController.searchBar.selectedScopeButtonIndex != 0
-        return searchController.isActive && !searchBarIsEmpty()
+        if isSearchButtonClicked == true {
+            return true
+        } else {
+            return searchController.isActive && !searchBarIsEmpty()
+        }
     }
     
     func screenshotSearch(keyword: String){
+        
+        guard let _ = storyboard?.instantiateViewController(withIdentifier: "SearchCollectionVC") as? SearchCollectionVC else {
+            return
+        }
+        
         let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
         //SQL query로는 (select * from Text where content LIKE '%keyword%')와 같은 작업
         request.predicate = NSPredicate(format: "text CONTAINS[cd] %@", keyword)
-        do{
+        do {
             fetchedRecordArray = try context.fetch(request) //조건에 맞는 레코드들 저장
-        }catch{
+        } catch {
             print("coredata fetch error")
         }
         if(fetchedRecordArray.count > 0){
@@ -72,17 +91,22 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         print(searchedLocalIdentifiers)
         let requestOptions = PHImageRequestOptions()
         requestOptions.isSynchronous = false
-        let assets = PHAsset.fetchAssets(withLocalIdentifiers: searchedLocalIdentifiers, options: nil)
-        print(assets.description)
-        searchAssets.removeAll()
         
-        if assets.count == searchedLocalIdentifiers.count {
-            print("asset count: \(assets.count)")
-            for i in 0..<assets.count {
-                let imageAsset = assets.object(at: i)
-                searchAssets.append(imageAsset)
+        searchedAssetArray.removeAll()
+        searchImages.removeAll()
+        
+        searchedAssests = PHAsset.fetchAssets(withLocalIdentifiers: searchedLocalIdentifiers, options: nil)
+        if searchedAssests != nil {
+            if searchedAssests.count == searchedLocalIdentifiers.count {
+                print("asset count: \(searchedAssests.count)")
+                for asset in 0..<searchedAssests.count {
+                    let asset = searchedAssests.object(at: asset)
+                    searchedAssetArray.append(asset)
+                    
+                }
+    //            print("searchAsset: \(searchAssets)")
+    //            searchVC.searchedAssetArray = searchedAssetArray
             }
-            print("searchAsset: \(searchAssets)")
         }
             
 //        imageManager.requestImage(for: asset, targetSize: PHImageManagerMaximumSize, contentMode: .aspectFit, options: requestOptions, resultHandler: { result, info in
@@ -93,8 +117,12 @@ extension AlbumGridVC: UISearchControllerDelegate, UISearchBarDelegate, UISearch
         
         searchedLocalIdentifiers.removeAll()
         
-        if searchAssets.count == fetchedRecordArray.count {
+        if searchedAssetArray.count == fetchedRecordArray.count {
+//            searchVC.fetchedRecordArray = fetchedRecordArray
+//            searchVC.searchedAssetArray = searchedAssetArray
+//            navigationController?.pushViewController(searchVC, animated: true)
             albumGridCollectionView.reloadData()
+            
         }
     }
 }
