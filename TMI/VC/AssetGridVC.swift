@@ -23,6 +23,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     var selectedAlbums: [PHAsset] = []
     var selectedIndexPath: [IndexPath] = []
     var selectedAlbumTitleString = String()
+    var collectionCheckStatus = false
     
     var currentAlbumIndex: Int = 0
     var fetchResult: PHFetchResult<PHAsset>!
@@ -127,6 +128,27 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         }
         setCellAppearance(cell)
         
+        cell.emptyCheckImageView.isHidden = true
+        cell.checkImageView.isHidden = true
+        
+        guard let sublayers = cell.contentView.layer.sublayers else {
+            return .init()
+        }
+        
+        for layer in sublayers {
+            if layer.name == "blueLayer" {
+                layer.removeFromSuperlayer()
+            }
+        }
+        
+        
+        if collectionCheckStatus == true {
+            cell.emptyCheckImageView.isHidden = false
+        } else {
+            cell.emptyCheckImageView.isHidden = true
+            cell.checkImageView.isHidden = true
+        }
+        
         cell.representedAssetIdentifier = asset.localIdentifier
         
         imageManager.requestImage(for: asset, targetSize: thumbnailSize, contentMode: .aspectFill, options: nil, resultHandler: { image, _ in
@@ -166,12 +188,31 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             return
         }
         
+        let blueLayer = CALayer()
+        blueLayer.name = "blueLayer"
+        blueLayer.frame = currentCell.contentView.bounds
+        blueLayer.backgroundColor = UIColor.neonBlue.withAlphaComponent(0.7).cgColor
+        
+        
         
         if currentCell.isChecked {
             print("해제할것")
             currentCell.isChecked = false
             
             currentCell.checkImageView.isHidden = true
+            currentCell.emptyCheckImageView.isHidden = false
+            
+            guard let sublayers = currentCell.contentView.layer.sublayers else {
+                return
+            }
+            
+            for layer in sublayers {
+                if layer.name == "blueLayer" {
+                    layer.removeFromSuperlayer()
+                }
+            }
+            
+//            currentCell.layoutSublayers(of: currentCell.contentView.layer)
             
             if let indexPath = collectionView.indexPath(for: currentCell) {
                 selectedIndexPath.removeAll { (index) -> Bool in
@@ -183,6 +224,12 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             currentCell.isChecked = true
             print("선택됨")
             currentCell.checkImageView.isHidden = false
+            currentCell.emptyCheckImageView.isHidden = true
+            
+            currentCell.contentView.layer.insertSublayer(blueLayer, below: currentCell.checkImageView.layer)
+            
+            
+        
             
             if let indexPath = collectionView.indexPath(for: currentCell) {
                 selectedIndexPath.append(indexPath)
@@ -214,8 +261,13 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         if sender.title == "선택" {
             sender.title = "취소"
+            collectionCheckStatus = true
+            detailCollectionView.reloadData()
+            
         } else {
             sender.title = "선택"
+            collectionCheckStatus = false
+            
             detailCollectionView.allowsMultipleSelection = false
             selectedAssetIndex.removeAll()
             
@@ -225,8 +277,9 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                     currentCell.checkImageView.isHidden = true
                 }
             }
-            
-            detailCollectionView.reloadItems(at: selectedIndexPath)
+            UIView.performWithoutAnimation {
+                detailCollectionView.reloadData()
+            }
             selectedIndexPath.removeAll()
         }
     }

@@ -628,22 +628,28 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                                     <color key="backgroundColor" red="0.99607843139999996" green="0.42745098040000001" blue="0.42745098040000001" alpha="1" colorSpace="custom" customColorSpace="calibratedRGB"/>
                                                 </imageView>
-                                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="btCheckActive" translatesAutoresizingMaskIntoConstraints="NO" id="CK3-OH-6j2">
-                                                    <rect key="frame" x="30" y="0.0" width="20" height="20"/>
+                                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iconsSelectFilled" translatesAutoresizingMaskIntoConstraints="NO" id="CK3-OH-6j2">
+                                                    <rect key="frame" x="12" y="12" width="20" height="20"/>
+                                                </imageView>
+                                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="iconsSelectOutlined" translatesAutoresizingMaskIntoConstraints="NO" id="gcZ-6p-UVJ">
+                                                    <rect key="frame" x="12" y="12" width="20" height="20"/>
                                                 </imageView>
                                             </subviews>
                                         </view>
                                         <constraints>
+                                            <constraint firstItem="CK3-OH-6j2" firstAttribute="leading" secondItem="fbt-iT-NqS" secondAttribute="leading" constant="12" id="8gN-PI-iS5"/>
+                                            <constraint firstItem="gcZ-6p-UVJ" firstAttribute="leading" secondItem="fbt-iT-NqS" secondAttribute="leading" constant="12" id="BNm-wi-XVd"/>
                                             <constraint firstAttribute="bottom" secondItem="VJX-Xs-MIB" secondAttribute="bottom" id="CDv-0Y-SJW"/>
                                             <constraint firstItem="VJX-Xs-MIB" firstAttribute="leading" secondItem="fbt-iT-NqS" secondAttribute="leading" id="Q1l-WX-w5k"/>
-                                            <constraint firstItem="CK3-OH-6j2" firstAttribute="trailing" secondItem="VJX-Xs-MIB" secondAttribute="trailing" id="YPI-Jo-55P"/>
+                                            <constraint firstItem="gcZ-6p-UVJ" firstAttribute="top" secondItem="VJX-Xs-MIB" secondAttribute="top" constant="12" id="Xlr-cX-cWS"/>
                                             <constraint firstAttribute="trailing" secondItem="VJX-Xs-MIB" secondAttribute="trailing" id="aPy-qz-sFm"/>
                                             <constraint firstItem="VJX-Xs-MIB" firstAttribute="top" secondItem="fbt-iT-NqS" secondAttribute="top" id="bBw-s0-NQf"/>
-                                            <constraint firstItem="CK3-OH-6j2" firstAttribute="top" secondItem="VJX-Xs-MIB" secondAttribute="top" id="sKm-oR-lLp"/>
+                                            <constraint firstItem="CK3-OH-6j2" firstAttribute="top" secondItem="VJX-Xs-MIB" secondAttribute="top" constant="12" id="sKm-oR-lLp"/>
                                         </constraints>
                                         <connections>
                                             <outlet property="checkImageView" destination="CK3-OH-6j2" id="vYz-wZ-j56"/>
                                             <outlet property="detailImageView" destination="VJX-Xs-MIB" id="i9a-Cc-lHt"/>
+                                            <outlet property="emptyCheckImageView" destination="gcZ-6p-UVJ" id="sOZ-n8-h3w"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -844,6 +850,8 @@
     <resources>
         <image name="btCheckActive" width="20" height="20"/>
         <image name="buttonsReset" width="20" height="20"/>
+        <image name="iconsSelectFilled" width="20" height="20"/>
+        <image name="iconsSelectOutlined" width="20" height="20"/>
         <image name="imgFolder" width="120" height="120"/>
         <image name="imgLogoBar32Px" width="32" height="32"/>
         <image name="imgLogoMain92Px" width="92" height="147"/>

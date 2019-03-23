@@ -14,6 +14,8 @@ class AssetGridViewCell: UICollectionViewCell {
     
     @IBOutlet weak var checkImageView: UIImageView!
     
+    @IBOutlet weak var emptyCheckImageView: UIImageView!
+    
     var isChecked = false
     var representedAssetIdentifier: String!
     
