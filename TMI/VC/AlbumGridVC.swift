@@ -125,6 +125,10 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        
         albumGridCollectionView.delegate = self
         albumGridCollectionView.dataSource = self
         albumGridCollectionView.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 10, right: 0)

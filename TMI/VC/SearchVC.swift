@@ -111,7 +111,14 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         
         if collectionView == searchCollectionView {
-            
+            if fetchedRecordArray.count == 0 {
+                guard let searchString = searchController.searchBar.text else {
+                    return fetchedRecordArray.count
+                }
+                searchCollectionView.setEmptyMessage("'\(searchString)'에 대한 사진이 없어요")
+            } else {
+                searchCollectionView.restore()
+            }
             return fetchedRecordArray.count
         } else {
             return searchWordArray.count
@@ -220,6 +227,9 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
         searchController.searchResultsUpdater = self
         searchController.delegate = self
         searchController.searchBar.delegate = self
+        
+        searchController.searchBar.autocapitalizationType = .none
+        searchController.searchBar.autocorrectionType = .no
         
         searchController.hidesNavigationBarDuringPresentation = false
         searchController.dimsBackgroundDuringPresentation = true
@@ -394,3 +404,48 @@ extension SearchVC : SearchGridLayoutDelegate {
 //        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
 //    }
 //}
+
+
+extension UICollectionView {
+    
+    func setEmptyMessage(_ message: String) {
+        let backView = UIView(frame: CGRect(x: 0, y: 0, width: self.bounds.size.width, height: self.bounds.size.height))
+        backView.sizeToFit()
+
+        let emptyImageView = UIImageView()
+        emptyImageView.contentMode = .scaleAspectFit
+        emptyImageView.image = #imageLiteral(resourceName: "imgError")
+        
+        let messageLabel = UILabel()
+        messageLabel.text = message
+        messageLabel.textColor = UIColor.black.withAlphaComponent(0.8)
+        messageLabel.numberOfLines = 0;
+        messageLabel.textAlignment = .center;
+        messageLabel.font = UIFont.systemFont(ofSize: 15, weight: .medium)
+        messageLabel.sizeToFit()
+        
+        backView.addSubview(emptyImageView)
+        backView.addSubview(messageLabel)
+        
+        emptyImageView.translatesAutoresizingMaskIntoConstraints = false
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            emptyImageView.centerXAnchor.constraint(equalTo: backView.centerXAnchor),
+//            emptyImageView.centerYAnchor.constraint(equalTo: backView.centerYAnchor),
+            
+            NSLayoutConstraint(item: emptyImageView, attribute: .centerY, relatedBy: .equal, toItem: backView, attribute: .centerY, multiplier: 0.5, constant: 0),
+            emptyImageView.widthAnchor.constraint(equalTo: backView.widthAnchor, multiplier: 0.32),
+            emptyImageView.heightAnchor.constraint(equalTo: emptyImageView.heightAnchor),
+            
+            messageLabel.topAnchor.constraint(equalTo: emptyImageView.bottomAnchor, constant: 24),
+            messageLabel.widthAnchor.constraint(equalTo: backView.widthAnchor),
+            ])
+        
+        self.backgroundView = backView;
+    }
+    
+    func restore() {
+        self.backgroundView = nil
+    }
+}
