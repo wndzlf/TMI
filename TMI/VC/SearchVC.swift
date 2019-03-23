@@ -17,7 +17,7 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
     @IBOutlet weak var searchWordCollectionView: UICollectionView!
      @IBOutlet weak var searchCollectionView: UICollectionView!
     
-    var searchWordArray = ["Instagram", "이체", "에타"]
+    var searchWordArray = ["Instagram", "이체", "에타", "토스"]
     
     var searchController: UISearchController!
     
@@ -46,6 +46,8 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
         
         searchWordCollectionView.delegate = self
         searchWordCollectionView.dataSource = self
+        
+        
 //        searchCollectionView.delegate = self
 //        searchCollectionView.dataSource = self
     }
@@ -74,11 +76,26 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
         return searchWordArray.count
     }
     
+    fileprivate func setCellAppearance(_ cell: SearchWordCollectionViewCell) {
+        cell.contentView.layer.cornerRadius = 19
+        cell.contentView.layer.borderWidth = 0.5
+        cell.contentView.layer.borderColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.1).cgColor
+        cell.contentView.layer.masksToBounds = true
+        
+        cell.layer.shadowColor = UIColor.black.cgColor
+        cell.layer.shadowOffset = CGSize(width: 0, height: 4.0)
+        cell.layer.shadowRadius = 15.0
+        cell.layer.shadowOpacity = 0.05
+        cell.layer.masksToBounds = false
+        cell.layer.shadowPath = UIBezierPath(roundedRect: cell.contentView.bounds, cornerRadius: cell.contentView.layer.cornerRadius).cgPath
+    }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SearchWordCell", for: indexPath) as? SearchWordCollectionViewCell else {
             fatalError("no searchWordCollectionView Cell")
         }
         cell.searchWordLabel.text = searchWordArray[indexPath.item]
+        setCellAppearance(cell)
         return cell
     }
     
@@ -228,7 +245,16 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
 extension SearchVC: UICollectionViewDelegateFlowLayout {
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 96, height: 38)
+        let width: CGFloat = (view.frame.width) * 0.26
+        let height: CGFloat = (view.frame.height) * 0.06
+        return CGSize(width: width, height: height)
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 8
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+    }
 }

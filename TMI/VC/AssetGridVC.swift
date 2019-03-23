@@ -101,7 +101,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     }
     
     fileprivate func setCellAppearance(_ cell: AssetGridViewCell) {
-        cell.contentView.layer.cornerRadius = 8
+        cell.contentView.layer.cornerRadius = 19
         cell.contentView.layer.borderWidth = 0.5
         cell.contentView.layer.borderColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.1).cgColor
         cell.contentView.layer.masksToBounds = true
