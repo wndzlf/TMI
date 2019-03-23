@@ -136,7 +136,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         activityIndicator.hidesWhenStopped = true
         activityIndicator.startAnimating()
         
-        setUpSearchController()
         authorizatePhotoState()
        addButtonsToNavigationBar()
         NotificationCenter.default.addObserver(self, selector: #selector(deleteItem(_:)),

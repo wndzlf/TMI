@@ -315,10 +315,6 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
     
     func screenshotSearch(keyword: String){
         
-        guard let _ = storyboard?.instantiateViewController(withIdentifier: "SearchCollectionVC") as? SearchCollectionVC else {
-            return
-        }
-        
         let request: NSFetchRequest<Screenshot> = Screenshot.fetchRequest()
         //SQL query로는 (select * from Text where content LIKE '%keyword%')와 같은 작업
         request.predicate = NSPredicate(format: "text CONTAINS[cd] %@", keyword)
@@ -356,9 +352,6 @@ class SearchVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
         searchedLocalIdentifiers.removeAll()
         
         if searchedAssetArray.count == fetchedRecordArray.count {
-            //            searchVC.fetchedRecordArray = fetchedRecordArray
-            //            searchVC.searchedAssetArray = searchedAssetArray
-            //            navigationController?.pushViewController(searchVC, animated: true)
             searchCollectionView.reloadData()
             searchCollectionView.collectionViewLayout.invalidateLayout()
         }
