@@ -9,9 +9,12 @@
 import UIKit
 
 class AssetGridViewCell: UICollectionViewCell {
+    
     @IBOutlet weak var detailImageView: UIImageView!
     
     @IBOutlet weak var checkImageView: UIImageView!
+    
+    @IBOutlet weak var emptyCheckImageView: UIImageView!
     
     var isChecked = false
     var representedAssetIdentifier: String!
@@ -30,8 +33,8 @@ class AssetGridViewCell: UICollectionViewCell {
     
     
     override func prepareForReuse() {
-        
         super.prepareForReuse()
         detailImageView.image = nil
     }
+    
 }

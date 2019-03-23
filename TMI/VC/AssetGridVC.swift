@@ -16,11 +16,14 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     @IBOutlet var trashButton: UIBarButtonItem!
     @IBOutlet var space: UIBarButtonItem!
     
-    @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
+    @IBOutlet weak var collectionViewFlowLayout: AssetGridLayout!
+    
     
     var selectedAssetIndex: [Int] = []
     var selectedAlbums: [PHAsset] = []
     var selectedIndexPath: [IndexPath] = []
+    var selectedAlbumTitleString = String()
+    var collectionCheckStatus = false
     
     var currentAlbumIndex: Int = 0
     var fetchResult: PHFetchResult<PHAsset>!
@@ -30,6 +33,8 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     fileprivate var previousPreheatRect = CGRect.zero
     
     var assetCollection: PHAssetCollection!
+    
+    var availableWidth: CGFloat = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,11 +50,24 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         moveButton.isEnabled = false
         trashButton.isEnabled = false
+        
+        detailCollectionView.contentInset = UIEdgeInsets(top: 30, left: 10, bottom: 10, right: 10)
+        if let layout = detailCollectionView.collectionViewLayout as? AssetGridLayout {
+            layout.delegate = self
+        }
+        let headerNib = UINib(nibName: "AssetGridCollectionReusableView", bundle: nil)
+        detailCollectionView.register(headerNib, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "Header")
+        
+//        detailCollectionView.contentInset = UIEdgeInsets(top: 23, left: 10, bottom: 10, right: 10)
+    
     }
     
     override func viewWillLayoutSubviews() {
+         super.viewWillLayoutSubviews()
+        
         let isNavigationBarHidden = navigationController?.isNavigationBarHidden ?? false
         view.backgroundColor = isNavigationBarHidden ? .black : .white
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -62,7 +80,7 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         let scale = UIScreen.main.scale
         
-        let cellSize = collectionViewFlowLayout.itemSize
+        let cellSize = collectionViewFlowLayout.collectionViewContentSize        
         
         thumbnailSize = CGSize(width: cellSize.width * scale, height: cellSize.height * scale)
     }
@@ -71,11 +89,64 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         return selectedAlbums.count
     }
     
+    fileprivate func setCellAppearance(_ cell: AssetGridViewCell) {
+        cell.contentView.layer.cornerRadius = 19
+        cell.contentView.layer.borderWidth = 0.5
+        cell.contentView.layer.borderColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.1).cgColor
+        cell.contentView.layer.masksToBounds = true
+        
+        cell.layer.shadowColor = UIColor.black.cgColor
+        cell.layer.shadowOffset = CGSize(width: 0, height: 5.0)
+        cell.layer.shadowRadius = 25.0
+        cell.layer.shadowOpacity = 0.15
+        cell.layer.masksToBounds = false
+        cell.layer.shadowPath = UIBezierPath(roundedRect: cell.bounds, cornerRadius: cell.contentView.layer.cornerRadius).cgPath
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            
+            guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Header", for: indexPath) as? AssetGridCollectionReusableView else {return .init()}
+            
+            headerView.albumNameLabel.text = selectedAlbumTitleString
+            headerView.albumCountLabel.text = "\(selectedAlbums.count)"
+            
+            return headerView
+            
+        default://I only needed a header so if not header I return an empty view
+            return UICollectionReusableView()
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let asset = selectedAlbums[indexPath.item]
         
         guard let cell = detailCollectionView.dequeueReusableCell(withReuseIdentifier: "SelectedAlbumCell", for: indexPath) as? AssetGridViewCell else {
+            fatalError("no assetGridViewCell")
+        }
+        setCellAppearance(cell)
+        
+        cell.emptyCheckImageView.isHidden = true
+        cell.checkImageView.isHidden = true
+        
+        guard let sublayers = cell.contentView.layer.sublayers else {
             return .init()
+        }
+        
+        for layer in sublayers {
+            if layer.name == "blueLayer" {
+                layer.removeFromSuperlayer()
+            }
+        }
+        
+        
+        if collectionCheckStatus == true {
+            cell.emptyCheckImageView.isHidden = false
+        } else {
+            cell.emptyCheckImageView.isHidden = true
+            cell.checkImageView.isHidden = true
         }
         
         cell.representedAssetIdentifier = asset.localIdentifier
@@ -117,12 +188,31 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             return
         }
         
+        let blueLayer = CALayer()
+        blueLayer.name = "blueLayer"
+        blueLayer.frame = currentCell.contentView.bounds
+        blueLayer.backgroundColor = UIColor.neonBlue.withAlphaComponent(0.7).cgColor
+        
+        
         
         if currentCell.isChecked {
             print("해제할것")
             currentCell.isChecked = false
             
             currentCell.checkImageView.isHidden = true
+            currentCell.emptyCheckImageView.isHidden = false
+            
+            guard let sublayers = currentCell.contentView.layer.sublayers else {
+                return
+            }
+            
+            for layer in sublayers {
+                if layer.name == "blueLayer" {
+                    layer.removeFromSuperlayer()
+                }
+            }
+            
+//            currentCell.layoutSublayers(of: currentCell.contentView.layer)
             
             if let indexPath = collectionView.indexPath(for: currentCell) {
                 selectedIndexPath.removeAll { (index) -> Bool in
@@ -134,6 +224,12 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             currentCell.isChecked = true
             print("선택됨")
             currentCell.checkImageView.isHidden = false
+            currentCell.emptyCheckImageView.isHidden = true
+            
+            currentCell.contentView.layer.insertSublayer(blueLayer, below: currentCell.checkImageView.layer)
+            
+            
+        
             
             if let indexPath = collectionView.indexPath(for: currentCell) {
                 selectedIndexPath.append(indexPath)
@@ -165,8 +261,13 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         if sender.title == "선택" {
             sender.title = "취소"
+            collectionCheckStatus = true
+            detailCollectionView.reloadData()
+            
         } else {
             sender.title = "선택"
+            collectionCheckStatus = false
+            
             detailCollectionView.allowsMultipleSelection = false
             selectedAssetIndex.removeAll()
             
@@ -176,8 +277,9 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                     currentCell.checkImageView.isHidden = true
                 }
             }
-            
-            detailCollectionView.reloadItems(at: selectedIndexPath)
+            UIView.performWithoutAnimation {
+                detailCollectionView.reloadData()
+            }
             selectedIndexPath.removeAll()
         }
     }
@@ -243,17 +345,48 @@ class AssetGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 //MARK:- CollectionViewFlowLayout
 extension AssetGridVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = (view.frame.width) / 4 - 8
-        let height: CGFloat = (view.frame.width) / 4
-        return CGSize(width: width, height: height)
+        
+        let insets = collectionView.contentInset
+        let width: CGFloat = collectionView.bounds.width - (insets.left + insets.right) - 20
+        let columnWidth = width / CGFloat(2)
+        
+        var height: CGFloat = CGFloat()
+        let number = indexPath.item % 4
+        
+        if number == 0 {
+            height = view.frame.height * 0.42
+        } else if number == 1{
+            height = view.frame.height * 0.25
+        } else if number == 2 {
+            height = view.frame.height * 0.19
+        } else if number == 3 {
+            height = view.frame.height * 0.42
+        }
+        
+        return CGSize(width: columnWidth, height: height)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 2
-    }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 1, left: 1, bottom: 1, right: 1)
-    }
 }
 
+extension AssetGridVC : AssetGridLayoutDelegate {
+    
+    // 1. Returns the photo height
+    func collectionView(_ collectionView: UICollectionView, heightForPhotoAtIndexPath indexPath:IndexPath) -> CGFloat {
+        
+        let number = indexPath.item % 4
+        
+        if number == 0 {
+            return view.frame.height * 0.42
+        } else if number == 1{
+            return view.frame.height * 0.25
+        } else if number == 2 {
+            return view.frame.height * 0.19
+        } else if number == 3 {
+            return view.frame.height * 0.42
+        }
+        
+        return CGFloat()
+    }
+    
+}

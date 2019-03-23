@@ -22,9 +22,10 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     @IBOutlet weak var collectionViewFlowLayout: UICollectionViewFlowLayout!
     
+    
     var assetsFetchResult: PHFetchResult<PHAsset>!
     
-    let imageManager: PHCachingImageManager = PHCachingImageManager() //이미지를 로드해 옴
+    let imageManager: PHCachingImageManager = PHCachingImageManager()
     
     let requestOptions = PHImageRequestOptions()
     
@@ -38,12 +39,6 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     var recordArray = [Screenshot]()
     
-    var fetchedRecordArray = [Screenshot]()
-    
-    var searchedLocalIdentifiers: [String] = []
-    
-    var searchedAssests : PHFetchResult<PHAsset>!
-    
     var assetCollection: PHAssetCollection!
     
     var albumFound : Bool = false
@@ -54,7 +49,13 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     var previousPreheatRect = CGRect.zero
     
+    var fetchedRecordArray = [Screenshot]()
+    
+    var searchedLocalIdentifiers: [String] = []
+    
     var searchController: UISearchController!
+    
+    var searchedAssests : PHFetchResult<PHAsset>!
     
     var searchedAssetArray: [PHAsset] = []
     
@@ -124,15 +125,20 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.navigationBar.isTranslucent = false
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        
         albumGridCollectionView.delegate = self
         albumGridCollectionView.dataSource = self
+        albumGridCollectionView.contentInset = UIEdgeInsets(top: 40, left: 0, bottom: 10, right: 0)
         
         activityIndicator.hidesWhenStopped = true
         activityIndicator.startAnimating()
         
         setUpSearchController()
         authorizatePhotoState()
-       
+       addButtonsToNavigationBar()
         NotificationCenter.default.addObserver(self, selector: #selector(deleteItem(_:)),
                                                name: NSNotification.Name("deleteAsset"),
                                                object: nil)
@@ -156,6 +162,32 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         setThumNailSize()
     }
     
+    func addButtonsToNavigationBar(){
+        let plusButton = UIButton(type: UIButton.ButtonType.custom)
+        
+        plusButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+//        plusButton.addTarget(self, action: "plusButtonTapped", for: .touchUpInside)
+        plusButton.setImage(UIImage(named: "buttonsPlus"), for: .normal)
+        
+        let plusBarButtonItem = UIBarButtonItem(customView: plusButton)
+        
+        let searchButton = UIButton(type: UIButton.ButtonType.custom)
+        searchButton.frame = CGRect(x: 0, y: 0, width: 40, height: 40)
+        searchButton.addTarget(self, action: "searchButtonTapped", for: .touchUpInside)
+        searchButton.setImage(UIImage(named: "buttonsSearch"), for: .normal)
+        
+        let userBarButtonItem = UIBarButtonItem(customView: searchButton)
+        
+        self.navigationItem.leftBarButtonItems = [plusBarButtonItem, userBarButtonItem]
+    }
+    
+    @objc func searchButtonTapped() {
+        guard let searchVC = storyboard?.instantiateViewController(withIdentifier: "SearchVC") else {
+            fatalError("No searchVC")
+        }
+        navigationController?.pushViewController(searchVC, animated: true)
+    }
+    
     private func hideBottomToolbar() {
         navigationController?.setToolbarHidden(true, animated: false)
     }
@@ -173,53 +205,35 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     
     //MARK: - CollectionView
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if isSearch() {
-            return fetchedRecordArray.count
-        }
         return AlbumGridVC.albumList.count
+    }
+    
+    fileprivate func setCellAppearance(_ cell: AlbumCollectionViewCell) {
+        cell.titleImageView.layer.cornerRadius = 8
+        cell.titleImageView.layer.borderWidth = 0.5
+        cell.titleImageView.layer.borderColor = UIColor.init(red: 0, green: 0, blue: 0, alpha: 0.1).cgColor
+        cell.titleImageView.layer.masksToBounds = true
+        
+        cell.layer.shadowColor = UIColor.black.cgColor
+        cell.layer.shadowOffset = CGSize(width: 0, height: 5.0)
+        cell.layer.shadowRadius = 25.0
+        cell.layer.shadowOpacity = 0.15
+        cell.layer.masksToBounds = false
+        cell.layer.shadowPath = UIBezierPath(roundedRect: cell.titleImageView.bounds, cornerRadius: cell.titleImageView.layer.cornerRadius).cgPath
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? AlbumCollectionViewCell else {
-            return .init()
+            fatalError("no albumcollectionviewcell")
         }
         
-        if isSearch() {
-            let fetchText: Screenshot = fetchedRecordArray[indexPath.item]
-            
-            let option = PHImageRequestOptions()
-            
-            let asset = searchedAssests.object(at: indexPath.item)
-        
-            activityIndicator.isHidden = false
-            
-            activityIndicator.startAnimating()
-            
-            option.resizeMode = .fast
-            
-            cell.representedAssetIdentifier = asset.localIdentifier
-            
-            print("localIdentifier: \(asset.localIdentifier)")
-            imageManager.requestImage(for: asset,
-                                      targetSize: thumbnailSize,
-                                      contentMode: .aspectFill,
-                                      options: option, resultHandler: { image, _ in
-                                        // UIKit may have recycled this cell by the handler's activation time.
-                                        // Set the cell's thumbnail image only if it's still showing the same asset.
-                                        if cell.representedAssetIdentifier == asset.localIdentifier {
-                                            cell.thumbnailImage = image
-                                            cell.titleLabel.text = fetchText.albumName
-                                            cell.imageCountLabel.text = nil
-                                        }
-            })
-            activityIndicator.stopAnimating()
-        } else {
+        setCellAppearance(cell)
             let album: AlbumModel = AlbumGridVC.albumList[indexPath.item]
             cell.thumbnailImage = album.image
             cell.titleLabel.text = album.name
             cell.imageCountLabel.text = String(album.count)
-        }
+        
         
         return cell
     }
@@ -227,17 +241,17 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let storyBoard = UIStoryboard(name: "Main", bundle: nil)
         
-        if isSearch() {
-            guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else {
-                fatalError("Unexpected ViewController")
-            }
-            
-            self.navigationController?.pushViewController(assetVC, animated: true)
-            
-            assetVC.asset = searchedAssests.object(at: indexPath.item)
-            
-        } else {
-            
+//        if isSearch() {
+//            guard let assetVC = storyBoard.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else {
+//                fatalError("Unexpected ViewController")
+//            }
+//
+//            self.navigationController?.pushViewController(assetVC, animated: true)
+//
+//            assetVC.asset = searchedAssests.object(at: indexPath.item)
+//
+//        } else {
+        
             guard let selectedVC = storyBoard.instantiateViewController(withIdentifier: "AssetGridVC") as? AssetGridVC else {
                 fatalError("Unexpected ViewController")
             }
@@ -245,10 +259,33 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             self.navigationController?.pushViewController(selectedVC, animated: true)
             
             PopupAlbumGridVC.currentAlbumIndex = indexPath.item
-
+            selectedVC.selectedAlbumTitleString = AlbumGridVC.albumList[indexPath.item].name
             selectedVC.selectedAlbums = AlbumGridVC.albumList[indexPath.item].collection
-        }
+//        }
         
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard
+            let headerView = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind,
+                withReuseIdentifier: "AlbumGridHeaderView",
+                for: indexPath) as? AlbumGridCollectionReusableView
+            else {
+                fatalError("Invalid view type")
+        }
+        var totalScreenshotCount = 0
+        for album in AlbumGridVC.albumList {
+            totalScreenshotCount += album.count
+        }
+        headerView.label.text = "\(totalScreenshotCount)개의 스크린샷을"
+        
+        if let myLabel = headerView.label.text {
+            let attributedString = NSMutableAttributedString(string: myLabel)
+            attributedString.addAttribute(NSAttributedString.Key.foregroundColor, value: UIColor.neonBlue, range: (attributedString.string as NSString).range(of:"\(totalScreenshotCount)개"))
+            headerView.label.attributedText = attributedString
+        }
+        return headerView
     }
     
     @objc func addAlbum(_ sender: AnyObject) {
@@ -296,17 +333,17 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
 //cgImage.size = UIImage.size * UIImage.scale
 extension AlbumGridVC: UICollectionViewDelegateFlowLayout {
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width: CGFloat = (view.frame.width) / 2 - 20
-        let height: CGFloat = (view.frame.width) / 2 + 28
+        let width: CGFloat = (collectionView.frame.width) / 2 - 8
+        let height: CGFloat = width
         return CGSize(width: width, height: height)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 10
+        return 38 + 8 + 12
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 10)
+        return UIEdgeInsets(top: 28, left: 0, bottom: 10, right: 0)
     }
 }
 
@@ -361,6 +398,7 @@ extension AlbumGridVC: PHPhotoLibraryChangeObserver {
                     albumDictionary[key] = value.filter({!(removedObjects.contains($0))})
                 }
             }
+            
             for album in AlbumGridVC.albumList {
                 album.collection = albumDictionary[album.name]!
                 album.count = albumDictionary[album.name]!.count
