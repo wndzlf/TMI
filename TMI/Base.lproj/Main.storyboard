@@ -24,7 +24,7 @@
                                     <size key="itemSize" width="157" height="216"/>
                                     <size key="headerReferenceSize" width="50" height="62"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
-                                    <inset key="sectionInset" minX="10" minY="0.0" maxX="10" maxY="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <activityIndicatorView key="backgroundView" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="gray" id="9px-kL-4dg">
                                     <rect key="frame" x="0.0" y="0.0" width="343" height="603"/>
@@ -32,7 +32,7 @@
                                 </activityIndicatorView>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="cell" id="zbV-iO-wmm" customClass="AlbumCollectionViewCell" customModule="TMI" customModuleProvider="target">
-                                        <rect key="frame" x="93" y="62" width="157" height="216"/>
+                                        <rect key="frame" x="0.0" y="62" width="157" height="216"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
                                             <rect key="frame" x="0.0" y="0.0" width="157" height="216"/>
@@ -163,10 +163,10 @@
             </objects>
             <point key="canvasLocation" x="924" y="26.53673163418291"/>
         </scene>
-        <!--View Controller-->
+        <!--StartVC-->
         <scene sceneID="gIF-yW-NUs">
             <objects>
-                <viewController id="8qp-G2-svB" sceneMemberID="viewController">
+                <viewController id="8qp-G2-svB" customClass="StartVC" customModule="TMI" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8Po-50-qOU">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -186,7 +186,7 @@
                                     <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 </state>
                                 <connections>
-                                    <segue destination="Thh-Oo-taQ" kind="show" id="G9O-sP-Cla"/>
+                                    <segue destination="Thh-Oo-taQ" kind="show" id="DLl-CA-Npv"/>
                                 </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="사진 정리해드릴까요?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rdy-LQ-GMP">
@@ -208,10 +208,13 @@
                         <viewLayoutGuide key="safeArea" id="JMm-Qa-hSd"/>
                     </view>
                     <navigationItem key="navigationItem" id="lb4-FT-loB"/>
+                    <connections>
+                        <outlet property="startButton" destination="qcc-0o-zTp" id="TXD-ta-kvU"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="QhD-1B-CqL" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="-1540" y="27"/>
+            <point key="canvasLocation" x="-1009" y="27"/>
         </scene>
         <!--SearchVC-->
         <scene sceneID="0Xl-8M-dhG">
@@ -779,81 +782,12 @@
             </objects>
             <point key="canvasLocation" x="89" y="27"/>
         </scene>
-        <!--View Controller-->
-        <scene sceneID="UKX-X0-WTo">
-            <objects>
-                <viewController id="i8v-p9-uQB" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="qqT-Pz-Yc4">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" alignment="center" spacing="2" translatesAutoresizingMaskIntoConstraints="NO" id="Y0m-Ti-KJB">
-                                <rect key="frame" x="99.5" y="316" width="176" height="55"/>
-                                <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="갤러리의 스크린샷을" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1To-Ws-rIi">
-                                        <rect key="frame" x="0.0" y="0.0" width="176" height="26.5"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="정리하고 있어요" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WnK-qB-wZC">
-                                        <rect key="frame" x="19" y="28.5" width="138" height="26.5"/>
-                                        <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
-                                        <nil key="textColor"/>
-                                        <nil key="highlightedColor"/>
-                                    </label>
-                                </subviews>
-                            </stackView>
-                            <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="20P-Mp-Ydg">
-                                <rect key="frame" x="40" y="395" width="295" height="6"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="6" id="RQ3-wL-PKt"/>
-                                </constraints>
-                            </progressView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="jsP-JN-f4p">
-                                <rect key="frame" x="169" y="415" width="37" height="17"/>
-                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="14"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgFolder" translatesAutoresizingMaskIntoConstraints="NO" id="J9r-l1-cJq">
-                                <rect key="frame" x="127.5" y="158" width="120" height="120"/>
-                            </imageView>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="imgLogoBar32Px" translatesAutoresizingMaskIntoConstraints="NO" id="eJo-u9-Hqr">
-                                <rect key="frame" x="171.5" y="20" width="32" height="32"/>
-                            </imageView>
-                        </subviews>
-                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <color key="tintColor" red="0.011764705882352941" green="0.95294117647058818" blue="0.97647058823529409" alpha="1" colorSpace="calibratedRGB"/>
-                        <constraints>
-                            <constraint firstItem="Y0m-Ti-KJB" firstAttribute="centerY" secondItem="dgp-14-Uj7" secondAttribute="centerY" id="8zf-EH-4Uu"/>
-                            <constraint firstItem="J9r-l1-cJq" firstAttribute="top" secondItem="dgp-14-Uj7" secondAttribute="top" constant="138" id="9h9-ZA-NyA"/>
-                            <constraint firstItem="20P-Mp-Ydg" firstAttribute="leading" secondItem="qqT-Pz-Yc4" secondAttribute="leadingMargin" constant="24" id="9sk-5a-7bN"/>
-                            <constraint firstItem="20P-Mp-Ydg" firstAttribute="centerX" secondItem="qqT-Pz-Yc4" secondAttribute="centerX" id="OOJ-xl-Cyw"/>
-                            <constraint firstItem="dgp-14-Uj7" firstAttribute="top" secondItem="eJo-u9-Hqr" secondAttribute="top" id="V8b-z5-BGV"/>
-                            <constraint firstItem="jsP-JN-f4p" firstAttribute="centerX" secondItem="qqT-Pz-Yc4" secondAttribute="centerX" id="fBQ-z1-mhd"/>
-                            <constraint firstItem="eJo-u9-Hqr" firstAttribute="centerX" secondItem="dgp-14-Uj7" secondAttribute="centerX" id="fmL-cE-qD0"/>
-                            <constraint firstItem="Y0m-Ti-KJB" firstAttribute="centerX" secondItem="dgp-14-Uj7" secondAttribute="centerX" id="j9k-JS-CvE"/>
-                            <constraint firstItem="J9r-l1-cJq" firstAttribute="centerX" secondItem="dgp-14-Uj7" secondAttribute="centerX" id="oG3-5x-D2z"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="20P-Mp-Ydg" secondAttribute="trailing" constant="24" id="vDl-XV-U0P"/>
-                            <constraint firstItem="jsP-JN-f4p" firstAttribute="top" secondItem="20P-Mp-Ydg" secondAttribute="bottom" constant="14" id="vrr-N4-48R"/>
-                            <constraint firstItem="20P-Mp-Ydg" firstAttribute="top" secondItem="Y0m-Ti-KJB" secondAttribute="bottom" constant="24" id="yV8-Il-2Qo"/>
-                        </constraints>
-                        <viewLayoutGuide key="safeArea" id="dgp-14-Uj7"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="vzd-Ha-4dB" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-721" y="27"/>
-        </scene>
     </scenes>
     <resources>
         <image name="btCheckActive" width="20" height="20"/>
         <image name="buttonsReset" width="20" height="20"/>
         <image name="iconsSelectFilled" width="20" height="20"/>
         <image name="iconsSelectOutlined" width="20" height="20"/>
-        <image name="imgFolder" width="120" height="120"/>
-        <image name="imgLogoBar32Px" width="32" height="32"/>
         <image name="imgLogoMain92Px" width="92" height="147"/>
     </resources>
 </document>

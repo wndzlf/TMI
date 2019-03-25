@@ -469,15 +469,21 @@ extension AlbumGridVC {
         for i in pixelBufferArray {
             finalInputArray.append(final_v3Input(Mul__0: i))
         }
-        print(finalInputArray)
+        
         guard let final_v3OutputArray = try? model.predictions(inputs: finalInputArray) else {
             fatalError("predictions error")
         }
+        let totalCount = final_v3OutputArray.count
+//        progressBar.total = Double(totalCount)
         
         for final_v3Output in final_v3OutputArray {
             let featurePointer = UnsafePointer<Double>(OpaquePointer(final_v3Output.final_result__0.dataPointer))
             let (maxIndex, maxValue) = argmax(featurePointer, count: 3)
             print("batch 이름 " + String(maxIndex) + ", 값은 " + String(maxValue))
+            
+//                self.progressBar.percentage += 1
+            
+            
             maxIndexArray.append(maxIndex)
         }
     }

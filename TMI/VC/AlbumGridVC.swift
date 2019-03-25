@@ -67,6 +67,8 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     var pixelBufferArray: [CVPixelBuffer] = []
     var maxIndexArray: [Int] = []
     
+    let progressBar: ProgressBar
+    let loadingView = UIView()
 
     fileprivate func setCollectionView() {
         DispatchQueue.main.async {
@@ -79,7 +81,15 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 UserDefaults.standard.set(true, forKey: "theFirstRun")
                 //앱 처음 실행
                 //TODO: 인트로 부르기
+//                self.setProgressBar()
+                
                 self.GetAlbums()
+                
+//                if self.progressBar.percentage == self.progressBar.total {
+//                    self.navigationController?.setNavigationBarHidden(false, animated: false)
+//                    self.loadingView.isHidden = true
+//                    self.albumGridCollectionView.isHidden = false
+//                }
             }
             
             self.resetCachedAssets()
@@ -123,6 +133,71 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         PHPhotoLibrary.shared().register(self) //포토 라이브러리가 변화될 때마다 델리게이트가 호출됨
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        progressBar = ProgressBar()
+        super.init(coder: aDecoder)
+    }
+    
+    @objc func buttonTapped() {
+        progressBar.percentage += 1
+    }
+    
+//    fileprivate func setProgressBar() {
+//        albumGridCollectionView.isHidden = true
+//        navigationController?.setNavigationBarHidden(true, animated: false)
+//
+//
+//        loadingView.translatesAutoresizingMaskIntoConstraints = false
+//        view.addSubview(loadingView)
+//        NSLayoutConstraint.activate([
+//            loadingView.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor),
+//            loadingView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+//            loadingView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+//            loadingView.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor),
+//            ])
+//
+//        let barImageView = UIImageView(image: UIImage(named: "imgLogoBar32Px"))
+//        let folderImageView = UIImageView(image: UIImage(named: "imgFolder"))
+//        let infoLabel = UILabel()
+//        let progressLabel = UILabel()
+//        progressLabel.tag = 99
+//
+//        infoLabel.text = "갤러리의 스크린샷을\n 정리하고 있어요"
+//        infoLabel.lineBreakMode = .byWordWrapping
+//        infoLabel.font = UIFont.systemFont(ofSize: 22, weight: .bold)
+//        infoLabel.numberOfLines = 2
+//        infoLabel.textAlignment = .center
+//        infoLabel.sizeToFit()
+//
+//
+//        loadingView.addSubview(barImageView)
+//        loadingView.addSubview(folderImageView)
+//        loadingView.addSubview(infoLabel)
+//        loadingView.addSubview(progressBar)
+//
+//
+//        barImageView.translatesAutoresizingMaskIntoConstraints = false
+//        folderImageView.translatesAutoresizingMaskIntoConstraints = false
+//        infoLabel.translatesAutoresizingMaskIntoConstraints = false
+//        progressBar.translatesAutoresizingMaskIntoConstraints = false
+//
+//        NSLayoutConstraint.activate([
+//            barImageView.topAnchor.constraint(equalTo: loadingView.topAnchor),
+//            barImageView.centerXAnchor.constraint(equalTo: loadingView.centerXAnchor),
+//
+//            folderImageView.topAnchor.constraint(equalTo: loadingView.topAnchor, constant: 138),
+//            folderImageView.centerXAnchor.constraint(equalTo: loadingView.centerXAnchor),
+//
+//            infoLabel.topAnchor.constraint(equalTo: folderImageView.bottomAnchor, constant: 24),
+//            infoLabel.centerXAnchor.constraint(equalTo: loadingView.centerXAnchor),
+//
+//            progressBar.topAnchor.constraint(equalTo: infoLabel.bottomAnchor, constant: 24),
+//            progressBar.leadingAnchor.constraint(equalTo: loadingView.leadingAnchor, constant: 24),
+//            progressBar.trailingAnchor.constraint(equalTo: loadingView.trailingAnchor, constant: -24),
+//            
+//            ])
+//    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationController?.navigationBar.isTranslucent = false
@@ -137,7 +212,8 @@ class AlbumGridVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         activityIndicator.startAnimating()
         
         authorizatePhotoState()
-       addButtonsToNavigationBar()
+        addButtonsToNavigationBar()
+        
         NotificationCenter.default.addObserver(self, selector: #selector(deleteItem(_:)),
                                                name: NSNotification.Name("deleteAsset"),
                                                object: nil)
@@ -496,5 +572,78 @@ private extension UICollectionView {
     func indexPathsForElements(in rect: CGRect) -> [IndexPath] {
         let allLayoutAttributes = collectionViewLayout.layoutAttributesForElements(in: rect)!
         return allLayoutAttributes.map { $0.indexPath }
+    }
+}
+
+
+class ProgressBar: UIView {
+    private let progressView: UIView
+    private var progressBarWidth: NSLayoutConstraint? = nil
+    private let progressLabel: UILabel
+    
+    var total: Double = 0
+    var progressRate: Double = 0
+    
+    var percentage: Double = 0 {
+        didSet {
+            updateProgress()
+        }
+    }
+    
+    
+    init() {
+        progressView = UIView()
+        progressLabel = UILabel()
+        super.init(frame: .zero)
+        setupBackgroundBar()
+        setupProgressView()
+        setupProgreeLabel()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupBackgroundBar() {
+        self.heightAnchor.constraint(equalToConstant: 6).isActive = true
+        self.backgroundColor = UIColor.init(red: 239, green: 239, blue: 239, alpha: 1)
+    }
+    
+    private func setupProgressView(){
+        self.addSubview(progressView)
+        progressView.translatesAutoresizingMaskIntoConstraints = false
+        
+        progressView.topAnchor.constraint(equalTo: self.topAnchor).isActive = true
+        progressView.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
+        progressView.leadingAnchor.constraint(equalTo: self.leadingAnchor).isActive = true
+        progressView.backgroundColor = UIColor.cyan
+    }
+    
+    func setupProgreeLabel() {
+        self.addSubview(progressLabel)
+        progressLabel.translatesAutoresizingMaskIntoConstraints = false
+        
+        progressLabel.topAnchor.constraint(equalTo: self.topAnchor, constant: 14).isActive = true
+        progressLabel.centerXAnchor.constraint(equalTo: self.centerXAnchor).isActive = true
+        progressLabel.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        
+    }
+    
+    func updateProgress() {
+        let progressMultiplier = CGFloat(percentage/total)
+        
+        DispatchQueue.main.async {
+            let intMul = Int(self.percentage/self.total) * 100
+            self.progressLabel.text = "\(intMul)%"
+            
+            UIView.animate(withDuration: 1.0) {
+            if let progressConstraint = self.progressBarWidth {
+                NSLayoutConstraint.deactivate([progressConstraint])
+            }
+            self.progressBarWidth = self.progressView.widthAnchor.constraint(equalTo: self.widthAnchor, multiplier: progressMultiplier)
+            self.progressBarWidth?.isActive = true
+            self.layoutIfNeeded()
+         }
+        }
     }
 }
