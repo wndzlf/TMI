@@ -19,12 +19,13 @@ class AssetVC: UIViewController, UIScrollViewDelegate {
         return CGSize(width: imageView.bounds.width * scale, height: imageView.bounds.height * scale)
     }
     
+   var pageIndex = Int()
+    
     @IBOutlet weak var imageView: UIImageView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        setBackBtnSearch(color: .black)
         setBackBtn(color: .black)
     }
     

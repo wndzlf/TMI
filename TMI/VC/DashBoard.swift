@@ -56,8 +56,14 @@ class DashBoard: UIViewController, UIPageViewControllerDataSource {
     private func AssetVCIndex(index: Int) -> AssetVC {
         
         guard let AssetVC = self.storyboard?.instantiateViewController(withIdentifier: "AssetVC") as? AssetVC else {
+            fatalError("no such VC")
+        }
+        
+        if selectedAlbums.count == 0 || index >= selectedAlbums.count {
             return .init()
         }
+        
+        AssetVC.pageIndex = index
         AssetVC.asset = selectedAlbums[index]
         
         return AssetVC
@@ -65,21 +71,26 @@ class DashBoard: UIViewController, UIPageViewControllerDataSource {
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerBefore viewController: UIViewController) -> UIViewController? {
         
-        if selectedIndex == NSNotFound {
+        guard let assetVC = viewController as? AssetVC else {
+            return .init()
+        }
+        var selectedIndex = assetVC.pageIndex as Int
+        
+        if selectedIndex == 0 || selectedIndex == NSNotFound {
             return nil
         }
         
         selectedIndex -= 1
         
-        if selectedIndex < albumIndex.startIndex {
-            selectedIndex += 1
-            return nil
-        }
-        
         return AssetVCIndex(index: selectedIndex)
     }
     
     func pageViewController(_ pageViewController: UIPageViewController, viewControllerAfter viewController: UIViewController) -> UIViewController? {
+        
+        guard let assetVC = viewController as? AssetVC else {
+            return .init()
+        }
+        var selectedIndex = assetVC.pageIndex as Int
         
         if selectedIndex == NSNotFound {
             return nil
@@ -87,13 +98,10 @@ class DashBoard: UIViewController, UIPageViewControllerDataSource {
         
         selectedIndex += 1
         
-        print(selectedIndex)
-        
-        if selectedIndex > albumIndex.endIndex {
-            selectedIndex -= 1
+        if selectedIndex == selectedAlbums.count {
             return nil
         }
+        
         return AssetVCIndex(index: selectedIndex)
     }
-    //Page View_End
 }
